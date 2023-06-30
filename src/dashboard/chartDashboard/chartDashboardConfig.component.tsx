@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   header: {
     padding: '2rem',
     borderBottom: `1px solid ${theme.palette.primary.main}`,
+    backgroundColor: theme.palette.background.default,
   },
   headerButtons: {
     display: 'flex',
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     gap: '1rem',
     padding: '2rem',
+    backgroundColor: theme.palette.background.default,
   },
   progressIndicators: {
     display: 'flex',
@@ -91,12 +93,6 @@ const ChartDashboard = ({ sourceId }) => {
     affordableHousingDelivery = useSelector(
       chartDataSelector(sourceId, 'AffordableHousingDelivery')
     );
-
-  // console.log('approvalsGranted: ', approvalsGranted);
-  // console.log('progressionVsPlanning: ', progressionVsPlanning);
-  // console.log('tenureHousingDelivery: ', tenureHousingDelivery);
-  // console.log('totalHousingDelivery: ', totalHousingDelivery);
-  console.log('affordableHousingDelivery: ', affordableHousingDelivery);
 
   const user = useSelector(userSelector);
 
