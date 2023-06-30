@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-import {
-  Grid,
-  makeStyles,
-  Select,
-  MenuItem,
-  Button,
-  Input,
-} from '@material-ui/core';
+import { Grid, makeStyles, Select, MenuItem, Input } from '@material-ui/core';
 
 import { filterEmptyStrings, getPastYears } from '../utils';
 import { targetDatasets } from '../waltham.constants';
 import { validate } from './validate';
+
+import { Button } from '../../../components';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {

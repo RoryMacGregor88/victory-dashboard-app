@@ -1,13 +1,10 @@
-import {
-  Typography,
-  Button as AuiButton,
-  Link,
-  styled,
-} from '@material-ui/core';
+import { Typography, Link, styled } from '@material-ui/core';
 
 import { Alert as AuiWell } from '@material-ui/lab';
 
 import { OrbisLogo } from '../orbis-logo/orbis-logo.component';
+
+import { Button as AuiButton } from '../../components';
 
 const Content = styled('div')(({ theme }) => ({
   width: '100%',

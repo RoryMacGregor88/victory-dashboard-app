@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
-// TODO: import
 import {
   ClickAwayListener,
   IconButton,
-  SvgIcon,
   makeStyles,
   Tooltip,
   Typography,
 } from '@material-ui/core';
+
+import { InfoIcon } from '../../components';
 
 import clsx from 'clsx';
 
@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
   open: {},
   content: {
     fontWeight: 600,
+    color: theme.palette.common.black,
   },
 }));
 
@@ -82,7 +83,7 @@ export const InfoButtonTooltip = ({
           aria-label='Info'
           onClick={handleIconClick}
         >
-          <SvgIcon titleAccess='Info' fontSize='inherit' />
+          <InfoIcon titleAccess='Info' fontSize='inherit' />
         </IconButton>
       </Tooltip>
     </ClickAwayListener>

@@ -1,11 +1,10 @@
-import { createTheme, alpha } from '@material-ui/core';
+import { createTheme, alpha, ThemeOptions } from '@material-ui/core';
 import { palette } from './palette';
 
 const borderRadius = 5;
 const spacing = (factor: number) => `${0.5 * factor}rem`;
 
-/** @type {import('@material-ui/core').ThemeOptions} */
-export const core = createTheme({
+export const core: ThemeOptions = createTheme({
   overrides: {
     MuiButton: {
       textSecondary: {
@@ -262,28 +261,35 @@ export const core = createTheme({
     h1: {
       fontSize: '26px',
       fontWeight: 600,
+      color: palette.common.white,
     },
     h2: {
       fontSize: '18px',
       fontWeight: 600,
+      color: palette.common.white,
     },
     h3: {
       fontSize: '16px',
       fontWeight: 600,
+      color: palette.common.white,
     },
     h4: {
       fontSize: '14px',
       fontWeight: 600,
+      color: palette.common.white,
     },
     h5: {
       fontSize: '12px',
       fontWeight: 600,
+      color: palette.common.white,
     },
     body1: {
       fontSize: '14px',
+      color: palette.common.white,
     },
     body2: {
       fontSize: '12px',
+      color: palette.common.white,
     },
     button: {
       fontSize: '18px',

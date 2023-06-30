@@ -5,11 +5,12 @@ import {
   CircularProgress,
   Grid,
   Typography,
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
 } from '@material-ui/core';
+
+import { Button } from '../../components';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -35,7 +36,6 @@ import { userSelector } from '../../accounts/accounts.slice';
 
 const useStyles = makeStyles((theme) => ({
   dashboard: {
-    overflowY: 'scroll',
     width: '100%',
   },
   header: {
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChartDashboard = ({ sourceId }) => {
+const ChartDashboard = ({ sourceId }: { sourceId: string }) => {
   const styles = useStyles({});
   const dispatch = useDispatch();
 
@@ -119,9 +119,22 @@ const ChartDashboard = ({ sourceId }) => {
     [dispatch, sourceId, user]
   );
 
+  interface Metadata {
+    datasetName: string;
+    url: string;
+    apiSourceId: string;
+  }
+
   useEffect(() => {
-    walthamApiMetadata.forEach(({ datasetName, url, apiSourceId }) =>
-      dispatch(fetchDashboardData({ sourceId, datasetName, url, apiSourceId }))
+    walthamApiMetadata.forEach(({ datasetName, url, apiSourceId }: Metadata) =>
+      dispatch(
+        fetchDashboardData({
+          sourceId,
+          datasetName,
+          url,
+          apiSourceId,
+        })
+      )
     );
   }, [sourceId, dispatch]);
 

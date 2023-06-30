@@ -18,7 +18,7 @@ import {
   ERROR_FONT_DEVISOR,
 } from '../../waltham.constants';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   header: {
     minHeight: '6ch',
   },
