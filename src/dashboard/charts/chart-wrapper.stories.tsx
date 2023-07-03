@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { ToggleButtonGroup, ToggleButton } from '@astrosat/astrosat-ui';
+// import { ToggleButtonGroup, ToggleButton } from '@astrosat/astrosat-ui';
 
 import { VictoryLegend, VictoryChart } from 'victory';
 

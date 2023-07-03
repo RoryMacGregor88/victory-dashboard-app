@@ -1,9 +1,7 @@
-import React from 'react';
-
 import { it, expect, describe, vi } from 'vitest';
 
-import * as mockData from '~/dashboard/mock-data/waltham-forest/mock_affordable_housing';
-import { render, screen } from 'test/test-utils';
+import mockData from '../../../../mock_data/mock_affordable_housing';
+import { render, screen } from '@testing-library/react';
 
 import {
   AffordableHousingDelivery,
@@ -17,11 +15,16 @@ const data = mockData.properties[0].data,
     2020: 80,
     2021: 120,
     2022: 90,
-  },
-  setDashboardSettings = vi.fn();
+  };
+
+let setDashboardSettings = vi.fn();
 
 describe('<AfforableHousingDelivery />', () => {
-  describe('Afforable Housing Delivery chart', () => {
+  beforeEach(() => {
+    setDashboardSettings = vi.fn();
+  });
+
+  describe('Affordable Housing Delivery chart', () => {
     it('shows the right title in the wrapper', () => {
       render(
         <AffordableHousingDelivery

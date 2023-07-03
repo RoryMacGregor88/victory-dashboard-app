@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { it, expect, describe, vi } from 'vitest';
 
 import { render } from '@testing-library/react';
@@ -19,20 +17,20 @@ describe('Target Dialog Screens', () => {
       expect(getByRole('button', { name: 'Next' })).toBeInTheDocument();
     });
 
-    it('disables `Next` button until changes have been made', () => {
+    it('disables `Next` button until changes have been made', async () => {
       const { getByRole, getByText } = render(<SelectScreen />);
 
       expect(getByRole('button', { name: 'Next' })).toBeDisabled();
 
-      userEvent.click(getByText(defaultValue));
+      await userEvent.click(getByText(defaultValue));
 
       expect(getByText(datasetName)).toBeInTheDocument();
-      userEvent.click(getByText(datasetName));
+      await userEvent.click(getByText(datasetName));
 
       expect(getByRole('button', { name: 'Next' })).toBeEnabled();
     });
 
-    it('fires callback when changes have been made and `Next` button is clicked', () => {
+    it('fires callback when changes have been made and `Next` button is clicked', async () => {
       const onNextClick = vi.fn(),
         expected = 'totalHousing';
 
@@ -40,9 +38,9 @@ describe('Target Dialog Screens', () => {
         <SelectScreen onNextClick={onNextClick} />
       );
 
-      userEvent.click(getByText(defaultValue));
-      userEvent.click(getByText(datasetName));
-      userEvent.click(getByRole('button', { name: 'Next' }));
+      await userEvent.click(getByText(defaultValue));
+      await userEvent.click(getByText(datasetName));
+      await userEvent.click(getByRole('button', { name: 'Next' }));
       expect(onNextClick).toHaveBeenCalledWith(expected);
     });
   });
@@ -53,15 +51,15 @@ describe('Target Dialog Screens', () => {
       expect(getByRole('button', { name: 'Add Target' })).toBeInTheDocument();
     });
 
-    it('disables `Add Target` button until changes have been made', () => {
+    it('disables `Add Target` button until changes have been made', async () => {
       const { getByRole, getByPlaceholderText } = render(<TargetScreen />);
 
       expect(getByRole('button', { name: 'Add Target' })).toBeDisabled();
-      userEvent.type(getByPlaceholderText('2020-2021'), '123');
+      await userEvent.type(getByPlaceholderText('2020-2021'), '123');
       expect(getByRole('button', { name: 'Add Target' })).toBeEnabled();
     });
 
-    it('allows cleared targets to be saved', () => {
+    it('allows cleared targets to be saved', async () => {
       const targets = {
         '2020-2021': '123',
       };
@@ -69,11 +67,11 @@ describe('Target Dialog Screens', () => {
       const { getByRole } = render(<TargetScreen targets={targets} />);
 
       expect(getByRole('button', { name: 'Add Target' })).toBeDisabled();
-      userEvent.click(getByRole('button', { name: 'Reset' }));
+      await userEvent.click(getByRole('button', { name: 'Reset' }));
       expect(getByRole('button', { name: 'Add Target' })).toBeEnabled();
     });
 
-    it('fires callback when changes have been made and `Add Target` button is clicked', () => {
+    it('fires callback when changes have been made and `Add Target` button is clicked', async () => {
       const onAddTargetsClick = vi.fn(),
         expected = {
           'test-dataset': {
@@ -89,23 +87,23 @@ describe('Target Dialog Screens', () => {
         />
       );
 
-      userEvent.type(getByPlaceholderText('2020-2021'), '123');
-      userEvent.type(getByPlaceholderText('2021-2022'), '456');
+      await userEvent.type(getByPlaceholderText('2020-2021'), '123');
+      await userEvent.type(getByPlaceholderText('2021-2022'), '456');
 
-      userEvent.click(getByRole('button', { name: 'Add Target' }));
+      await userEvent.click(getByRole('button', { name: 'Add Target' }));
       expect(onAddTargetsClick).toHaveBeenCalledWith(expected);
     });
 
-    it('clears all values when `Reset` button is clicked', () => {
+    it('clears all values when `Reset` button is clicked', async () => {
       const { getByRole, getByPlaceholderText } = render(<TargetScreen />);
 
       const input1 = getByPlaceholderText('2021-2022');
       const input2 = getByPlaceholderText('2022-2023');
 
-      userEvent.type(input1, '123');
-      userEvent.type(input2, '456');
+      await userEvent.type(input1, '123');
+      await userEvent.type(input2, '456');
 
-      userEvent.click(getByRole('button', { name: 'Reset' }));
+      await userEvent.click(getByRole('button', { name: 'Reset' }));
 
       expect(input1).toHaveValue('');
       expect(input2).toHaveValue('');
@@ -113,50 +111,50 @@ describe('Target Dialog Screens', () => {
   });
 
   describe('validation', () => {
-    it('allows numbers', () => {
+    it('allows numbers', async () => {
       const { queryByText, getByPlaceholderText } = render(<TargetScreen />);
 
-      userEvent.type(getByPlaceholderText('2021-2022'), '123');
+      await userEvent.type(getByPlaceholderText('2021-2022'), '123');
 
       expect(queryByText(inputErrorMessage)).not.toBeInTheDocument();
     });
 
-    it('allows decimals', () => {
+    it('allows decimals', async () => {
       const { queryByText, getByPlaceholderText } = render(<TargetScreen />);
 
-      userEvent.type(getByPlaceholderText('2021-2022'), '123.456');
+      await userEvent.type(getByPlaceholderText('2021-2022'), '123.456');
       expect(queryByText(inputErrorMessage)).not.toBeInTheDocument();
     });
 
-    it('does not allow letters', () => {
+    it('does not allow letters', async () => {
       const { getByText, getByPlaceholderText } = render(<TargetScreen />);
 
-      userEvent.type(getByPlaceholderText('2021-2022'), 'abc');
+      await userEvent.type(getByPlaceholderText('2021-2022'), 'abc');
       expect(getByText(inputErrorMessage)).toBeInTheDocument();
     });
 
-    it('does not allow special characters', () => {
+    it('does not allow special characters', async () => {
       const { getByText, getByPlaceholderText } = render(<TargetScreen />);
 
-      userEvent.type(getByPlaceholderText('2021-2022'), ';,%');
+      await userEvent.type(getByPlaceholderText('2021-2022'), ';,%');
       expect(getByText(inputErrorMessage)).toBeInTheDocument();
     });
 
-    it('removes error message when restricted characters removed', () => {
+    it('removes error message when restricted characters removed', async () => {
       const { getByText, queryByText, getByPlaceholderText } = render(
         <TargetScreen />
       );
 
       const input = getByPlaceholderText('2021-2022');
 
-      userEvent.type(input, ';,%');
+      await userEvent.type(input, ';,%');
       expect(getByText(inputErrorMessage)).toBeInTheDocument();
 
-      userEvent.clear(input);
+      await userEvent.clear(input);
       expect(queryByText(inputErrorMessage)).not.toBeInTheDocument();
     });
 
-    it('disables `Add Targets` button if a single field fails validation', () => {
+    it('disables `Add Targets` button if a single field fails validation', async () => {
       const { getByText, getByRole, getByPlaceholderText } = render(
         <TargetScreen />
       );
@@ -164,9 +162,9 @@ describe('Target Dialog Screens', () => {
       const input1 = getByPlaceholderText('2021-2022');
       const input2 = getByPlaceholderText('2022-2023');
 
-      userEvent.type(input1, '123');
-      userEvent.type(input2, 'abc');
-      userEvent.clear(input1);
+      await userEvent.type(input1, '123');
+      await userEvent.type(input2, 'abc');
+      await userEvent.clear(input1);
 
       expect(getByText(inputErrorMessage)).toBeInTheDocument();
       expect(getByRole('button', { name: 'Add Target' })).toBeDisabled();

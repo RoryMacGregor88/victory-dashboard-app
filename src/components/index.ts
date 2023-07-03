@@ -1,4 +1,3 @@
-export { ErrorFallback } from './error-fallback/error-fallback.component';
 export { LoadMaskFallback } from './load-mask-fallback.component';
 export { InfoButtonTooltip } from './info-button-tooltip/info-button-tooltip.component';
 export { ToggleButton } from './toggle-button/toggle-button.component';

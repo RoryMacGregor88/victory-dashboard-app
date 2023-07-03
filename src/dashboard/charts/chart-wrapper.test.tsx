@@ -1,6 +1,5 @@
-import React from 'react';
-
-import { render, screen, userEvent, waitFor } from 'test/test-utils';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { ChartWrapper } from './chart-wrapper.component';
 
@@ -12,10 +11,10 @@ describe('< ChartWrapper/>', () => {
     render(
       <ChartWrapper title={TITLE} info={INFO}>
         <div>Test Children</div>
-      </ChartWrapper>,
+      </ChartWrapper>
     );
     expect(
-      screen.getByRole('heading', { name: 'Test Title' }),
+      screen.getByRole('heading', { name: 'Test Title' })
     ).toBeInTheDocument();
   });
 
@@ -23,7 +22,7 @@ describe('< ChartWrapper/>', () => {
     render(
       <ChartWrapper title={TITLE} info={INFO}>
         <div>Test Children</div>
-      </ChartWrapper>,
+      </ChartWrapper>
     );
     expect(screen.getByRole('img', { name: 'Info' })).toBeInTheDocument();
   });
@@ -32,7 +31,7 @@ describe('< ChartWrapper/>', () => {
     render(
       <ChartWrapper title={TITLE}>
         <div>Test Children</div>
-      </ChartWrapper>,
+      </ChartWrapper>
     );
     expect(screen.queryByRole('img', { name: 'Info' })).not.toBeInTheDocument();
   });
@@ -41,11 +40,10 @@ describe('< ChartWrapper/>', () => {
     render(
       <ChartWrapper title={TITLE} info={INFO}>
         <div>Test Children</div>
-      </ChartWrapper>,
+      </ChartWrapper>
     );
-    await waitFor(() =>
-      userEvent.click(screen.getByRole('button', { name: 'Info' })),
-    );
-    expect(screen.getByText(INFO)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Info' })),
+      expect(screen.getByText(INFO)).toBeInTheDocument();
   });
 });

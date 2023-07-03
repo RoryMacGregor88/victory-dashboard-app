@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 
 import { ParentSize } from '@visx/responsive';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   parentSize: {
     display: 'flex',
     flexDirection: 'column',

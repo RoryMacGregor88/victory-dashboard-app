@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { darken } from '@astrosat/astrosat-ui';
+import { darken } from '@material-ui/core';
 
 import { VictoryLine, VictoryScatter, VictoryGroup } from 'victory';
 
@@ -25,7 +23,7 @@ const LineChart = ({
 }) => {
   const chartTheme = useChartTheme();
 
-  const renderLineChart = width => {
+  const renderLineChart = (width) => {
     return ranges?.map((range, i) => {
       const color = chartTheme.colors[i % chartTheme.colors.length],
         scatterWidth = width / 2,

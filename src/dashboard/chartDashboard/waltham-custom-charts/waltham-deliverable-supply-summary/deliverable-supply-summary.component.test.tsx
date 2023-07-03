@@ -1,16 +1,15 @@
-import React from 'react';
+import { it, expect, describe } from 'vitest';
 
-import { it, expect, describe, vi } from 'vitest';
-
-import { render, screen } from 'test/test-utils';
+import { render, screen } from '@testing-library/react';
 
 import { deliverableSupplySummaryTypes } from '../../waltham.constants';
 import DeliverableSupplySummary from './deliverable-supply-summary.component';
 import * as MOCK_DATA from './mock-data';
 
 // These tests are skipped deliberately as the component has been retired
+// TODO: invesigate this. Add back in?
 
-describe('Deliverable Supply Summary', () => {
+describe.skip('Deliverable Supply Summary', () => {
   it('should display chart on screen', () => {
     render(<DeliverableSupplySummary data={MOCK_DATA} />);
     expect(

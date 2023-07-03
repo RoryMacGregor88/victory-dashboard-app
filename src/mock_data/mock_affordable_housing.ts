@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   name: 'Mock Data for Affordable Housing Over Time Graph',
   version: '1.0.0',
   properties: [

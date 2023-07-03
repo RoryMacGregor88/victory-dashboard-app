@@ -1,11 +1,12 @@
-import React from 'react';
+import { rest } from 'msw';
 
-import { render, screen, waitFor } from 'test/test-utils';
+import { render, screen, waitFor } from '../test/test.utils';
+
+import { server } from '../mocks/server';
 
 import { Dashboard } from './dashboard.component';
 
 const defaultRenderOptions = {
-  history: { initialEntries: ['/?source_id=some/test/source/1'] },
   state: {
     data: {
       sources: [
@@ -15,7 +16,9 @@ const defaultRenderOptions = {
             url: '',
             application: {
               orbis: {
-                dashboard_component: { name: 'Mock' },
+                dashboard_component: {
+                  name: 'LBWF Housing Delivery Dashboard',
+                },
               },
             },
           },
@@ -25,14 +28,18 @@ const defaultRenderOptions = {
   },
 };
 
-describe('<Dashboard />', () => {
+describe('Dashboard', () => {
   it('renders the dashboard specified in metadata', async () => {
+    server.use(
+      rest.get('*/api/*', (req, res, ctx) => res(ctx.status(200), ctx.json({})))
+    );
+
     render(<Dashboard />, defaultRenderOptions);
 
     await waitFor(() =>
       expect(
-        screen.getByRole('heading', { name: 'Mock Dashboard' }),
-      ).toBeInTheDocument(),
+        screen.getByRole('heading', { name: 'LBWF Housing Delivery Dashboard' })
+      ).toBeInTheDocument()
     );
   });
 });

@@ -24,11 +24,11 @@ export const tenureHousingTransformer = (
 
   const transformedData = filteredTimeline.map((year) => {
     const obj = apiData.find((datum) => datum.startYear === year);
-    // Victory does not work well with number values, so must be stringified.
+    // Victory does not work with number values, so must be stringified.
     return obj
-      ? { ...obj, startYear: `${obj.startYear}` }
+      ? { ...obj, startYear: String(obj.startYear) }
       : {
-          startYear: `${year}`,
+          startYear: String(year),
           ...Object.values(housingTenureTypes).reduce(
             (acc, cur) => ({ ...acc, [cur]: null }),
             {}

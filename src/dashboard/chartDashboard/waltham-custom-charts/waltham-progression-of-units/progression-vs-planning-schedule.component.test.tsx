@@ -1,8 +1,6 @@
-import React from 'react';
-
 import { it, expect, describe } from 'vitest';
 
-import { render, screen } from 'test/test-utils';
+import { render, screen } from '@testing-library/react';
 
 import * as mockData from './mock-data';
 import ProgressionVsPlanningSchedule from './progression-vs-planning-schedule.component';

@@ -1,4 +1,4 @@
-import { screen, render } from 'test/test-utils';
+import { screen, render } from '../../../../test/test.utils';
 
 import {
   getPercentage,
@@ -67,7 +67,7 @@ describe('WFC progress indicators', () => {
           percentage: null,
           target: 100,
           name: 'Test Name',
-        }),
+        })
       );
 
       expect(screen.getByText('Test Name Target Required')).toBeInTheDocument();

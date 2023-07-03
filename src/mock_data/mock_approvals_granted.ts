@@ -1,6 +1,6 @@
 // large double line/scatter chart
 
-module.exports = {
+export default {
   name: 'Mock Data for Housing Unit Approvals Granted Over Time Graph',
   version: '1.0.0',
   properties: [

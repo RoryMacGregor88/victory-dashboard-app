@@ -254,14 +254,14 @@ describe('Waltham Forest Data Transformers', () => {
 
   describe('getPastYears', () => {
     it('returns specified no. of previous years, formatted correctly', () => {
-      const expected = [2020, 2021, 2022];
+      const expected = [2021, 2022, 2023];
 
       const result = getPastYears(3);
       expect(result).toEqual(expected);
     });
 
     it('defaults to 5 years if no args passed', () => {
-      const expected = [2018, 2019, 2020, 2021, 2022];
+      const expected = [2019, 2020, 2021, 2022, 2023];
 
       const result = getPastYears();
       expect(result).toEqual(expected);
@@ -271,11 +271,11 @@ describe('Waltham Forest Data Transformers', () => {
   describe('getUser5YearTotals', () => {
     it('totals up data for last 5 years', () => {
       const data = {
-          2018: '10',
-          2019: '20',
-          2020: '30',
-          2021: '40',
-          2022: '50',
+          2019: '10',
+          2020: '20',
+          2021: '30',
+          2022: '40',
+          2023: '50',
         },
         expected = 150;
 
@@ -285,13 +285,13 @@ describe('Waltham Forest Data Transformers', () => {
 
     it('filters values outside of last 5 years', () => {
       const data = {
-          2016: '1000',
-          2017: '2000',
-          2018: '10',
-          2019: '20',
-          2020: '30',
-          2021: '40',
-          2022: '50',
+          2017: '1000',
+          2018: '2000',
+          2019: '10',
+          2020: '20',
+          2021: '30',
+          2022: '40',
+          2023: '50',
         },
         expected = 150;
 
@@ -301,9 +301,9 @@ describe('Waltham Forest Data Transformers', () => {
 
     it('works if not all 5 years have values', () => {
       const data = {
-          2018: '10',
-          2019: '20',
-          2020: '30',
+          2019: '10',
+          2020: '20',
+          2021: '30',
         },
         expected = 60;
 

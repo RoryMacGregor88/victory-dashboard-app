@@ -1,6 +1,6 @@
 // stacked bar chart
 
-module.exports = {
+export default {
   name: 'Mock Data for Housing Delivery by Tenure Type Graph',
   version: '1.0.0',
   properties: [

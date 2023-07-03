@@ -1,10 +1,6 @@
-import { Suspense } from 'react';
-
 import { Box } from '@material-ui/core';
 
-import { ErrorBoundary } from 'react-error-boundary';
-
-import { LoadMaskFallback, ErrorFallback } from '../components';
+import { LoadMaskFallback } from '../components';
 
 import ChartDashboard from './chartDashboard/chartDashboardConfig.component';
 
@@ -23,11 +19,7 @@ const Dashboard = (): JSX.Element | null => {
 
   return (
     <Box width='100vw' height='100vh' overflow='hidden' display='flex'>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense fallback={<LoadMaskFallback />}>
-          <ChartDashboard sourceId={sourceId} />
-        </Suspense>
-      </ErrorBoundary>
+      <ChartDashboard sourceId={sourceId} />
     </Box>
   );
 };
