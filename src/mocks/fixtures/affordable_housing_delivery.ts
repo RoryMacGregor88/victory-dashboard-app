@@ -1,4 +1,9 @@
-export default [
+export type AffordableHousingData = {
+  startYear: number;
+  'Affordable Housing': number;
+}[];
+
+const data: AffordableHousingData = [
   {
     startYear: 2013,
     'Affordable Housing': 75,
@@ -40,3 +45,5 @@ export default [
     'Affordable Housing': 17,
   },
 ];
+
+export default data;

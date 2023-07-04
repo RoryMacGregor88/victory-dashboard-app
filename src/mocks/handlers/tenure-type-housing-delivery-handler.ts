@@ -4,7 +4,7 @@ import data from '../fixtures/tenure_type_housing_delivery';
 
 const getTenureTypeHousingDeliveryData = rest.get(
   '*/tenure_type_housing_delivery/latest/',
-  (req, res, ctx) => res(ctx.status(200), ctx.json(data))
+  (_, res, ctx) => res(ctx.status(200), ctx.json(data))
 );
 
 export { getTenureTypeHousingDeliveryData };

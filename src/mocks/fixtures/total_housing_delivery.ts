@@ -1,4 +1,16 @@
-export default [
+export type TotalHousingDeliveryData = {
+  name: string;
+  label: string;
+  description: string;
+  units: string;
+  data: {
+    Year: string;
+    'Total Gross': number;
+    'Total Net': number;
+  }[];
+}[];
+
+const data: TotalHousingDeliveryData = [
   {
     name: 'Housing Delivery in Units',
     label: 'Housing Delivery in Units',
@@ -59,3 +71,5 @@ export default [
     ],
   },
 ];
+
+export default data;

@@ -1,4 +1,22 @@
-export default {
+export type HousingApprovalsData = {
+  properties: {
+    name: 'Monthly' | 'Cumulative';
+    data: {
+      '2014': number | null;
+      '2015': number | null;
+      '2016': number | null;
+      '2017': number | null;
+      '2018': number | null;
+      '2019': number | null;
+      '2020': number | null;
+      '2021': number | null;
+      '2022': number | null;
+      Month: string;
+    }[];
+  }[];
+};
+
+const data: HousingApprovalsData = {
   properties: [
     {
       name: 'Monthly',
@@ -300,3 +318,5 @@ export default {
     },
   ],
 };
+
+export default data;

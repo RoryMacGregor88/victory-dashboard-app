@@ -1,4 +1,10 @@
-import { createTheme, alpha, lighten } from '@material-ui/core';
+import {
+  createTheme,
+  alpha,
+  lighten,
+  ThemeOptions,
+  Theme,
+} from '@material-ui/core';
 import createPalette, {
   PaletteOptions,
 } from '@material-ui/core/styles/createPalette';
@@ -25,8 +31,7 @@ const darkPalette: PaletteOptions = {
 
 const palette = createPalette(deepmerge(corePalette, darkPalette));
 
-/** @type {import('@material-ui/core').ThemeOptions} */
-const dark = {
+const dark: ThemeOptions = {
   palette,
   overrides: {
     MuiButton: {
@@ -112,4 +117,6 @@ const dark = {
   },
 };
 
-export default createTheme(deepmerge(core, dark));
+const theme: Theme = createTheme(deepmerge(core, dark));
+
+export default theme;

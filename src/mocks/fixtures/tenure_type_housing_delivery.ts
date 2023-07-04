@@ -1,4 +1,14 @@
-export default [
+export type TenureTypeHousingData = {
+  'Affordable Rent (not at LAR benchmark rents)': number | null;
+  'London Affordable Rent': number | null;
+  Intermediate: number | null;
+  'Intermediate Other': number | null;
+  'Market for sale': number | null;
+  'Social Rent': number | null;
+  startYear: number | null;
+}[];
+
+const data: TenureTypeHousingData = [
   {
     'Affordable Rent (not at LAR benchmark rents)': 75,
     'London Affordable Rent': null,
@@ -90,3 +100,5 @@ export default [
     startYear: 2022,
   },
 ];
+
+export default data;

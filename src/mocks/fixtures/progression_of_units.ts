@@ -1,4 +1,11 @@
-export default [
+export type ProgressionOfUnitsData = {
+  Year: number;
+  'Ahead of Schedule': number;
+  'Behind Schedule': number;
+  'On Track': number;
+}[];
+
+const data: ProgressionOfUnitsData = [
   {
     Year: 2018,
     'Ahead of Schedule': 270,
@@ -30,3 +37,5 @@ export default [
     'On Track': 10,
   },
 ];
+
+export default data;
