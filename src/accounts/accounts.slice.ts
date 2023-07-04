@@ -1,17 +1,28 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
+import { RootState } from '../root.reducer';
+
 import { MOCK_USER } from '../constants';
 
-type State = {
-  user: {
-    orb_state: { [key: string]: unknown };
+export type UserOrbState = {
+  targets: { [key: string]: number };
+  settings: { [key: string]: string };
+};
+
+export type User = {
+  orb_state: {
+    [sourceId: string]: UserOrbState;
   };
+};
+
+export type AccountsState = {
+  user: User;
   error: null;
 };
 
 type Payload = {
   payload: {
-    user: unknown; // TODO: real user type
+    user: User;
   };
 };
 
@@ -19,14 +30,13 @@ const name = 'accounts';
 
 export const initialState = {
   user: MOCK_USER,
-  error: null,
 };
 
 const accountsSlice = createSlice({
   name,
   initialState,
   reducers: {
-    updateUser: (state: State, { payload }: Payload) => {
+    updateUser: (state, { payload }) => {
       const { user } = payload;
       state.user = user;
     },
@@ -35,8 +45,7 @@ const accountsSlice = createSlice({
 
 export const { updateUser } = accountsSlice.actions;
 
-/** @param {import('typings').RootState} state */
-const baseSelector = (state) => state?.accounts;
+const baseSelector = (state: RootState) => state?.accounts;
 
 export const userSelector = createSelector(
   baseSelector,

@@ -2,24 +2,43 @@ import {
   createSlice,
   createSelector,
   createAsyncThunk,
+  Dispatch,
 } from '@reduxjs/toolkit';
-import { NotificationManager } from 'react-notifications';
 
-import { updateUser } from '../../accounts/accounts.slice';
+import { User, UserOrbState, updateUser } from '../../accounts/accounts.slice';
 import { userSelector } from '../../accounts/accounts.slice';
+
+import { RootState } from '../../root.reducer';
+
+type ChartData = { [key: string]: unknown }[];
+
+export type DashboardState = {
+  [sourceId: string]: {
+    [datasetName: string]: ChartData;
+  };
+};
+
+interface ChartMetadata {
+  sourceId: string;
+  datasetName: string;
+  url: string;
+}
+
+interface Payload {
+  payload: Omit<ChartMetadata, 'url'> & {
+    data: ChartData;
+  };
+}
 
 const name = 'dashboard';
 
-export const initialState = {
-  isLoading: false,
-  error: null,
-};
+export const initialState = {};
 
 const dashboardSlice = createSlice({
   name,
   initialState,
   reducers: {
-    setChartData: (state, { payload }) => {
+    setChartData: (state: DashboardState, { payload }: Payload) => {
       const { sourceId, datasetName, data } = payload;
 
       state[sourceId] = {
@@ -32,68 +51,59 @@ const dashboardSlice = createSlice({
 
 export const fetchDashboardData = createAsyncThunk(
   `${name}/fetchDashboardData`,
-  async (props, { rejectWithValue, dispatch }) => {
-    const { sourceId, datasetName, url } = props;
-
+  async (args: ChartMetadata, { rejectWithValue, dispatch }) => {
+    const { sourceId, datasetName, url } = args;
     try {
-      const res = await fetch(url);
-      const data = await res.json();
-
+      const data = await (await fetch(url)).json();
       dispatch(setChartData({ sourceId, datasetName, data }));
-    } catch (error) {
-      /** @type {import('api-client').ResponseError} */
-      const { message, status } = error;
-      NotificationManager.error(
-        `${status} ${message}`,
-        `Fetching Dashboard Data Error - ${message}`,
-        50000,
-        () => {}
-      );
-      return rejectWithValue({ message: `${status} ${message}` });
+    } catch (e) {
+      const error = e as Error;
+
+      const { message } = error;
+      return rejectWithValue({ message });
     }
   }
 );
 
+interface UpdateDashboardConfigArgs {
+  user: User;
+  sourceId: string;
+  data: UserOrbState;
+}
+
 export const updateUserDashboardConfig =
-  ({ user, sourceId, data }) =>
-  async (dispatch) => {
+  ({ user, sourceId, data }: UpdateDashboardConfigArgs) =>
+  async (dispatch: Dispatch) => {
     const { targets, settings } = data;
 
     const { targets: currentTargets, settings: currentSettings } =
       user.orb_state[sourceId] ?? {};
 
     /** add dashboard data to existing 'profiles' property on user */
-    const updatedUser = {
+    const updatedUser: User = {
       ...user,
       orb_state: {
         ...user.orb_state,
         [sourceId]: {
-          ...(user.profiles.orbis_profile.orb_state[sourceId] ?? {}),
+          ...(user.orb_state[sourceId] ?? {}),
           targets: { ...(currentTargets ?? {}), ...targets },
           settings: { ...(currentSettings ?? {}), ...settings },
         },
       },
     };
 
-    // combines new 'profiles' property with rest of user
+    /** combines new 'profiles' property with rest of user */
     dispatch(updateUser({ user: updatedUser }));
   };
 
 export const { setChartData } = dashboardSlice.actions;
 
-/** @param {import('typings').RootState} state */
-const baseSelector = (state) => state?.dashboard;
+const baseSelector = (state: RootState) => state?.dashboard;
 
-/** @param {import('typings').Source['source_id']} sourceId */
-/** @param {string} datasetName */
-export const chartDataSelector = (sourceId, datasetName) =>
-  createSelector(baseSelector, (state) => state?.[sourceId]?.[datasetName]);
+export const chartDataSelector = (sourceId: string, datasetName: string) =>
+  createSelector(baseSelector, (state) => state[sourceId][datasetName]);
 
-/** @param {import('typings').Source['source_id']} sourceId */
-export const userOrbStateSelector = (sourceId) =>
-  createSelector(
-    userSelector,
-    (user) => user?.profiles?.orbis_profile?.orb_state?.[sourceId] ?? {}
-  );
+export const userOrbStateSelector = (sourceId: string) =>
+  createSelector(userSelector, (user) => user.orb_state[sourceId]);
 
 export default dashboardSlice.reducer;

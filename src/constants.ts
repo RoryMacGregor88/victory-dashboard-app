@@ -1,9 +1,5 @@
 export const MOCK_USER = {
-  profiles: {
-    orbis_profile: {
-      orb_state: {},
-    },
-  },
+  orb_state: {},
 };
 
 export const inputErrorMessage = 'Only number values are permitted.';
