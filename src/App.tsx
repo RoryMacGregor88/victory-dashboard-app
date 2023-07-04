@@ -1,5 +1,5 @@
-import { Dashboard } from './dashboard/dashboard.component';
+import { DashboardWrapper } from './dashboard/dashboard-wrapper/dashboard-wrapper.component';
 
-const App = () => <Dashboard />;
+const App = () => <DashboardWrapper />;
 
 export default App;

@@ -2,6 +2,19 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 import { MOCK_USER } from '../constants';
 
+type State = {
+  user: {
+    orb_state: { [key: string]: unknown };
+  };
+  error: null;
+};
+
+type Payload = {
+  payload: {
+    user: unknown; // TODO: real user type
+  };
+};
+
 const name = 'accounts';
 
 export const initialState = {
@@ -13,13 +26,9 @@ const accountsSlice = createSlice({
   name,
   initialState,
   reducers: {
-    updateUser: (state, { payload }) => {
-      const { sourceId, datasetName, data } = payload;
-
-      state[sourceId] = {
-        ...state[sourceId],
-        [datasetName]: data,
-      };
+    updateUser: (state: State, { payload }: Payload) => {
+      const { user } = payload;
+      state.user = user;
     },
   },
 });

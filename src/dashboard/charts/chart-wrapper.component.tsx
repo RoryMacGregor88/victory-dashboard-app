@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     backgroundColor: lighten(theme.palette.background.default, 0.055),
     padding: theme.spacing(3),
     width: '100%',

@@ -1,3 +1,3 @@
-import { Dashboard } from './dashboard.component';
+import { DashboardWrapper } from './dashboard-wrapper/dashboard-wrapper.component';
 
-export default Dashboard;
+export default DashboardWrapper;

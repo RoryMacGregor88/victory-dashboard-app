@@ -2,6 +2,8 @@ import { makeStyles, darken, SvgIcon } from '@material-ui/core';
 
 import clsx from 'clsx';
 
+// TODO: do we need this?
+
 const useStyles = makeStyles((theme) => ({
   svg: {
     width: 'auto',
