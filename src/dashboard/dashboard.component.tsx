@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  FC,
+  ReactElement,
+} from 'react';
 
 import {
   makeStyles,
@@ -12,7 +19,7 @@ import {
 
 import { Button } from '../components';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
 import { exportToCsv } from './utils/utils';
 
@@ -21,6 +28,7 @@ import {
   fetchDashboardData,
   updateUserDashboardConfig,
   userOrbStateSelector,
+  ChartMetadata,
 } from './dashboard-slice/dashboard.slice';
 import {
   SelectScreen,
@@ -32,7 +40,11 @@ import { WalthamHousingDelivery } from './waltham-custom-charts/waltham-housing-
 import { ProgressIndicators } from './waltham-custom-charts/waltham-progress-indicators/progress-indicators.component';
 import ProgressionVsPlanningSchedule from './waltham-custom-charts/waltham-progression-of-units/progression-vs-planning-schedule.component';
 import { walthamApiMetadata, targetDatasets } from '../constants';
-import { userSelector } from '../accounts/accounts.slice';
+import {
+  Targets,
+  UserOrbState,
+  userSelector,
+} from '../accounts/accounts.slice';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -70,73 +82,72 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Dashboard = ({ sourceId }: { sourceId: string }) => {
+export const Dashboard: FC<{ sourceId: string }> = ({
+  sourceId,
+}): ReactElement => {
   const styles = useStyles({});
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  // all data, including 'name', 'version', etc
-  const approvalsGranted = useSelector(
+  /** all data, including 'name', 'version', etc */
+  const approvalsGranted = useAppSelector(
       chartDataSelector(sourceId, 'ApprovalsGranted')
     ),
-    progressionVsPlanning = useSelector(
+    progressionVsPlanning = useAppSelector(
       chartDataSelector(sourceId, 'ProgressionVsPlanning')
     ),
-    tenureHousingDelivery = useSelector(
+    tenureHousingDelivery = useAppSelector(
       chartDataSelector(sourceId, 'TenureHousingDelivery')
     ),
-    totalHousingDelivery = useSelector(
+    totalHousingDelivery = useAppSelector(
       chartDataSelector(sourceId, 'TotalHousingDelivery')
     ),
-    affordableHousingDelivery = useSelector(
+    affordableHousingDelivery = useAppSelector(
       chartDataSelector(sourceId, 'AffordableHousingDelivery')
     );
 
-  const user = useSelector(userSelector);
+  const user = useAppSelector(userSelector);
 
-  const userOrbState = useSelector(userOrbStateSelector(sourceId));
+  // TODO: need a selector if already have a user selector?
+  const userOrbState = useAppSelector(userOrbStateSelector(sourceId));
 
   const { targets, settings } = userOrbState;
 
-  const [dashboardSettings, setDashboardSettings] = useState({
+  const [dashboardSettings, setDashboardSettings] = useState<UserOrbState>({
     targets: {},
     settings: {},
   });
-  const [selectedDataset, setSelectedDataset] = useState(undefined);
-  const [localTargets, setLocalTargets] = useState(targets);
+
+  const [selectedDataset, setSelectedDataset] = useState<string | null>(null);
+  // TODO: why not one of these for settings? Do we need 2 pieces of state for this?
+  const [localTargets, setLocalTargets] = useState<Targets>(targets);
   const [targetDialogVisible, setTargetDialogVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const dashboardSettingsRef = useRef(dashboardSettings);
 
-  /**
-   * @param {object} data
-   */
   const updateWalthamOrbState = useCallback(
-    (data) => dispatch(updateUserDashboardConfig({ user, sourceId, data })),
+    (data: UserOrbState) => {
+      if (user) {
+        dispatch(updateUserDashboardConfig({ user, sourceId, data }));
+      }
+    },
     [dispatch, sourceId, user]
   );
 
-  interface Metadata {
-    datasetName: string;
-    url: string;
-    apiSourceId: string;
-  }
-
   useEffect(() => {
-    walthamApiMetadata.forEach(({ datasetName, url, apiSourceId }: Metadata) =>
-      dispatch(
-        fetchDashboardData({
-          sourceId,
-          datasetName,
-          url,
-          apiSourceId,
-        })
-      )
-    );
+    walthamApiMetadata.forEach(({ datasetName, url }) => {
+      const chartMetadata: ChartMetadata = {
+        sourceId,
+        datasetName,
+        url,
+      };
+
+      dispatch(fetchDashboardData(chartMetadata));
+    });
   }, [sourceId, dispatch]);
 
-  // 1. listener func must be reusable so that it can also be removed
-  // 2. must check changes have been made to prevent firing every time
+  /** 1. listener func must be reusable so that it can also be removed */
+  /** 2. must check changes have been made to prevent firing every time */
   const saveSettingsHandler = useCallback(() => {
     const changesMade = Object.values(dashboardSettingsRef.current).some(
       (obj) => !!Object.keys(obj).length
@@ -153,12 +164,12 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
     dashboardSettingsRef.current = dashboardSettings;
   }, [dashboardSettings]);
 
-  // add event listener in the event that the user closes/refreshes tab
+  /** add event listener that covers user closing/refreshing tab */
   useEffect(() => {
     window.addEventListener('beforeunload', saveSettingsHandler);
   });
 
-  // if user navigates away in-app, remove listener and save settings
+  /** remove listener and save settings if user navigates away in-app */
   useEffect(() => {
     return () => {
       window.removeEventListener('beforeunload', saveSettingsHandler);
@@ -167,14 +178,11 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
   }, [saveSettingsHandler]);
 
   const closeDialog = () => {
-    setSelectedDataset(undefined);
+    setSelectedDataset(null);
     setTargetDialogVisible(false);
   };
 
-  /**
-   * @param {object} newTargets
-   */
-  const handleAddTargetsClick = (newTargets) => {
+  const handleAddTargetsClick = (newTargets: Targets) => {
     setLocalTargets((prev) => ({ ...prev, ...newTargets }));
     setDashboardSettings((prev) => ({
       ...prev,
@@ -274,19 +282,21 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
         onClose={closeDialog}
         aria-labelledby='waltham-forest-targets-dialog'
       >
-        <DialogTitle onClose={closeDialog}>
-          {targetDatasets[selectedDataset] ?? 'Add Targets'}
+        <DialogTitle>
+          {selectedDataset ? targetDatasets[selectedDataset] : 'Add Targets'}
         </DialogTitle>
         <DialogContent>
           {selectedDataset ? (
             <TargetScreen
-              onAddTargetsClick={(targets) => handleAddTargetsClick(targets)}
+              onAddTargetsClick={(targets: Targets) =>
+                handleAddTargetsClick(targets)
+              }
               selectedDataset={selectedDataset}
               targets={localTargets?.[selectedDataset]}
             />
           ) : (
             <SelectScreen
-              onNextClick={(dataset) => setSelectedDataset(dataset)}
+              onNextClick={(dataset: string) => setSelectedDataset(dataset)}
             />
           )}
         </DialogContent>

@@ -2,7 +2,7 @@ import { LoadMaskFallback } from '../../components';
 
 import { Dashboard } from '../dashboard.component';
 
-const SOURCE_ID = 'source_id';
+const SOURCE_ID = 'mock_source_id';
 
 const MOCK_LOCATION = {
   search: `?${SOURCE_ID}=123`,

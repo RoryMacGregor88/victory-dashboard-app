@@ -8,8 +8,9 @@ import {
 import { User, UserOrbState, updateUser } from '../../accounts/accounts.slice';
 import { userSelector } from '../../accounts/accounts.slice';
 
-import { RootState } from '../../root.reducer';
+import { RootState } from '../../store';
 
+// TODO: make this union of all datasets?
 type ChartData = { [key: string]: unknown }[];
 
 export type DashboardState = {
@@ -18,11 +19,11 @@ export type DashboardState = {
   };
 };
 
-interface ChartMetadata {
+export type ChartMetadata = {
   sourceId: string;
   datasetName: string;
   url: string;
-}
+};
 
 interface Payload {
   payload: Omit<ChartMetadata, 'url'> & {
@@ -65,14 +66,14 @@ export const fetchDashboardData = createAsyncThunk(
   }
 );
 
-interface UpdateDashboardConfigArgs {
+export type UserConfigData = {
   user: User;
   sourceId: string;
   data: UserOrbState;
-}
+};
 
 export const updateUserDashboardConfig =
-  ({ user, sourceId, data }: UpdateDashboardConfigArgs) =>
+  ({ user, sourceId, data }: UserConfigData) =>
   async (dispatch: Dispatch) => {
     const { targets, settings } = data;
 
@@ -101,9 +102,9 @@ export const { setChartData } = dashboardSlice.actions;
 const baseSelector = (state: RootState) => state?.dashboard;
 
 export const chartDataSelector = (sourceId: string, datasetName: string) =>
-  createSelector(baseSelector, (state) => state[sourceId][datasetName]);
+  createSelector(baseSelector, (state) => state[sourceId]?.[datasetName]);
 
 export const userOrbStateSelector = (sourceId: string) =>
-  createSelector(userSelector, (user) => user.orb_state[sourceId]);
+  createSelector(userSelector, (user) => user.orb_state[sourceId] ?? {});
 
 export default dashboardSlice.reducer;

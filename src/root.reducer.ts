@@ -1,14 +1,7 @@
 import { combineReducers } from 'redux';
 
-import accounts, { AccountsState } from './accounts/accounts.slice';
+import accounts from './accounts/accounts.slice';
 
-import dashboard, {
-  DashboardState,
-} from './dashboard/dashboard-slice/dashboard.slice';
-
-export type RootState = {
-  accounts: AccountsState;
-  dashboard: DashboardState;
-};
+import dashboard from './dashboard/dashboard-slice/dashboard.slice';
 
 export const createRootReducer = () => combineReducers({ accounts, dashboard });

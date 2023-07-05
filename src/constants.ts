@@ -1,10 +1,21 @@
 export const MOCK_USER = {
-  orb_state: {},
+  orb_state: {
+    mock_source_id: {
+      targets: {
+        totalHousing: {
+          '2016': 123,
+        },
+      },
+      settings: {
+        tenureYear: 2022,
+      },
+    },
+  },
 };
 
 export const inputErrorMessage = 'Only number values are permitted.';
 
-// live data tenure types
+/** live data tenure types */
 export const housingTenureTypes = {
   affordableHousing: 'Affordable Rent (not at LAR benchmark rents)',
   affordableHousingLondon: 'London Affordable Rent',
@@ -42,7 +53,7 @@ export const TARGET_LEGEND_DATA = {
   color: '#d13aff',
 };
 
-// live data
+/** live data */
 export const walthamApiMetadata = [
   {
     datasetName: 'TenureHousingDelivery',
@@ -71,9 +82,9 @@ export const walthamApiMetadata = [
   },
 ];
 
-export const targetDatasets = {
-  totalHousing:
-    'Total housing test target for each of the last 5 financial years',
+// TODO: make enums for this stuff?
+export const targetDatasets: { [datasetName: string]: string } = {
+  totalHousing: 'Total housing target for each of the last 5 financial years',
   sociallyRented:
     'Social Rented Housing Targets for previous 5 financial years',
   marketHousing: 'Market Housing Targets for previous 5 financial years',

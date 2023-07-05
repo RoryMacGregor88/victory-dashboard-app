@@ -1,12 +1,21 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
-import { RootState } from '../root.reducer';
+import { RootState } from '../store';
+import { MOCK_USER } from '~/constants';
 
-import { MOCK_USER } from '../constants';
+export type Targets = {
+  [datasetName: string]: {
+    [year: string]: number;
+  };
+};
+
+export type Settings = {
+  [settingName: string]: string | number;
+};
 
 export type UserOrbState = {
-  targets: { [key: string]: number };
-  settings: { [key: string]: string };
+  targets: Targets;
+  settings: Settings;
 };
 
 export type User = {
@@ -16,8 +25,7 @@ export type User = {
 };
 
 export type AccountsState = {
-  user: User;
-  error: null;
+  user: User | null;
 };
 
 type Payload = {
@@ -36,7 +44,7 @@ const accountsSlice = createSlice({
   name,
   initialState,
   reducers: {
-    updateUser: (state, { payload }) => {
+    updateUser: (state: AccountsState, { payload }: Payload) => {
       const { user } = payload;
       state.user = user;
     },

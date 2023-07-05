@@ -1,6 +1,6 @@
-import { Button as MuiButton } from '@material-ui/core';
+import { Button as MuiButton, PropTypes } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { forwardRef } from 'react';
+import { ReactNode } from 'react';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -48,26 +48,28 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-/**
- * @param { import('@material-ui/core/Button/Button').ButtonProps} props
- * @param { React.Ref<HTMLButtonElement> } ref
- */
-export const Button = forwardRef(
-  ({ variant = 'contained', color = 'primary', ...rest }, ref) => {
-    const classes = styles({ variant, color, ...rest });
-    const component = (
-      <MuiButton
-        ref={ref}
-        classes={classes}
-        variant={variant}
-        color={color}
-        {...rest}
-      />
-    );
-    return rest.disabled ? (
-      <span style={{ cursor: 'not-allowed' }}>{component}</span>
-    ) : (
-      component
-    );
-  }
+interface ButtonProps {
+  variant?: 'text' | 'outlined' | 'contained';
+  color?: PropTypes.Color | undefined;
+  size: 'small' | 'medium' | 'large';
+  onClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  children: ReactNode;
+}
+
+export const Button = ({
+  variant = 'contained',
+  color = 'primary',
+  size = 'medium',
+  onClick,
+  children,
+}: ButtonProps) => (
+  <MuiButton
+    classes={styles()}
+    variant={variant}
+    color={color}
+    size={size}
+    onClick={onClick}
+  >
+    {children}
+  </MuiButton>
 );
