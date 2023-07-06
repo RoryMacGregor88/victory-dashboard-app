@@ -9,6 +9,7 @@ import { User, UserOrbState, updateUser } from '../../accounts/accounts.slice';
 import { userSelector } from '../../accounts/accounts.slice';
 
 import { RootState } from '../../store';
+import { MOCK_USER } from '../../constants';
 
 // TODO: make this union of all datasets?
 type ChartData = { [key: string]: unknown }[];
@@ -33,7 +34,9 @@ interface Payload {
 
 const name = 'dashboard';
 
-export const initialState = {};
+export const initialState = {
+  user: MOCK_USER,
+};
 
 const dashboardSlice = createSlice({
   name,
@@ -55,7 +58,8 @@ export const fetchDashboardData = createAsyncThunk(
   async (args: ChartMetadata, { rejectWithValue, dispatch }) => {
     const { sourceId, datasetName, url } = args;
     try {
-      const data = await (await fetch(url)).json();
+      const res = await fetch(url);
+      const data = await res.json();
       dispatch(setChartData({ sourceId, datasetName, data }));
     } catch (e) {
       const error = e as Error;

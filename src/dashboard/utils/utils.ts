@@ -7,20 +7,19 @@ import { utils, write } from 'xlsx';
  * This function is necessary because the data entries do not always have the same
  * keys, and victory does not accept missing keys. It does however accept 'null'
  * values, so this fills any missing keys with 'null' so the data is usable.
- *
- * @param {Object[]} data
- * @returns {Object[]}
  */
 const lineDataTransformer = (data) => {
   if (!data) return;
 
-  // create list of every key that appears across all data
+  /** create list of every key that appears across all data */
   const uniqueKeys = [
     ...new Set(data.reduce((acc, cur) => [...acc, ...Object.keys(cur)], [])),
   ];
 
-  // normalise each datum with every key, using data where it exists,
-  // and 'null' where it does not
+  /**
+   * normalise each datum with every key, using data where it exists,
+   * and 'null' where it does not
+   */
   return data.map((obj) =>
     uniqueKeys.reduce((acc, cur) => ({ ...acc, [cur]: obj[cur] ?? null }), {})
   );
@@ -142,6 +141,8 @@ const getUser5YearTotals = (obj) => {
 const getDataTimeline = (apiData, targets = {}) => {
   if (!apiData) return;
 
+  console.log('INSIDE: ', apiData, (targets = {}));
+
   // if uninitiated by user, targets will be undefined, but
   // defaulted to empty object
   const hasTargets = !!Object.keys(targets).length;
@@ -256,7 +257,6 @@ const computePercentages = (timeline, data, targets, targetProperty) => {
  * @param {array[string]} columns - list of columns we want to add (miss out to use all)
  * @returns
  */
-
 const GroupedDataTransformer = (
   data,
   groupColumn = 'Year',
@@ -315,6 +315,7 @@ const GroupedWidthCalculator = (data, width) => {
   const zoneWidth = width / dataPointCount;
   const barWidth = minBarWidth + zoneWidth / (groupCount * thinness);
   const offset = barWidth * barGapMultiplier;
+
   return {
     barWidth,
     offset,

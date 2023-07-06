@@ -1,14 +1,8 @@
 export const MOCK_USER = {
   orb_state: {
     mock_source_id: {
-      targets: {
-        totalHousing: {
-          '2016': 123,
-        },
-      },
-      settings: {
-        tenureYear: 2022,
-      },
+      targets: {},
+      settings: {},
     },
   },
 };
@@ -43,7 +37,13 @@ export const progressionVsPlanningPalette = {
   'On Track': '#05c3ff',
 };
 
-export const TENURE_DATA_TYPES = {
+// TODO: don't like this, random types in constants files
+interface TenureDataTypes {
+  gross: 'Gross';
+  net: 'Net';
+}
+
+export const TENURE_DATA_TYPES: TenureDataTypes = {
   gross: 'Gross',
   net: 'Net',
 };
@@ -78,7 +78,7 @@ export const walthamApiMetadata = [
   {
     datasetName: 'TotalHousingDelivery',
     url: '/api/total_housing_delivery/v1/',
-    apiSourceId: 'api/mock/total_housing_delivery/v1',
+    apiSourceId: 'api/total_housing_delivery/v1',
   },
 ];
 

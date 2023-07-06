@@ -1,45 +1,34 @@
 import { vi, it, expect, describe } from 'vitest';
 
-import { render, fireEvent } from '@testing-library/react';
+import { render, userEvent, screen } from '../../test/test.utils';
 
 import { Button } from './button.component';
 
-describe.only('Button Component', () => {
-  it('should render a button tag with text under normal circumstances', () => {
-    const { container, getByText } = render(<Button>Some Text</Button>);
+describe('Button Component', () => {
+  it('renders', () => {
+    render(<Button onClick={vi.fn()}>Some Text</Button>);
 
-    expect(container.querySelector('button')).toBeInTheDocument();
-    expect(getByText('Some Text')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Some Text' })
+    ).toBeInTheDocument();
   });
 
-  it('should render an `a` tag if passed a `href` attribute', () => {
-    const { container, getByText } = render(
-      <Button href='foo'>Some Text</Button>
+  it('call click handler', async () => {
+    const onClick = vi.fn();
+    render(<Button onClick={onClick}>Some Text</Button>);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Some Text' }));
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  it('disables button if disabled prop present', async () => {
+    const onClick = vi.fn();
+    render(
+      <Button onClick={onClick} disabled>
+        Some Text
+      </Button>
     );
 
-    expect(container.querySelector('a')).toBeInTheDocument();
-    expect(getByText('Some Text')).toBeInTheDocument();
-  });
-
-  it('should propagates the click event properly', () => {
-    const handler = vi.fn();
-    const { getByText } = render(<Button onClick={handler}>Some Text</Button>);
-
-    fireEvent.click(getByText('Some Text'));
-    expect(handler).toHaveBeenCalled();
-  });
-
-  describe('disabled', () => {
-    it('should not propagate the click event', () => {
-      const handler = vi.fn();
-      const { getByText } = render(
-        <Button onClick={handler} disabled={true}>
-          Some Text
-        </Button>
-      );
-
-      fireEvent.click(getByText('Some Text'));
-      expect(handler).not.toHaveBeenCalled();
-    });
+    expect(screen.getByRole('button')).toBeDisabled();
   });
 });

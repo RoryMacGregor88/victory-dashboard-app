@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { VictoryBar, VictoryStack } from 'victory';
 
 import { BaseChart } from '../base-chart/base-chart.component';
@@ -23,15 +21,15 @@ const StackedBarChart = ({
   renderLegend,
 }) => {
   if (!data) return null;
-  const renderStackedBarChart = width => {
+  const renderStackedBarChart = (width) => {
     const barWidth = width / 20;
-    const mappedData = data.map(item => {
+    const mappedData = data.map((item) => {
       return { ...item, Year: item.Year.toString() };
     });
     return (
       <VictoryStack>
-        {!!renderLegend ? renderLegend(width) : null}
-        {ranges?.map(range => (
+        {renderLegend ? renderLegend(width) : null}
+        {ranges?.map((range) => (
           <VictoryBar
             key={range}
             data={mappedData}

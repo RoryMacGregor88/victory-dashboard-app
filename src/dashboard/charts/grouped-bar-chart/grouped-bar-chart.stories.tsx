@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { groupedDataTransformer } from '../../chartDashboard/utils';
 import { GroupedBarChart } from './grouped-bar-chart.component';
 

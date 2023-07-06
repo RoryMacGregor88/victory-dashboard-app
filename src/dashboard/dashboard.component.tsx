@@ -17,7 +17,7 @@ import {
   DialogContent,
 } from '@material-ui/core';
 
-import { Button } from '../components';
+import { Button, LoadMaskFallback } from '../components';
 
 import { useAppDispatch, useAppSelector } from '../hooks';
 
@@ -45,6 +45,14 @@ import {
   UserOrbState,
   userSelector,
 } from '../accounts/accounts.slice';
+
+import {
+  TotalHousingDeliveryData,
+  TenureTypeHousingData,
+  AffordableHousingData,
+  ProgressionOfUnitsData,
+  HousingApprovalsData,
+} from '../mocks/fixtures';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -89,21 +97,28 @@ export const Dashboard: FC<{ sourceId: string }> = ({
   const dispatch = useAppDispatch();
 
   /** all data, including 'name', 'version', etc */
-  const approvalsGranted = useAppSelector(
+  const approvalsGranted: HousingApprovalsData = useAppSelector(
       chartDataSelector(sourceId, 'ApprovalsGranted')
     ),
-    progressionVsPlanning = useAppSelector(
+    progressionVsPlanning: ProgressionOfUnitsData = useAppSelector(
       chartDataSelector(sourceId, 'ProgressionVsPlanning')
     ),
-    tenureHousingDelivery = useAppSelector(
+    tenureHousingDelivery: TenureTypeHousingData = useAppSelector(
       chartDataSelector(sourceId, 'TenureHousingDelivery')
     ),
-    totalHousingDelivery = useAppSelector(
+    totalHousingDelivery: TotalHousingDeliveryData = useAppSelector(
       chartDataSelector(sourceId, 'TotalHousingDelivery')
     ),
-    affordableHousingDelivery = useAppSelector(
+    affordableHousingDelivery: AffordableHousingData = useAppSelector(
       chartDataSelector(sourceId, 'AffordableHousingDelivery')
     );
+
+  const isDataLoaded =
+    approvalsGranted &&
+    progressionVsPlanning &&
+    tenureHousingDelivery &&
+    totalHousingDelivery &&
+    affordableHousingDelivery;
 
   const user = useAppSelector(userSelector);
 
@@ -121,7 +136,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
   // TODO: why not one of these for settings? Do we need 2 pieces of state for this?
   const [localTargets, setLocalTargets] = useState<Targets>(targets);
   const [targetDialogVisible, setTargetDialogVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [exportIsLoading, setExportIsLoading] = useState(false);
 
   const dashboardSettingsRef = useRef(dashboardSettings);
 
@@ -191,9 +206,11 @@ export const Dashboard: FC<{ sourceId: string }> = ({
     closeDialog();
   };
 
-  const handleExport = async () => {};
+  const handleExport = () => {
+    console.log('Hello');
+  };
   // const handleExport = async () => {
-  //   setIsLoading(true);
+  //   setExportIsLoading(true);
 
   //   const source_id = 'astrosat/wfc/export/latest';
 
@@ -206,10 +223,12 @@ export const Dashboard: FC<{ sourceId: string }> = ({
 
   //   exportToCsv(data, 'wfc-dashboard-data');
 
-  //   setIsLoading(false);
+  //   setExportIsLoading(false);
   // };
 
-  return (
+  return !isDataLoaded ? (
+    <LoadMaskFallback />
+  ) : (
     <>
       <Grid
         container
@@ -220,7 +239,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
         <Typography variant='h2'>LBWF Housing Delivery Dashboard</Typography>
         <div className={styles.headerButtons}>
           <Button size='small' onClick={handleExport}>
-            {isLoading ? (
+            {exportIsLoading ? (
               <CircularProgress size={20} color='inherit' />
             ) : (
               'Export'
@@ -233,23 +252,23 @@ export const Dashboard: FC<{ sourceId: string }> = ({
       </Grid>
 
       <div className={styles.content}>
-        <div className={styles.progressIndicators}>
+        {/* <div className={styles.progressIndicators}>
           <ProgressIndicators
             totalData={totalHousingDelivery}
             tenureData={tenureHousingDelivery}
             targets={localTargets}
           />
-        </div>
+        </div> */}
 
         <WalthamHousingDelivery
-          totalHousingDeliveryChartData={totalHousingDelivery?.[0]?.data}
+          totalHousingDeliveryChartData={totalHousingDelivery}
           tenureHousingDeliveryChartData={tenureHousingDelivery}
           targets={localTargets}
           settings={settings}
           setDashboardSettings={setDashboardSettings}
         />
 
-        <div className={styles.bottomChartContainer}>
+        {/* <div className={styles.bottomChartContainer}>
           <div className={styles.columnCharts}>
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
@@ -269,11 +288,11 @@ export const Dashboard: FC<{ sourceId: string }> = ({
             xLabel='Month'
             yLabel='No. Housing Approvals Granted'
             ranges={['2019', '2020']}
-            data={approvalsGranted?.properties}
+            data={approvalsGranted}
             settings={settings}
             setDashboardSettings={setDashboardSettings}
           />
-        </div>
+        </div> */}
       </div>
 
       <Dialog

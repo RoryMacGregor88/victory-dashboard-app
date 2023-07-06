@@ -1,21 +1,20 @@
 import { it, expect, describe, vi } from 'vitest';
 
-import mockData from '../../../../mock_data/mock_affordable_housing';
-import { render, screen } from '@testing-library/react';
+import mockData from '../../../mocks/fixtures/affordable_housing_delivery';
+import { render, screen } from '../../../test/test.utils';
 
 import {
   AffordableHousingDelivery,
   getPairedValues,
 } from './affordable-housing-delivery.component';
 
-const data = mockData.properties[0].data,
-  targets = {
-    2018: 100,
-    2019: 70,
-    2020: 80,
-    2021: 120,
-    2022: 90,
-  };
+const targets = {
+  2018: 100,
+  2019: 70,
+  2020: 80,
+  2021: 120,
+  2022: 90,
+};
 
 let setDashboardSettings = vi.fn();
 
@@ -28,7 +27,7 @@ describe('<AfforableHousingDelivery />', () => {
     it('shows the right title in the wrapper', () => {
       render(
         <AffordableHousingDelivery
-          data={data}
+          data={mockData}
           targets={targets}
           setDashboardSettings={setDashboardSettings}
         />
@@ -44,7 +43,7 @@ describe('<AfforableHousingDelivery />', () => {
     it('shows the right axis labels', () => {
       render(
         <AffordableHousingDelivery
-          data={data}
+          data={mockData}
           targets={targets}
           setDashboardSettings={setDashboardSettings}
         />

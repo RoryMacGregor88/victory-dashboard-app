@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { BaseChart } from './base-chart.component';
 
 export default {

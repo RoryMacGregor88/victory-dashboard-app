@@ -1,5 +1,3 @@
-import React from 'react';
-
 import * as data from '~/dashboard/mock-data/waltham-forest/mock_affordable_housing';
 
 import { AfforableHousingDelivery } from './affordable-housing-delivery.component';

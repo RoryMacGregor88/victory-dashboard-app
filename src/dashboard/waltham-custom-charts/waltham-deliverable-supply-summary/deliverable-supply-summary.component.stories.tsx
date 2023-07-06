@@ -1,5 +1,3 @@
-import React from 'react';
-
 import DeliverableSupplySummary from './deliverable-supply-summary.component';
 import * as MOCK_DATA from './mock-data';
 

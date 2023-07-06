@@ -1,5 +1,3 @@
-import React, { useMemo } from 'react';
-
 import { darken } from '@material-ui/core';
 
 import {
@@ -19,6 +17,7 @@ import { WalthamCustomLegend } from '../../../waltham-custom-legend/waltham-cust
 import { TARGET_LEGEND_DATA, housingTenureTypes } from '../../../../constants';
 
 import { tenureHousingTransformer } from './tenure-housing-transformer/tenure-housing-transformer';
+import { useMemo } from 'react';
 
 /**
  * @param {{

@@ -1,5 +1,4 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, userEvent } from '../../test/test.utils';
 
 import { ChartWrapper } from './chart-wrapper.component';
 

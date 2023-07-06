@@ -2,7 +2,7 @@ import { rest } from 'msw';
 
 import { render, screen, waitFor } from '../../test/test.utils';
 
-import { server } from '../..//mocks/server';
+import { server } from '../../mocks/server';
 
 import { DashboardWrapper } from './dashboard-wrapper.component';
 
@@ -31,7 +31,7 @@ const defaultRenderOptions = {
 describe('DashboardWrapper', () => {
   it('renders the dashboard specified in metadata', async () => {
     server.use(
-      rest.get('*/api/*', (req, res, ctx) => res(ctx.status(200), ctx.json({})))
+      rest.get('*/api/*', (_, res, ctx) => res(ctx.status(200), ctx.json({})))
     );
 
     render(<DashboardWrapper />, defaultRenderOptions);

@@ -1,6 +1,7 @@
-import React from 'react';
 import clsx from 'clsx';
+
 import { ToggleButton as MuiToggleButton } from '@material-ui/lab';
+
 import { darken, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({

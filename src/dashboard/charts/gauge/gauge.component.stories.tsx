@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { GaugeChart } from './gauge.component';
 
 export default {

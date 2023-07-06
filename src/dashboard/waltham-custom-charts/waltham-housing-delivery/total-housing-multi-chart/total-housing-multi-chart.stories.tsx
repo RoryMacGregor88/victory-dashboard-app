@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { groupedApiData } from '../story-data';
 import { TotalHousingMultiChart } from './total-housing-multi-chart.component';
 

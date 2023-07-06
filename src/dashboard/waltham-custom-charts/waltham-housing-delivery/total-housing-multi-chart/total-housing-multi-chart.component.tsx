@@ -28,8 +28,10 @@ const TotalHousingMultiChart = ({
 }) => {
   const { walthamChartColors } = useChartTheme();
 
-  // Transform API/target data to correct data shape, and create a
-  // reliable timeline form earliest year -> latest year
+  /**
+   * Transform API/target data to correct data shape, and create a
+   * reliable timeline form earliest year to latest year
+   */
   const transformerOutput = useMemo(
     () => totalHousingTransformer(apiData, userTargetData, filteredTimeline),
     [apiData, userTargetData, filteredTimeline]

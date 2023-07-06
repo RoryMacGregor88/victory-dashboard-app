@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { groupedApiData, stackedApiData } from './story-data';
 import { WalthamHousingDelivery } from './waltham-housing-delivery.component';
 

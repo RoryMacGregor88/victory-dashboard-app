@@ -2,14 +2,12 @@ import { it, expect, describe, beforeEach } from 'vitest';
 
 import reducer, { setChartData, chartDataSelector } from './dashboard.slice';
 
+let beforeState = {};
+
 describe('Dashboard Slice', () => {
   describe('reducer', () => {
-    let beforeState;
     beforeEach(() => {
-      beforeState = {
-        isLoading: false,
-        error: null,
-      };
+      beforeState = {};
     });
 
     it('returns initial state', () => {

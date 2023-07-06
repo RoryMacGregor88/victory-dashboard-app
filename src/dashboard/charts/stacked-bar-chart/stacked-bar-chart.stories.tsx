@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { StackedBarChart } from './stacked-bar-chart.component';
 
 const data = [

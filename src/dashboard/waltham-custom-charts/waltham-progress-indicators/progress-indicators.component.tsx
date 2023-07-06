@@ -17,49 +17,65 @@ import {
   TARGET_FONT_DEVISOR,
   ERROR_FONT_DEVISOR,
 } from '../../../constants';
+import { Targets } from '~/accounts/accounts.slice';
+import {
+  TotalHousingDeliveryData,
+  TenureTypeHousingData,
+} from '../../../mocks/fixtures';
 
 const useStyles = makeStyles(() => ({
-  header: {
-    minHeight: '6ch',
-  },
+  header: { minHeight: '6ch' },
 }));
 
+interface PercentageArgs {
+  target: number;
+  progress: number;
+}
+
 /**
- * this prevents "Infinity%" values being shown, but calculates any
- * valid values, including zero
- *
- * @param {number} target
- * @param {number} progress
- * @returns {number}
+ * this prevents "Infinity%" values being shown, but
+ * calculates any valid values, including zero
  */
-const getPercentage = (target, progress) => {
+const getPercentage = ({ target, progress }: PercentageArgs) => {
   if (progress === MIN_PERCENTAGE && target === MIN_PERCENTAGE) {
+    /** target and progress are both zero, return 100% */
     return MAX_PERCENTAGE;
   } else if (target === MIN_PERCENTAGE) {
+    /** target is 0, return 100% */
     return MAX_PERCENTAGE;
   } else if (progress === MIN_PERCENTAGE) {
+    /** progress is zero, return 0% */
     return MIN_PERCENTAGE;
   } else if (!!progress && target > MIN_PERCENTAGE) {
+    /** calculate percentage */
     return Math.round((progress / target) * MAX_PERCENTAGE);
   } else {
     return null;
   }
 };
 
+interface CenterDisplayArgs {
+  percentage: number | null;
+  target: number | undefined;
+  name: string;
+  radius: number;
+  width: number;
+}
+
 /**
  * takes the calculated percentage, as well as other props, and returns a
- * responsive component to be displayed inside the progress indicator.
- *
- * @param {{
- *  percentage: number|null,
- *  target: number|undefined,
- *  name: string,
- *  radius: number,
- *  width: number
- * }} props
+ * responsive component to be displayed inside the progress indicator
  */
-const renderCenterDisplay = ({ percentage, target, name, radius, width }) =>
-  percentage ? (
+const renderCenterDisplay = ({
+  percentage,
+  target,
+  name,
+  radius,
+  width,
+}: CenterDisplayArgs) => {
+  // TODO: why number coerce if already a number?
+  const roundedPercentage = `${Math.round(Number(percentage))}%`;
+  return percentage ? (
     <>
       <Text
         width={radius}
@@ -73,7 +89,7 @@ const renderCenterDisplay = ({ percentage, target, name, radius, width }) =>
           fontSize: `${width / PERCENT_FONT_DEVISOR}rem`,
         }}
       >
-        {`${Math.round(Number(percentage))}%`}
+        {roundedPercentage}
       </Text>
       <Text
         width={radius}
@@ -105,44 +121,38 @@ const renderCenterDisplay = ({ percentage, target, name, radius, width }) =>
       {`${name} Target Required`}
     </Text>
   );
+};
 
-/**
- * @param {{
- *   totalData: object
- *   tenureData: object
- *   targets: object
- * }} props
- */
-const ProgressIndicators = ({ totalData, tenureData, targets }) => {
+interface ProgressIndicatorProps {
+  totalData: TotalHousingDeliveryData;
+  tenureData: TenureTypeHousingData;
+  targets: Targets;
+}
+
+const ProgressIndicators = ({
+  totalData,
+  tenureData,
+  targets,
+}: ProgressIndicatorProps): JSX.Element => {
   const chartTheme = useChartTheme();
   const styles = useStyles({});
-  const totalDataArray = totalData?.properties?.[0]?.data;
 
-  const tenureCurrentYear = tenureData?.find((obj) => obj.startYear === 2022);
+  const tenureCurrentYear = tenureData.find((obj) => obj.startYear === 2022);
 
-  // TODO: this is only here because mock data needs `startYear` added and `Year` filtered out
-  const adaptedTotalData = totalDataArray?.map((obj) => {
-    const [startYear] = obj.Year.split('-');
-    return Object.entries({ startYear: Number(startYear), ...obj }).reduce(
-      (acc, [key, value]) => (key === 'Year' ? acc : { ...acc, [key]: value }),
-      {}
-    );
-  });
-
-  // 'Gross' values tallied up for last 5 years, like ticket asks
+  /** 'Gross' values tallied up for last 5 years */
   const past5YearsTotal = useMemo(
     () =>
       getPastYears().reduce(
         (acc, cur) =>
-          (acc += adaptedTotalData?.find((d) => d.startYear === cur)?.[
+          (acc += totalData.find((datum) => datum.startYear === cur)?.[
             'Total Gross'
           ]),
         0
       ),
-    [adaptedTotalData]
+    [totalData]
   );
 
-  // data combined with user target for progress wheels
+  /** data combined with user target for progress wheels */
   const targetData = useMemo(
     () => [
       {
@@ -173,7 +183,7 @@ const ProgressIndicators = ({ totalData, tenureData, targets }) => {
     <>
       {targetData
         ? targetData.map(({ target, progress, title, name, info }, i) => {
-            const percentage = getPercentage(target, progress);
+            const percentage = getPercentage({ target, progress });
             return (
               <ChartWrapper
                 key={name}
@@ -190,15 +200,19 @@ const ProgressIndicators = ({ totalData, tenureData, targets }) => {
                       y: MAX_PERCENTAGE - (percentage ?? MIN_PERCENTAGE),
                     },
                   ]}
-                  renderCenterDisplay={({ radius, width }) =>
+                  renderCenterDisplay={({
+                    radius,
+                    width,
+                  }: {
+                    radius: number;
+                    width: number;
+                  }): JSX.Element =>
                     renderCenterDisplay({
+                      percentage,
                       target,
                       name,
-                      percentage,
                       radius,
                       width,
-                      value: percentage,
-                      units: '%',
                     })
                   }
                 />

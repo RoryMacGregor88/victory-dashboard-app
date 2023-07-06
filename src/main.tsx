@@ -1,4 +1,4 @@
-import React from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { CssBaseline, ThemeProvider } from '@material-ui/core';
@@ -10,7 +10,7 @@ const { worker } = await import('./mocks/browser.ts');
 worker.start();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  <StrictMode>
     <CssBaseline>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
@@ -18,5 +18,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         </ThemeProvider>
       </Provider>
     </CssBaseline>
-  </React.StrictMode>
+  </StrictMode>
 );

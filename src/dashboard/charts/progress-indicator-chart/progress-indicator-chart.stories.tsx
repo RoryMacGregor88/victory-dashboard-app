@@ -1,5 +1,3 @@
-import React from 'react';
-
 import * as data from '../../mock-data/waltham-forest/mock_target_progress';
 import { useChartTheme } from '../../useChartTheme';
 import { ProgressIndicatorChart } from './progress-indicator-chart.component';

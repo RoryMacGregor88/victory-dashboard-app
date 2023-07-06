@@ -1,26 +1,26 @@
 import { it, expect, describe } from 'vitest';
 
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../../test/test.utils';
 
-import * as mockData from './mock-data';
+import mockData from '../../../mocks/fixtures/progression_of_units';
 import ProgressionVsPlanningSchedule from './progression-vs-planning-schedule.component';
-
-const data = mockData.properties[0].data;
 
 describe('Progression vs Planning Schedule', () => {
   it('should display chart on screen', () => {
-    render(<ProgressionVsPlanningSchedule settings={{}} data={data} />);
+    render(<ProgressionVsPlanningSchedule settings={{}} data={mockData} />);
 
     expect(
       screen.getByRole('heading', {
         name: 'Progression of Units Relating to Planning Schedule',
       })
     ).toBeInTheDocument();
+
     expect(
       screen.getByRole('button', {
         name: 'Info',
       })
     ).toBeInTheDocument();
+
     expect(
       screen.getByRole('img', {
         name: 'Info',

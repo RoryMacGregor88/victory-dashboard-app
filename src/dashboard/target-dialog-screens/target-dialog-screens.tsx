@@ -61,7 +61,7 @@ const SelectScreen = ({ onNextClick }) => {
         container
         component={Select}
         value={selectedDataset}
-        inputProps={{ 'aria-label': 'Waltham Forest datasets' }}
+        inputProps={{ 'aria-label': DEFAULT_TEXT }}
         onChange={({ target: { value } }) => setSelectedDataset(value)}
       >
         <MenuItem value={DEFAULT_TEXT} disabled>
@@ -111,8 +111,10 @@ const TargetScreen = ({ onAddTargetsClick, selectedDataset, targets = {} }) => {
   const handleChange = (data) =>
     setTargetData((prev) => ({ ...prev, ...data }));
 
-  const handleSubmit = () =>
+  const handleSubmit = () => {
+    console.log('HIT');
     onAddTargetsClick({ [selectedDataset]: filterEmptyStrings(targetData) });
+  };
 
   return (
     <Grid item container component='form' onSubmit={handleSubmit}>

@@ -1,6 +1,6 @@
 import { it, expect, describe } from 'vitest';
 
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../../test/test.utils';
 
 import { deliverableSupplySummaryTypes } from '../../waltham.constants';
 import DeliverableSupplySummary from './deliverable-supply-summary.component';

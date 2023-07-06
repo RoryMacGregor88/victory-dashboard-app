@@ -1,48 +1,18 @@
 import { it, expect, describe, vi } from 'vitest';
 
-import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, userEvent, screen } from '../../../test/test.utils';
 
 import { WalthamHousingDelivery } from './waltham-housing-delivery.component';
 
-const tenures = {
-    'Affordable Rent': 303,
-    Intermediate: 130,
-    'Market for sale': 124,
-    'Social Rent': 127,
-    'Private Rented Sector': 198,
-  },
-  data = [
-    {
-      startYear: 2014,
-      ...tenures,
-    },
-    {
-      startYear: 2015,
-      ...tenures,
-    },
-    {
-      startYear: 2016,
-      ...tenures,
-    },
-    {
-      startYear: 2017,
-      ...tenures,
-    },
-    {
-      startYear: 2018,
-      ...tenures,
-    },
-    {
-      startYear: 2019,
-      ...tenures,
-    },
-  ],
-  defaultData = {
-    tenureHousingDeliveryChartData: data,
-    targets: {},
-    settings: {},
-  };
+import tenureData from '../../../mocks/fixtures/tenure_type_housing_delivery';
+import totalData from '../../../mocks/fixtures/total_housing_delivery';
+
+const defaultData = {
+  tenureHousingDeliveryChartData: tenureData,
+  totalHousingDeliveryChartData: totalData,
+  targets: {},
+  settings: {},
+};
 
 let setDashboardSettings = null;
 
@@ -51,8 +21,8 @@ describe('WalthamHousingDelivery', () => {
     setDashboardSettings = vi.fn();
   });
 
-  it('sets default values if no saved settings', () => {
-    const { getByRole } = render(
+  it.only('sets default values if no saved settings', () => {
+    render(
       <WalthamHousingDelivery
         {...defaultData}
         setDashboardSettings={setDashboardSettings}
@@ -60,15 +30,16 @@ describe('WalthamHousingDelivery', () => {
     );
 
     expect(setDashboardSettings).toHaveBeenCalledTimes(1);
+
     expect(
-      getByRole('button', { name: '2015-2016 - 2019-2020' })
+      screen.getByRole('button', { name: '2015-2016 - 2019-2020' })
     ).toBeInTheDocument();
 
     expect(
-      getByRole('button', { name: 'All Tenure Types' })
+      screen.getByRole('button', { name: 'All Tenure Types' })
     ).toBeInTheDocument();
 
-    // expect(getByRole('button', { name: 'Gross' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Gross' })).toBeInTheDocument();
   });
 
   it('defaults to user`s saved settings if present', () => {
@@ -78,7 +49,7 @@ describe('WalthamHousingDelivery', () => {
       tenureDateType: 'Net',
     };
 
-    const { getByRole } = render(
+    render(
       <WalthamHousingDelivery
         {...defaultData}
         settings={settings}
@@ -89,10 +60,14 @@ describe('WalthamHousingDelivery', () => {
     expect(setDashboardSettings).not.toHaveBeenCalled();
 
     expect(
-      getByRole('button', { name: '2014-2015 - 2018-2019' })
+      screen.getByRole('button', { name: '2014-2015 - 2018-2019' })
     ).toBeInTheDocument();
-    expect(getByRole('button', { name: 'Social Rent' })).toBeInTheDocument();
-    // expect(getByRole('button', { name: 'Net' })).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('button', { name: 'Social Rent' })
+    ).toBeInTheDocument();
+
+    expect(screen.getByRole('button', { name: 'Net' })).toBeInTheDocument();
   });
 
   it('resets to highest available year if year is invalid after switching tenure type', async () => {
@@ -104,7 +79,7 @@ describe('WalthamHousingDelivery', () => {
         tenureType: 'marketHousing',
       };
 
-    const { getByText, getByRole } = render(
+    render(
       <WalthamHousingDelivery
         {...defaultData}
         targets={targets}
@@ -113,16 +88,18 @@ describe('WalthamHousingDelivery', () => {
       />
     );
 
-    await userEvent.click(getByRole('button', { name: 'Market for sale' }));
-    await userEvent.click(getByRole('option', { name: 'Social Rent' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Market for sale' })
+    );
+    await userEvent.click(screen.getByRole('option', { name: 'Social Rent' }));
 
-    // will update once as usual, then again to correct itself if invalid.
+    /** will update once as usual, then again to correct itself if invalid. */
     expect(setDashboardSettings).toHaveBeenCalledTimes(2);
-    expect(getByText('2015-2016 - 2019-2020')).toBeInTheDocument();
+    expect(screen.getByText('2015-2016 - 2019-2020')).toBeInTheDocument();
   });
 
   it('calls setDashboardSettings function when filters are changed', async () => {
-    const { getByRole } = render(
+    render(
       <WalthamHousingDelivery
         {...defaultData}
         settings={{ tenureYear: 2019 }}
@@ -130,8 +107,12 @@ describe('WalthamHousingDelivery', () => {
       />
     );
 
-    await userEvent.click(getByRole('button', { name: 'All Tenure Types' }));
-    await userEvent.click(getByRole('option', { name: 'Market for sale' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: 'All Tenure Types' })
+    );
+    await userEvent.click(
+      screen.getByRole('option', { name: 'Market for sale' })
+    );
 
     expect(setDashboardSettings).toHaveBeenCalledTimes(1);
   });

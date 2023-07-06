@@ -1,7 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from '../store';
-import { MOCK_USER } from '~/constants';
+import { MOCK_USER } from '../constants';
 
 export type Targets = {
   [datasetName: string]: {
@@ -10,7 +10,10 @@ export type Targets = {
 };
 
 export type Settings = {
-  [settingName: string]: string | number;
+  tenureType?: string;
+  tenureDataType?: 'Gross' | 'Net';
+  tenureYear?: number | undefined;
+  totalYear?: number | undefined;
 };
 
 export type UserOrbState = {

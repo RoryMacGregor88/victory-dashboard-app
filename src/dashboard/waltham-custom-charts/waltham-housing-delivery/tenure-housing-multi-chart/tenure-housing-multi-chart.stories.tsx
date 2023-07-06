@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { stackedApiData } from '../story-data';
 import { TenureHousingMultiChart } from './tenure-housing-multi-chart.component';
 

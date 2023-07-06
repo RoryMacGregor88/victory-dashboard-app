@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { VictoryBar, VictoryGroup } from 'victory';
 
 import { useChartTheme } from '../../useChartTheme';
@@ -18,7 +16,7 @@ const GroupedBarChart = ({ xLabel = '', yLabel = '', data }) => {
 
   if (!data) return null;
 
-  const renderGroupedBarChart = width => {
+  const renderGroupedBarChart = (width) => {
     const { barWidth, offset } = GroupedWidthCalculator(data, width);
 
     return (

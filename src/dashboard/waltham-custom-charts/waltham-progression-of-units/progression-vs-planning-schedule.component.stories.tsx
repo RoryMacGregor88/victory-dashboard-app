@@ -1,5 +1,3 @@
-import React from 'react';
-
 import * as MOCK_DATA from './mock-data';
 import ProgressionVsPlanningSchedule from './progression-vs-planning-schedule.component';
 

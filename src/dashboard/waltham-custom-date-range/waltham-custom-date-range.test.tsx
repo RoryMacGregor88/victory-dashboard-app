@@ -1,7 +1,6 @@
 import { it, expect, describe, vi } from 'vitest';
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, userEvent } from '../../test/test.utils';
 
 import { WalthamCustomDateRange } from './waltham-custom-date-range.component';
 
