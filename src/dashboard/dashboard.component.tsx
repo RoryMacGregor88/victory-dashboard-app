@@ -13,11 +13,10 @@ import {
   Grid,
   Typography,
   Dialog,
-  DialogTitle,
   DialogContent,
 } from '@material-ui/core';
 
-import { Button, LoadMaskFallback } from '../components';
+import { Button, LoadMaskFallback, DialogTitle } from '../components';
 
 import { useAppDispatch, useAppSelector } from '../hooks';
 
@@ -301,7 +300,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
         onClose={closeDialog}
         aria-labelledby='waltham-forest-targets-dialog'
       >
-        <DialogTitle>
+        <DialogTitle onClose={closeDialog}>
           {selectedDataset ? targetDatasets[selectedDataset] : 'Add Targets'}
         </DialogTitle>
         <DialogContent>
