@@ -5,24 +5,16 @@ import {
   Dispatch,
 } from '@reduxjs/toolkit';
 
-import { User, UserOrbState, updateUser } from '../../accounts/accounts.slice';
+import { User, updateUser } from '../../accounts/accounts.slice';
 import { userSelector } from '../../accounts/accounts.slice';
 
 import { RootState } from '../../store';
-
-// TODO: make this union of all datasets?
-type ChartData = { [key: string]: unknown }[];
+import { ChartMetadata, ChartData, UserOrbState } from '../../types';
 
 export type DashboardState = {
   [sourceId: string]: {
     [datasetName: string]: ChartData;
   };
-};
-
-export type ChartMetadata = {
-  sourceId: string;
-  datasetName: string;
-  url: string;
 };
 
 interface Payload {
@@ -33,7 +25,7 @@ interface Payload {
 
 const name = 'dashboard';
 
-export const initialState = {
+export const initialState: DashboardState = {
   mock_source_id: {},
 };
 
@@ -102,15 +94,12 @@ export const updateUserDashboardConfig =
 
 export const { setChartData } = dashboardSlice.actions;
 
-const baseSelector = (state: RootState) => state?.dashboard;
+const baseSelector = (state: RootState) => state.dashboard;
 
 export const chartDataSelector = (sourceId: string, datasetName: string) =>
-  createSelector(
-    baseSelector,
-    (state: DashboardState) => state[sourceId]?.[datasetName]
-  );
+  createSelector(baseSelector, (state) => state[sourceId]?.[datasetName]);
 
 export const userOrbStateSelector = (sourceId: string) =>
-  createSelector(userSelector, (user: User) => user.orb_state[sourceId] ?? {});
+  createSelector(userSelector, (user) => user.orb_state[sourceId] ?? {});
 
 export default dashboardSlice.reducer;

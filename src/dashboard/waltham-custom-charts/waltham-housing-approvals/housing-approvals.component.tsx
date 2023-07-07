@@ -14,6 +14,9 @@ import { WalthamCustomLegend } from '../../waltham-custom-legend/waltham-custom-
 import { HOUSING_APPROVAL_DATA_TYPES } from '../../../constants';
 
 import { lineDataTransformer } from '../../utils/utils';
+import { HousingApprovalsData } from '../../../mocks/fixtures';
+import { Settings, UserOrbState } from '../../../accounts/accounts.slice';
+import { LegendData } from '../../../types';
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -25,6 +28,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+interface Props {
+  x?: string;
+  xLabel?: string;
+  yLabel?: string;
+  ranges?: string[];
+  data: HousingApprovalsData;
+  settings: Settings;
+  setDashboardSettings: React.Dispatch<React.SetStateAction<UserOrbState>>;
+}
+
 const HousingApprovalsComponent = ({
   x = 'x',
   xLabel = '',
@@ -33,18 +46,18 @@ const HousingApprovalsComponent = ({
   data,
   settings,
   setDashboardSettings,
-}) => {
+}: Props) => {
   const { walthamChartColors } = useChartTheme();
   const styles = useStyles();
 
   const [configuration, setConfiguration] = useState(
     settings?.approvalsGrantedDataType ?? HOUSING_APPROVAL_DATA_TYPES.monthly
   );
-  /**
-   * @param {any} _
-   * @param {string} newValue
-   */
-  const handleToggleClick = (_, newValue) => {
+
+  const handleToggleClick = (
+    _: unknown,
+    newValue: Settings['approvalsGrantedDataType']
+  ) => {
     setConfiguration(newValue);
     setDashboardSettings((prev) => ({
       ...prev,
@@ -55,13 +68,16 @@ const HousingApprovalsComponent = ({
     }));
   };
 
+  // TODO: how to type this?
   const dataByType = useMemo(
     () =>
-      lineDataTransformer(data?.find((p) => p.name === configuration)?.data),
+      lineDataTransformer(
+        data?.find((datum) => datum.name === configuration)?.data
+      ),
     [data, configuration]
   );
 
-  const apiLegendData = [
+  const apiLegendData: LegendData[] = [
     {
       name: 'Actual 2019',
       color: walthamChartColors.housingApproval[0],
@@ -72,7 +88,7 @@ const HousingApprovalsComponent = ({
     },
   ];
 
-  const HousingApprovalsLineChart = ({ width }) => {
+  const HousingApprovalsLineChart = () => {
     if (!dataByType) return null;
     return (
       <VictoryGroup>
@@ -121,7 +137,7 @@ const HousingApprovalsComponent = ({
       classes={{ paper: styles.wrapper }}
     >
       <StyledParentSize>
-        {({ width }) => (
+        {({ width }: { width: number }) => (
           <>
             <ToggleButtonGroup
               size='small'
@@ -139,7 +155,7 @@ const HousingApprovalsComponent = ({
             </ToggleButtonGroup>
             <WalthamCustomLegend apiLegendData={apiLegendData} width={width} />
             <BaseChart width={width} xLabel={xLabel} yLabel={yLabel}>
-              {HousingApprovalsLineChart({ width })}
+              {HousingApprovalsLineChart()}
             </BaseChart>
           </>
         )}

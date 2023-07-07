@@ -2,24 +2,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from '../store';
 import { MOCK_USER } from '../constants';
-
-export type Targets = {
-  [datasetName: string]: {
-    [year: string]: number;
-  };
-};
-
-export type Settings = {
-  tenureType?: string;
-  tenureDataType?: 'Gross' | 'Net';
-  tenureYear?: number | undefined;
-  totalYear?: number | undefined;
-};
-
-export type UserOrbState = {
-  targets: Targets;
-  settings: Settings;
-};
+import { UserOrbState } from '../types';
 
 export type User = {
   orb_state: {
@@ -28,7 +11,7 @@ export type User = {
 };
 
 export type AccountsState = {
-  user: User | null;
+  user: User;
 };
 
 type Payload = {
@@ -39,7 +22,7 @@ type Payload = {
 
 const name = 'accounts';
 
-export const initialState = {
+export const initialState: AccountsState = {
   user: MOCK_USER,
 };
 
@@ -56,11 +39,11 @@ const accountsSlice = createSlice({
 
 export const { updateUser } = accountsSlice.actions;
 
-const baseSelector = (state: RootState) => state?.accounts;
+const baseSelector = (state: RootState) => state.accounts;
 
 export const userSelector = createSelector(
   baseSelector,
-  (accounts: AccountsState) => accounts?.user
+  (accounts) => accounts.user
 );
 
 export default accountsSlice.reducer;

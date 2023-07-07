@@ -104,7 +104,9 @@ const TenureDataFilter = ({
       <Grid item>
         <Select
           value={tenureType}
-          onChange={({ target: { value } }) => handleTenureTypeSelect(value)}
+          onChange={({ target: { value } }) =>
+            handleTenureTypeSelect(String(value))
+          }
           classes={{ root, select }}
           disableUnderline
         >
@@ -146,10 +148,10 @@ export const WalthamHousingDelivery = ({
   const styles = useStyles();
 
   const [configuration, setConfiguration] = useState<Settings>({
-    tenureType: settings?.tenureType ?? ALL_TENURE_TYPES,
+    tenureType: settings?.tenureType,
     tenureDataType: TENURE_DATA_TYPES.gross,
-    tenureYear: settings?.tenureYear ?? undefined,
-    totalYear: settings?.totalYear ?? undefined,
+    tenureYear: settings?.tenureYear,
+    totalYear: settings?.totalYear,
   });
 
   const { tenureType, tenureDataType, tenureYear, totalYear } = configuration;
@@ -190,7 +192,7 @@ export const WalthamHousingDelivery = ({
   const processedTargets =
     tenureType === ALL_TENURE_TYPES
       ? getTargetTotals(targets)
-      : targets?.[tenureType];
+      : targets[tenureType ?? ALL_TENURE_TYPES];
 
   const dataByTenureType = useMemo(
     () =>

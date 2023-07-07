@@ -1,4 +1,5 @@
 import { Grid, makeStyles } from '@material-ui/core';
+import { LegendData } from '../../types';
 
 const RATIOS = {
     legendContainer: 0.1125,
@@ -23,22 +24,21 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-/**
- * @param {{
- *  apiLegendData: { name: string, color: string }[]
- *  targetLegendData?: { name: string, color: string }
- *  width: number
- *  padTop?: boolean
- *  padBottom?: boolean
- * }} props
- */
+interface Props {
+  apiLegendData: LegendData[];
+  targetLegendData?: { name: string; color: string };
+  width: number;
+  padTop?: boolean;
+  padBottom?: boolean;
+}
+
 const WalthamCustomLegend = ({
   apiLegendData,
   targetLegendData,
   width,
   padTop = false,
   padBottom = false,
-}) => {
+}: Props) => {
   const maxHeight = width * RATIOS.legendContainer,
     fontSize = width * RATIOS.fontSize,
     fontSizeLimit = fontSize < MAX_FONT_SIZE ? fontSize : MAX_FONT_SIZE,

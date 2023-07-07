@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-  FC,
-  ReactElement,
-} from 'react';
+import { useCallback, useEffect, useState, useRef, FC } from 'react';
 
 import {
   makeStyles,
@@ -27,7 +20,6 @@ import {
   fetchDashboardData,
   updateUserDashboardConfig,
   userOrbStateSelector,
-  ChartMetadata,
 } from './dashboard-slice/dashboard.slice';
 import {
   SelectScreen,
@@ -39,11 +31,7 @@ import { WalthamHousingDelivery } from './waltham-custom-charts/waltham-housing-
 import { ProgressIndicators } from './waltham-custom-charts/waltham-progress-indicators/progress-indicators.component';
 import ProgressionVsPlanningSchedule from './waltham-custom-charts/waltham-progression-of-units/progression-vs-planning-schedule.component';
 import { walthamApiMetadata, targetDatasets } from '../constants';
-import {
-  Targets,
-  UserOrbState,
-  userSelector,
-} from '../accounts/accounts.slice';
+import { userSelector } from '../accounts/accounts.slice';
 
 import {
   TotalHousingDeliveryData,
@@ -54,6 +42,7 @@ import {
 } from '../mocks/fixtures';
 // TODO: why does this work
 import { ExportData } from '~/mocks/fixtures/export_data';
+import { ChartMetadata, Targets, UserOrbState } from '../types';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -93,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Dashboard: FC<{ sourceId: string }> = ({
   sourceId,
-}): ReactElement => {
+}): JSX.Element => {
   const styles = useStyles();
   const dispatch = useAppDispatch();
 
