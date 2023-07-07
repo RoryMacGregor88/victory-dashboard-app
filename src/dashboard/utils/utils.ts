@@ -141,8 +141,6 @@ const getUser5YearTotals = (obj) => {
 const getDataTimeline = (apiData, targets = {}) => {
   if (!apiData) return;
 
-  console.log('INSIDE: ', apiData, (targets = {}));
-
   // if uninitiated by user, targets will be undefined, but
   // defaulted to empty object
   const hasTargets = !!Object.keys(targets).length;

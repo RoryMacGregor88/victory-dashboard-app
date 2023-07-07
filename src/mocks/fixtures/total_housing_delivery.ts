@@ -55,6 +55,11 @@ const data: TotalHousingDeliveryData = [
     'Total Gross': 136,
     'Total Net': 83,
   },
+  {
+    startYear: '2023-2024',
+    'Total Gross': 335,
+    'Total Net': 111,
+  },
 ];
 
 export default data;

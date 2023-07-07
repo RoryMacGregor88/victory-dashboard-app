@@ -4,14 +4,16 @@ import { vi } from 'vitest';
 
 const { ResizeObserver } = window;
 
+/**
+ * This is here because the package 'visx' tries
+ * to use it and it breaks in tests
+ */
 beforeAll(() => {
-  beforeEach(() => {
-    window.ResizeObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    }));
-  });
+  window.ResizeObserver = vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  }));
 });
 
 afterAll(() => {

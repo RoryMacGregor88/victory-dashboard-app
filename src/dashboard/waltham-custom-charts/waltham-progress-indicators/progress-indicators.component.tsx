@@ -139,17 +139,32 @@ const ProgressIndicators = ({
 
   const tenureCurrentYear = tenureData.find((obj) => obj.startYear === 2022);
 
+  /**
+   * this is only here because mock data needs `startYear` split on
+   * the hyphen and coerced into a number
+   */
+  const adaptedTotalData = totalData?.map((obj) => {
+    const [startYear] = obj.startYear.split('-');
+    return Object.entries(obj).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: key === 'startYear' ? Number(startYear) : value,
+      }),
+      {}
+    );
+  });
+
   /** 'Gross' values tallied up for last 5 years */
   const past5YearsTotal = useMemo(
     () =>
       getPastYears().reduce(
         (acc, cur) =>
-          (acc += totalData.find((datum) => datum.startYear === cur)?.[
+          (acc += adaptedTotalData.find((datum) => datum.startYear === cur)[
             'Total Gross'
           ]),
         0
       ),
-    [totalData]
+    [adaptedTotalData]
   );
 
   /** data combined with user target for progress wheels */

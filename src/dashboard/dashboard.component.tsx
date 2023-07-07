@@ -252,13 +252,13 @@ export const Dashboard: FC<{ sourceId: string }> = ({
       </Grid>
 
       <div className={styles.content}>
-        {/* <div className={styles.progressIndicators}>
+        <div className={styles.progressIndicators}>
           <ProgressIndicators
             totalData={totalHousingDelivery}
             tenureData={tenureHousingDelivery}
             targets={localTargets}
           />
-        </div> */}
+        </div>
 
         <WalthamHousingDelivery
           totalHousingDeliveryChartData={totalHousingDelivery}
@@ -268,7 +268,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
           setDashboardSettings={setDashboardSettings}
         />
 
-        {/* <div className={styles.bottomChartContainer}>
+        <div className={styles.bottomChartContainer}>
           <div className={styles.columnCharts}>
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
@@ -292,7 +292,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
             settings={settings}
             setDashboardSettings={setDashboardSettings}
           />
-        </div> */}
+        </div>
       </div>
 
       <Dialog

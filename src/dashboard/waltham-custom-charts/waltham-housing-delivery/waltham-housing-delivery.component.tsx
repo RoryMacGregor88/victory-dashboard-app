@@ -203,14 +203,26 @@ export const WalthamHousingDelivery = ({
     [tenureHousingDeliveryChartData, tenureType]
   );
 
-  const totalTimeline = getDataTimeline(
-    totalHousingDeliveryChartData,
-    targets?.totalHousing
-  );
-  // tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
+  /**
+   * this is only here because mock data needs `startYear` split on
+   * the hyphen and coerced into a number
+   */
+  const adaptedTotalData = totalHousingDeliveryChartData?.map((obj) => {
+    const [startYear] = obj.startYear.split('-');
+    return Object.entries(obj).reduce(
+      (acc, [key, value]) => ({
+        ...acc,
+        [key]: key === 'startYear' ? Number(startYear) : value,
+      }),
+      {}
+    );
+  });
 
-  // console.log('TEST: ', totalHousingDeliveryChartData, targets?.totalHousing);
-  // console.log('TEST2: ', totalTimeline);
+  const totalTimeline = getDataTimeline(
+      adaptedTotalData,
+      targets?.totalHousing
+    ),
+    tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
 
   /** setup/error catch for total chart */
   useEffect(() => {
@@ -219,18 +231,18 @@ export const WalthamHousingDelivery = ({
     } else {
       updateDateFilter({ totalYear: totalTimeline[totalTimeline.length - 1] });
     }
-  }, [totalYear, updateDateFilter]);
+  }, [totalTimeline, totalYear, updateDateFilter]);
 
   /** setup/error catch for tenure chart */
-  // useEffect(() => {
-  //   if (!tenureTimeline || tenureTimeline.includes(tenureYear)) {
-  //     return;
-  //   } else {
-  //     updateDateFilter({
-  //       tenureYear: tenureTimeline[tenureTimeline.length - 1],
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!tenureTimeline || tenureTimeline.includes(tenureYear)) {
+      return;
+    } else {
+      updateDateFilter({
+        tenureYear: tenureTimeline[tenureTimeline.length - 1],
+      });
+    }
+  }, [tenureTimeline, tenureYear, updateDateFilter]);
 
   return (
     <Grid container direction='column' className={styles.container}>
@@ -257,7 +269,7 @@ export const WalthamHousingDelivery = ({
             onSelect={(value: number) => updateDateFilter({ totalYear: value })}
           />
           <TotalHousingMultiChart
-            apiData={totalHousingDeliveryChartData}
+            apiData={adaptedTotalData}
             userTargetData={targets?.totalHousing}
             filteredTimeline={getFilteredTimeline(totalTimeline, totalYear)}
           />
@@ -267,7 +279,7 @@ export const WalthamHousingDelivery = ({
           title='Housing Delivery by Tenure Type'
           info='Housing delivery values broken down by tenure type per financial year. The data source is the PLD (Planning London Data Hub).'
         >
-          {/* <TenureDataFilter
+          <TenureDataFilter
             timeline={tenureTimeline}
             tenureYear={tenureYear}
             tenureType={tenureType}
@@ -276,7 +288,7 @@ export const WalthamHousingDelivery = ({
               updateDateFilter({ tenureYear: year })
             }
             handleTenureTypeSelect={handleTenureTypeSelect}
-          /> */}
+          />
           <ToggleButtonGroup
             size='small'
             value={tenureDataType}
@@ -292,7 +304,7 @@ export const WalthamHousingDelivery = ({
             </ToggleButton>
           </ToggleButtonGroup>
 
-          {/* {tenureTimeline?.includes(tenureYear) ? (
+          {tenureTimeline?.includes(tenureYear) ? (
             <TenureHousingMultiChart
               apiData={dataByTenureType}
               userTargetData={processedTargets}
@@ -301,7 +313,7 @@ export const WalthamHousingDelivery = ({
               }
               filteredTimeline={getFilteredTimeline(tenureTimeline, tenureYear)}
             />
-          ) : null} */}
+          ) : null}
         </ChartWrapper>
       </Grid>
     </Grid>
