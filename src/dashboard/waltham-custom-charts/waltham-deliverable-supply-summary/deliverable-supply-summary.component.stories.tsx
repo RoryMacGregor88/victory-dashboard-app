@@ -1,5 +1,5 @@
 import DeliverableSupplySummary from './deliverable-supply-summary.component';
-import * as MOCK_DATA from './mock-data';
+import * as MOCK_DATA from '../../../mocks/fixtures';
 
 export default {
   title: '~/dashboard/Waltham Forest/Charts/Deliverable Supply Summary',

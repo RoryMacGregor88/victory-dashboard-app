@@ -2,9 +2,9 @@ import { it, expect, describe } from 'vitest';
 
 import { render, screen } from '../../../test/test.utils';
 
-import { deliverableSupplySummaryTypes } from '../../waltham.constants';
+import { deliverableSupplySummaryTypes } from '../../../constants';
 import DeliverableSupplySummary from './deliverable-supply-summary.component';
-import * as MOCK_DATA from './mock-data';
+import * as MOCK_DATA from '../../../mocks/fixtures';
 
 // These tests are skipped deliberately as the component has been retired
 // TODO: invesigate this. Add back in?

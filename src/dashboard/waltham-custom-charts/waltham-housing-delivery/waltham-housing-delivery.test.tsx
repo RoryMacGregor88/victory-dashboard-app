@@ -1,6 +1,6 @@
 import { it, expect, describe, vi } from 'vitest';
 
-import { render, userEvent, screen } from '../../../test/test.utils';
+import { render, userEvent, screen, waitFor } from '../../../test/test.utils';
 
 import { WalthamHousingDelivery } from './waltham-housing-delivery.component';
 
@@ -21,7 +21,7 @@ describe('WalthamHousingDelivery', () => {
     setDashboardSettings = vi.fn();
   });
 
-  it.only('sets default values if no saved settings', () => {
+  it('sets default values if no saved settings', async () => {
     render(
       <WalthamHousingDelivery
         {...defaultData}
@@ -29,10 +29,12 @@ describe('WalthamHousingDelivery', () => {
       />
     );
 
-    expect(setDashboardSettings).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(setDashboardSettings).toHaveBeenCalledTimes(2);
+    });
 
     expect(
-      screen.getByRole('button', { name: '2015-2016 - 2019-2020' })
+      screen.getByRole('button', { name: '2018-2019 - 2022-2023' })
     ).toBeInTheDocument();
 
     expect(
@@ -45,6 +47,7 @@ describe('WalthamHousingDelivery', () => {
   it('defaults to user`s saved settings if present', () => {
     const settings = {
       tenureYear: 2018,
+      totalYear: 2019,
       tenureType: 'sociallyRented',
       tenureDateType: 'Net',
     };
@@ -91,11 +94,12 @@ describe('WalthamHousingDelivery', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Market for sale' })
     );
+
     await userEvent.click(screen.getByRole('option', { name: 'Social Rent' }));
 
     /** will update once as usual, then again to correct itself if invalid. */
     expect(setDashboardSettings).toHaveBeenCalledTimes(2);
-    expect(screen.getByText('2015-2016 - 2019-2020')).toBeInTheDocument();
+    expect(screen.getByText('2019-2020 - 2023-2024')).toBeInTheDocument();
   });
 
   it('calls setDashboardSettings function when filters are changed', async () => {
@@ -114,6 +118,6 @@ describe('WalthamHousingDelivery', () => {
       screen.getByRole('option', { name: 'Market for sale' })
     );
 
-    expect(setDashboardSettings).toHaveBeenCalledTimes(1);
+    expect(setDashboardSettings).toHaveBeenCalledTimes(2);
   });
 });

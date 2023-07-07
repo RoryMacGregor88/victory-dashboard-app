@@ -5,41 +5,27 @@ import { render, screen, waitFor } from '../../test/test.utils';
 import { server } from '../../mocks/server';
 
 import { DashboardWrapper } from './dashboard-wrapper.component';
+import { MOCK_USER } from '../../constants';
 
-const defaultRenderOptions = {
-  state: {
-    data: {
-      sources: [
-        {
-          source_id: 'some/test/source/1',
-          metadata: {
-            url: '',
-            application: {
-              orbis: {
-                dashboard_component: {
-                  name: 'LBWF Housing Delivery Dashboard',
-                },
-              },
-            },
-          },
-        },
-      ],
-    },
+const state = {
+  dashboard: {
+    mock_source_id: {},
+  },
+  accounts: {
+    user: MOCK_USER,
   },
 };
 
 describe('DashboardWrapper', () => {
-  it('renders the dashboard specified in metadata', async () => {
+  it('shows loadmask if all data not loaded', async () => {
     server.use(
       rest.get('*/api/*', (_, res, ctx) => res(ctx.status(200), ctx.json({})))
     );
 
-    render(<DashboardWrapper />, defaultRenderOptions);
+    render(<DashboardWrapper />, { state });
 
     await waitFor(() =>
-      expect(
-        screen.getByRole('heading', { name: 'LBWF Housing Delivery Dashboard' })
-      ).toBeInTheDocument()
+      expect(screen.getByTestId('loadmask')).toBeInTheDocument()
     );
   });
 });

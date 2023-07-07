@@ -230,7 +230,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
         alignItems='center'
         className={styles.header}
       >
-        <Typography variant='h2'>LBWF Housing Delivery Dashboard</Typography>
+        <Typography variant='h2'>Housing Delivery Dashboard</Typography>
         <div className={styles.headerButtons}>
           <Button size='small' onClick={handleExport}>
             {exportIsLoading ? (

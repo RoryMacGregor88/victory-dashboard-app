@@ -56,7 +56,7 @@ describe('Tooltip Utilities', () => {
     });
   });
 
-  describe.only('getStackDatumTotal', () => {
+  describe('getStackDatumTotal', () => {
     const testData = {
       key1: 100,
       key2: 200,

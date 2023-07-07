@@ -2,13 +2,13 @@ import { useMemo } from 'react';
 
 import { VictoryBar, VictoryStack } from 'victory';
 
-import { BaseChart } from '../../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../../charts/chart-wrapper.component';
-import { useChartTheme } from '../../../useChartTheme';
-import FlyoutTooltip from '../../../chartDashboard/FlyoutTooltip';
-import { labelsForArrayOfObjects } from '../../../chartDashboard/tooltips-utils';
-import { WalthamCustomLegend } from '../../../chartDashboard/waltham-custom-legend/waltham-custom-legend.component';
-import { deliverableSupplySummaryTypes } from '../../../chartDashboard/waltham.constants';
+import { BaseChart } from '../../charts/base-chart/base-chart.component';
+import { ChartWrapper } from '../../charts/chart-wrapper.component';
+import { useChartTheme } from '../../useChartTheme';
+import FlyoutTooltip from '../../FlyoutTooltip';
+import { labelsForArrayOfObjects } from '../../../dashboard/tooltip-utils/tooltips-utils';
+import { WalthamCustomLegend } from '../../../dashboard/waltham-custom-legend/waltham-custom-legend.component';
+import { deliverableSupplySummaryTypes } from '../../../constants';
 
 const DeliverableSupplySummary = ({ data }) => {
   const chartTheme = useChartTheme();

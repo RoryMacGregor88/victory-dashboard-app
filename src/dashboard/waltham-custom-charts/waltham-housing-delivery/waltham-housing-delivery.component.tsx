@@ -224,7 +224,7 @@ export const WalthamHousingDelivery = ({
     ),
     tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
 
-  /** setup/error catch for total chart */
+  /** setup/resset for total chart */
   useEffect(() => {
     if (!totalTimeline || totalTimeline.includes(totalYear)) {
       return;
@@ -233,7 +233,7 @@ export const WalthamHousingDelivery = ({
     }
   }, [totalTimeline, totalYear, updateDateFilter]);
 
-  /** setup/error catch for tenure chart */
+  /** setup/resset for tenure chart */
   useEffect(() => {
     if (!tenureTimeline || tenureTimeline.includes(tenureYear)) {
       return;

@@ -111,10 +111,8 @@ const TargetScreen = ({ onAddTargetsClick, selectedDataset, targets = {} }) => {
   const handleChange = (data) =>
     setTargetData((prev) => ({ ...prev, ...data }));
 
-  const handleSubmit = () => {
-    console.log('HIT');
+  const handleSubmit = () =>
     onAddTargetsClick({ [selectedDataset]: filterEmptyStrings(targetData) });
-  };
 
   return (
     <Grid item container component='form' onSubmit={handleSubmit}>

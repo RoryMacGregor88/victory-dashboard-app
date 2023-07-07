@@ -28,8 +28,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface PercentageArgs {
-  target: number;
-  progress: number;
+  target: number | undefined;
+  progress: number | undefined | null;
 }
 
 /**

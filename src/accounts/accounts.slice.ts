@@ -60,7 +60,7 @@ const baseSelector = (state: RootState) => state?.accounts;
 
 export const userSelector = createSelector(
   baseSelector,
-  (accounts) => accounts?.user
+  (accounts: AccountsState) => accounts?.user
 );
 
 export default accountsSlice.reducer;
