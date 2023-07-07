@@ -58,7 +58,7 @@ const ChartWrapper = ({
   classes = {},
   ...rest
 }) => {
-  const styles = useStyles({});
+  const styles = useStyles();
   const { header, paper } = classes;
   return (
     <Paper className={clsx(styles.paper, paper)} {...rest}>

@@ -35,7 +35,7 @@ const HousingApprovalsComponent = ({
   setDashboardSettings,
 }) => {
   const { walthamChartColors } = useChartTheme();
-  const styles = useStyles({});
+  const styles = useStyles();
 
   const [configuration, setConfiguration] = useState(
     settings?.approvalsGrantedDataType ?? HOUSING_APPROVAL_DATA_TYPES.monthly

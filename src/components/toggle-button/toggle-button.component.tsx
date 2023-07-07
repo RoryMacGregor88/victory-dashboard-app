@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
  * @param {import('@material-ui/lab').ToggleButtonProps} props
  */
 export const ToggleButton = ({ classes = {}, ...props }) => {
-  const styles = useStyles({});
+  const styles = useStyles();
   const { root, selected, disabled, sizeSmall, sizeLarge, ...rest } = classes;
 
   const combinedStyles = {

@@ -6,6 +6,7 @@ import store from './store';
 import App from './App.tsx';
 import theme from './themes/index.ts';
 
+/** mock server used to mimic the real backend that the dashboard uses in real life */
 const { worker } = await import('./mocks/browser.ts');
 worker.start();
 

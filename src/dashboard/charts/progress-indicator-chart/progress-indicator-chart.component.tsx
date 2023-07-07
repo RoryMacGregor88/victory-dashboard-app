@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
  * }} props
  */
 const ProgressIndicatorChart = ({ color, data, renderCenterDisplay }) => {
-  const styles = useStyles({});
+  const styles = useStyles();
   return (
     <ParentSize className={styles.parentSize}>
       {({ width }) => {

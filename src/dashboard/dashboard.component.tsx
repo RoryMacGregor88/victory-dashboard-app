@@ -52,6 +52,8 @@ import {
   ProgressionOfUnitsData,
   HousingApprovalsData,
 } from '../mocks/fixtures';
+// TODO: why does this work
+import { ExportData } from '~/mocks/fixtures/export_data';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -92,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 export const Dashboard: FC<{ sourceId: string }> = ({
   sourceId,
 }): ReactElement => {
-  const styles = useStyles({});
+  const styles = useStyles();
   const dispatch = useAppDispatch();
 
   /** all data, including 'name', 'version', etc */
@@ -205,25 +207,18 @@ export const Dashboard: FC<{ sourceId: string }> = ({
     closeDialog();
   };
 
-  const handleExport = () => {
-    console.log('Hello');
+  /**
+   * original function used an API client, not a manual fetch,
+   * but this was easier for demo purposes than hooking all that up
+   */
+  const handleExport = async () => {
+    setExportIsLoading(true);
+    const res = await fetch('/api/export/');
+    const exportData: ExportData = await res.json();
+
+    exportToCsv(exportData, 'mock-dashboard-data');
+    setExportIsLoading(false);
   };
-  // const handleExport = async () => {
-  //   setExportIsLoading(true);
-
-  //   const source_id = 'astrosat/wfc/export/latest';
-
-  //   const authToken = getAuthTokenForSource(authTokens, { source_id });
-  //   const url = `/${source_id}/`;
-
-  //   const data = await apiClient.dashboard.getDashboardData(url, {
-  //     headers: { Authorization: `Bearer ${authToken}` },
-  //   });
-
-  //   exportToCsv(data, 'wfc-dashboard-data');
-
-  //   setExportIsLoading(false);
-  // };
 
   return !isDataLoaded ? (
     <LoadMaskFallback />

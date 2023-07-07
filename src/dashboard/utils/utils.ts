@@ -2,6 +2,8 @@ import { WALTHAM_FILTER_RANGE, MIME_TYPE, EXTENSION } from '../../constants';
 
 import * as FileSaver from 'file-saver';
 import { utils, write } from 'xlsx';
+// TODO: why is this working
+import { ExportData } from '~/mocks/fixtures/export_data';
 
 /**
  * This function is necessary because the data entries do not always have the same
@@ -325,11 +327,8 @@ const GroupedWidthCalculator = (data, width) => {
 /**
  * takes an array of sub-arrays and creates a document for each parent
  * array, and a separate worksheet for each sub array.
- *
- * @param {{title: string, data: object[]}[]} data
- * @param {string} filename
  */
-const exportToCsv = (data, filename) => {
+const exportToCsv = (data: ExportData, filename) => {
   const sheets = data
     .map(({ title, data }) => ({ title, data: utils.json_to_sheet(data) }))
     .reduce((acc, { title, data }) => ({ ...acc, [title]: data }), {});

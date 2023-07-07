@@ -135,7 +135,7 @@ const ProgressIndicators = ({
   targets,
 }: ProgressIndicatorProps): JSX.Element => {
   const chartTheme = useChartTheme();
-  const styles = useStyles({});
+  const styles = useStyles();
 
   const tenureCurrentYear = tenureData.find((obj) => obj.startYear === 2022);
 

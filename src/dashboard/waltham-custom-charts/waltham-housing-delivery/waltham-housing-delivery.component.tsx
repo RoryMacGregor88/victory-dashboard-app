@@ -143,7 +143,7 @@ export const WalthamHousingDelivery = ({
   settings,
   setDashboardSettings,
 }: HousingDeliveryProps) => {
-  const styles = useStyles({});
+  const styles = useStyles();
 
   const [configuration, setConfiguration] = useState<Settings>({
     tenureType: settings?.tenureType ?? ALL_TENURE_TYPES,

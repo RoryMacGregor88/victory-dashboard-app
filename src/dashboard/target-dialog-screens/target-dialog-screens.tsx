@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 const DEFAULT_TEXT = 'Select Type of Target';
 
 const Wrapper = ({ children }) => {
-  const styles = useStyles({});
+  const styles = useStyles();
   return (
     <Grid
       container
@@ -52,7 +52,7 @@ const Wrapper = ({ children }) => {
  * }} props
  */
 const SelectScreen = ({ onNextClick }) => {
-  const styles = useStyles({});
+  const styles = useStyles();
   const [selectedDataset, setSelectedDataset] = useState(DEFAULT_TEXT);
   return (
     <Wrapper>
@@ -93,7 +93,7 @@ const SelectScreen = ({ onNextClick }) => {
  * }} props
  */
 const TargetScreen = ({ onAddTargetsClick, selectedDataset, targets = {} }) => {
-  const styles = useStyles({});
+  const styles = useStyles();
   const [targetData, setTargetData] = useState(targets);
   const [error, setError] = useState(undefined);
   const isDirty = targetData !== targets;
