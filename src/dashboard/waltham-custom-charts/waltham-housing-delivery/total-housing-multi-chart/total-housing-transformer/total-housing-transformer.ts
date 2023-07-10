@@ -14,13 +14,9 @@ export const totalHousingTransformer = (
   targets = {},
   filteredTimeline
 ) => {
-  if (!apiData) return;
+  if (!apiData || !filteredTimeline) return;
 
-  const hasTargets = !!Object.keys(targets).length;
-
-  const transformedTargets = hasTargets
-    ? userTargetTransformer(targets, filteredTimeline)
-    : null;
+  const transformedTargets = userTargetTransformer(targets, filteredTimeline);
 
   const transformedData = Object.values(
     filteredTimeline.reduce(

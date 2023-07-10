@@ -50,9 +50,13 @@ const HousingApprovalsComponent = ({
   const { walthamChartColors } = useChartTheme();
   const styles = useStyles();
 
-  const [configuration, setConfiguration] = useState(
-    settings?.approvalsGrantedDataType ?? HOUSING_APPROVAL_DATA_TYPES.monthly
-  );
+  /** select dropdowns and/or toggle buttons */
+  const [configuration, setConfiguration] = useState({
+    approvalsGrantedDataType:
+      settings?.approvalsGrantedDataType ?? HOUSING_APPROVAL_DATA_TYPES.monthly,
+  });
+
+  const { approvalsGrantedDataType } = configuration;
 
   const handleToggleClick = (
     _: unknown,
@@ -69,13 +73,12 @@ const HousingApprovalsComponent = ({
   };
 
   // TODO: how to type this?
-  const dataByType = useMemo(
-    () =>
-      lineDataTransformer(
-        data?.find((datum) => datum.name === configuration)?.data
-      ),
-    [data, configuration]
-  );
+  const dataByType = useMemo(() => {
+    const dataArray = data.find(
+      (datum) => datum.name === approvalsGrantedDataType
+    )?.data;
+    return lineDataTransformer(dataArray);
+  }, [data, approvalsGrantedDataType]);
 
   const apiLegendData: LegendData[] = [
     {
@@ -141,7 +144,7 @@ const HousingApprovalsComponent = ({
           <>
             <ToggleButtonGroup
               size='small'
-              value={configuration}
+              value={approvalsGrantedDataType}
               orientation='horizontal'
               onChange={handleToggleClick}
               className={styles.toggleButtonGroup}

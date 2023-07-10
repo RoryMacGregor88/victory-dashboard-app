@@ -14,19 +14,22 @@ import { WalthamCustomDateRange } from '../../waltham-custom-date-range/waltham-
 import { WalthamCustomLegend } from '../../waltham-custom-legend/waltham-custom-legend.component';
 import { yellowStyle } from '../../../constants';
 
+// TODO: already have a getFilteredData function for the other charts, why this one too?
+
 /**
  * @param {object[]} data
  * @param {number} year
  * @returns {object[]}
  */
 const getFilteredData = (data, year) => {
+  console.log('HIT');
   if (!data) return;
-  const currentYearObject = data.find(
-    (datum) => Number(datum.startYear) === year
-  );
+  const currentYearObject = data.find((datum) => datum.startYear === year);
   const index = data.indexOf(currentYearObject);
   return data.slice(index - 4, index + 1);
 };
+
+// TODO: extract to utils file, and tests
 
 /**
  * Non-matching pairs in API data/targets cannot be computed into
@@ -59,6 +62,8 @@ export const getPairedValues = (data, targets) => {
   );
 };
 
+const thisYear = new Date().getFullYear();
+
 /**
  * @param {{
  *  data: object[]
@@ -75,11 +80,13 @@ const AffordableHousingDelivery = ({
 }) => {
   const { walthamChartColors } = useChartTheme();
 
+  /** select dropdowns and/or toggle buttons */
   const [configuration, setConfiguration] = useState({
     affordableHousingTotalYear:
-      settings?.affordableHousingTotalYear ?? undefined,
+      settings?.affordableHousingTotalYear ?? thisYear,
   });
 
+  // TODO: I like this pattern better, more explicit than just 'configuration'. Change others to match
   const { affordableHousingTotalYear } = configuration;
 
   const apiLegendData = [
@@ -92,12 +99,12 @@ const AffordableHousingDelivery = ({
 
   const timeline = getDataTimeline(pairedData, pairedTargets);
 
-  const percentageData = computePercentages(
+  const percentageData = computePercentages({
     timeline,
     data,
     targets,
-    'Affordable Housing'
-  );
+    percentageProperty: 'Affordable Housing',
+  });
 
   const hasData = percentageData?.some((item) => !!item['Affordable Housing']);
 
@@ -119,7 +126,7 @@ const AffordableHousingDelivery = ({
     [setDashboardSettings]
   );
 
-  // setup/error catch for affordable housing chart
+  /** setup/reset for affordable housing chart */
   useEffect(() => {
     if (!timeline?.length || timeline.includes(affordableHousingTotalYear)) {
       return;
@@ -130,12 +137,14 @@ const AffordableHousingDelivery = ({
     }
   }, [affordableHousingTotalYear, timeline, updateDateFilter]);
 
-  const AffordableHousingLineChart = ({ width }) => {
+  const AffordableHousingLineChart = () => {
     if (!data) return null;
-    const filteredData = getFilteredData(
-      percentageData,
-      affordableHousingTotalYear
-    );
+
+    const showAllData = affordableHousingTotalYear === thisYear;
+
+    const filteredData = showAllData
+      ? percentageData
+      : getFilteredData(percentageData, affordableHousingTotalYear);
 
     if (!filteredData) return null;
 

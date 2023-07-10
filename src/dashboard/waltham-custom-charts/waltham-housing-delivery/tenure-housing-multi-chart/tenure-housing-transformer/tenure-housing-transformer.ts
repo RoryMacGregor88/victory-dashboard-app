@@ -16,15 +16,11 @@ export const tenureHousingTransformer = (
 ) => {
   if (!apiData) return;
 
-  const hasTargets = !!Object.keys(targets).length;
-
-  const transformedTargets = hasTargets
-    ? userTargetTransformer(targets, filteredTimeline)
-    : null;
+  const transformedTargets = userTargetTransformer(targets, filteredTimeline);
 
   const transformedData = filteredTimeline.map((year) => {
     const obj = apiData.find((datum) => datum.startYear === year);
-    // Victory does not work with number values, so must be stringified.
+    /** Victory does not work with number values, so must be stringified. */
     return obj
       ? { ...obj, startYear: String(obj.startYear) }
       : {
@@ -35,6 +31,8 @@ export const tenureHousingTransformer = (
           ),
         };
   });
+
+  // console.log('TEST: ', transformedData);
 
   return { transformedData, transformedTargets };
 };

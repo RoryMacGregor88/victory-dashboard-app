@@ -382,8 +382,16 @@ describe('Waltham Forest Data Transformers', () => {
       expect(result).toEqual(expected);
     });
 
-    it('returns undefined if no timeline or selected year', () => {
-      const result = getFilteredTimeline(undefined, undefined);
+    it('returns undefined if timeline is undefines', () => {
+      const result = getFilteredTimeline(undefined, '7');
+
+      expect(result).toBeUndefined();
+    });
+
+    it('returns undefined if selected year is undefined', () => {
+      const timeline = ['1', '2', '3', '4', '5', '6', '7'];
+
+      const result = getFilteredTimeline(timeline, undefined);
 
       expect(result).toBeUndefined();
     });

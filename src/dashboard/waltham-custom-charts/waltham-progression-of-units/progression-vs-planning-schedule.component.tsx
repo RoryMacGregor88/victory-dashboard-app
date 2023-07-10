@@ -27,6 +27,7 @@ const ProgressionVsPlanningSchedule = ({
 }) => {
   const chartTheme = useChartTheme();
 
+  /** select dropdowns and/or toggle buttons */
   const [configuration, setConfiguration] = useState(
     settings?.affordableHousingType ?? ALL_TYPES
   );
@@ -96,25 +97,24 @@ const ProgressionVsPlanningSchedule = ({
   const ProgressVsPlanningStackedChart = ({ width }) => {
     const barWidth = width / 20;
 
-    const ranges =
-      configuration === ALL_TYPES
-        ? progressVsPlanningRanges
-        : [progressionVsPlanningOptions[configuration]];
+    const showAllData = configuration === ALL_TYPES;
+
+    const ranges = showAllData
+      ? progressVsPlanningRanges
+      : [progressionVsPlanningOptions[configuration]];
 
     const x = 'Year';
 
-    // TODO: fix this
-    const filteredData = filterByType(
-      data,
-      configuration,
-      ALL_TYPES,
-      progressionVsPlanningOptions,
-      'Year'
-    );
+    const filteredData = showAllData
+      ? data
+      : filterByType({
+          data,
+          selectedType: configuration,
+        });
 
     return data ? (
       <VictoryStack>
-        {ranges?.map((range) => (
+        {ranges.map((range) => (
           <VictoryBar
             labelComponent={FlyoutTooltip()}
             key={range}

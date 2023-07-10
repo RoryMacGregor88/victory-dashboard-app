@@ -26,19 +26,24 @@ import {
   useWalthamSelectStyles,
 } from '../../waltham-custom-date-range/waltham-custom-date-range.component';
 
-import { housingTenureTypes, TENURE_DATA_TYPES } from '../../../constants';
+import {
+  housingTenureTypes,
+  TENURE_DATA_TYPES,
+  ALL_TENURE_TYPES,
+} from '../../../constants';
 import { TenureHousingMultiChart } from './tenure-housing-multi-chart/tenure-housing-multi-chart.component';
 import { TotalHousingMultiChart } from './total-housing-multi-chart/total-housing-multi-chart.component';
 import { ToggleButton, ToggleButtonGroup } from '../../../components';
 import {
-  Settings,
-  Targets,
-  UserOrbState,
-} from '../../../accounts/accounts.slice';
-import {
   TenureTypeHousingData,
   TotalHousingDeliveryData,
 } from '../../../mocks/fixtures';
+import {
+  HousingTenureTypes,
+  Settings,
+  Targets,
+  UserOrbState,
+} from '../../../types';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -68,19 +73,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type TenureDataType = 'Gross' | 'Net';
-
-const ALL_TENURE_TYPES = 'All Tenure Types';
-
-// TODO: toggle buttons are disabled and initialisation of Gross/Net in state is hardcoded to 'Gross' for now, because mock data contained Gross/Net data, but API does not. This may be re-instated in the future, so commenting out is better than removing only to code again later.
-
 interface TenureDataFilterProps {
   timeline: number[];
-  tenureYear: number;
-  tenureType: string;
-  housingTenureTypes: { [key: string]: string };
-  handleYearRangeSelect: (value: number) => void;
-  handleTenureTypeSelect: (value: string) => void;
+  tenureYear: Settings['tenureYear'];
+  tenureType: Settings['tenureType'];
+  housingTenureTypes: HousingTenureTypes;
+  handleYearRangeSelect: (year: number) => void;
+  handleTenureTypeSelect: (type: keyof HousingTenureTypes) => void;
 }
 
 const TenureDataFilter = ({
@@ -105,7 +104,7 @@ const TenureDataFilter = ({
         <Select
           value={tenureType}
           onChange={({ target: { value } }) =>
-            handleTenureTypeSelect(String(value))
+            handleTenureTypeSelect(value as keyof HousingTenureTypes)
           }
           classes={{ root, select }}
           disableUnderline
@@ -147,18 +146,21 @@ export const WalthamHousingDelivery = ({
 }: HousingDeliveryProps) => {
   const styles = useStyles();
 
-  const [configuration, setConfiguration] = useState<Settings>({
-    tenureType: settings?.tenureType,
+  type Configuration = Omit<Settings, 'approvalsGrantedDataType'>;
+
+  /** select dropdowns and/or toggle buttons */
+  const [configuration, setConfiguration] = useState<Configuration>({
+    tenureType: settings.tenureType ?? ALL_TENURE_TYPES,
     tenureDataType: TENURE_DATA_TYPES.gross,
-    tenureYear: settings?.tenureYear,
-    totalYear: settings?.totalYear,
+    tenureYear: settings.tenureYear,
+    totalYear: settings.totalYear,
   });
 
   const { tenureType, tenureDataType, tenureYear, totalYear } = configuration;
 
   // TODO: do we need 2 piece of state for this? Can they all just read from the dashboardSettings?
   const updateDateFilter = useCallback(
-    (newSettings: Settings) => {
+    (newSettings: Partial<Settings>) => {
       setConfiguration((prev) => ({
         ...prev,
         ...newSettings,
@@ -172,72 +174,67 @@ export const WalthamHousingDelivery = ({
     [setDashboardSettings]
   );
 
-  // TODO: enums for this stuff?
-  const handleTenureTypeSelect = (value: string) => {
+  const handleTenureTypeSelect = (value: keyof HousingTenureTypes) => {
     setConfiguration((prev) => ({ ...prev, tenureType: value }));
+
     setDashboardSettings((prev: UserOrbState) => ({
       ...prev,
       settings: { ...prev.settings, tenureType: value },
     }));
   };
 
-  const handleToggleClick = (_: SyntheticEvent, type: TenureDataType) => {
+  const handleToggleClick = (_: SyntheticEvent, type: 'Gross' | 'Net') => {
     setConfiguration((prev) => ({ ...prev, tenureDataType: type }));
+
     setDashboardSettings((prev: UserOrbState) => ({
       ...prev,
       settings: { ...prev.settings, tenureDataType: type },
     }));
   };
 
-  const processedTargets =
-    tenureType === ALL_TENURE_TYPES
-      ? getTargetTotals(targets)
-      : targets[tenureType ?? ALL_TENURE_TYPES];
+  const showAllData = tenureType === ALL_TENURE_TYPES;
 
+  const processedTargets = showAllData
+    ? getTargetTotals(targets)
+    : targets[tenureType];
+
+  // TODO: why is this one memoized, bit other is not? (Progression/Planning)
   const dataByTenureType = useMemo(
     () =>
-      filterByType(
-        tenureHousingDeliveryChartData,
-        tenureType,
-        ALL_TENURE_TYPES,
-        housingTenureTypes
-      ),
-    [tenureHousingDeliveryChartData, tenureType]
+      showAllData
+        ? tenureHousingDeliveryChartData
+        : filterByType<TenureTypeHousingData>({
+            data: tenureHousingDeliveryChartData,
+            selectedType: housingTenureTypes[tenureType],
+          }),
+    [tenureHousingDeliveryChartData, tenureType, showAllData]
   );
 
-  /**
-   * this is only here because mock data needs `startYear` split on
-   * the hyphen and coerced into a number
-   */
-  const adaptedTotalData = totalHousingDeliveryChartData?.map((obj) => {
-    const [startYear] = obj.startYear.split('-');
-    return Object.entries(obj).reduce(
-      (acc, [key, value]) => ({
-        ...acc,
-        [key]: key === 'startYear' ? Number(startYear) : value,
-      }),
-      {}
-    );
-  });
-
   const totalTimeline = getDataTimeline(
-      adaptedTotalData,
+      totalHousingDeliveryChartData,
       targets?.totalHousing
     ),
     tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
 
-  /** setup/resset for total chart */
+  /** setup/reset for total chart */
   useEffect(() => {
-    if (!totalTimeline || totalTimeline.includes(totalYear)) {
+    /** timeline hasn't built yet, or year is within timeline so no need to reset */
+    if (!totalTimeline || (totalYear && totalTimeline.includes(totalYear))) {
       return;
     } else {
-      updateDateFilter({ totalYear: totalTimeline[totalTimeline.length - 1] });
+      updateDateFilter({
+        totalYear: totalTimeline[totalTimeline.length - 1],
+      });
     }
   }, [totalTimeline, totalYear, updateDateFilter]);
 
-  /** setup/resset for tenure chart */
+  /** setup/reset for tenure chart */
   useEffect(() => {
-    if (!tenureTimeline || tenureTimeline.includes(tenureYear)) {
+    /** timeline hasn't built yet, or year is within timeline so no need to reset */
+    if (
+      !tenureTimeline ||
+      (tenureYear && tenureTimeline.includes(tenureYear))
+    ) {
       return;
     } else {
       updateDateFilter({
@@ -271,7 +268,7 @@ export const WalthamHousingDelivery = ({
             onSelect={(value: number) => updateDateFilter({ totalYear: value })}
           />
           <TotalHousingMultiChart
-            apiData={adaptedTotalData}
+            apiData={totalHousingDeliveryChartData}
             userTargetData={targets?.totalHousing}
             filteredTimeline={getFilteredTimeline(totalTimeline, totalYear)}
           />
@@ -286,7 +283,7 @@ export const WalthamHousingDelivery = ({
             tenureYear={tenureYear}
             tenureType={tenureType}
             housingTenureTypes={housingTenureTypes}
-            handleYearRangeSelect={(year: number) =>
+            handleYearRangeSelect={(year) =>
               updateDateFilter({ tenureYear: year })
             }
             handleTenureTypeSelect={handleTenureTypeSelect}
@@ -306,7 +303,7 @@ export const WalthamHousingDelivery = ({
             </ToggleButton>
           </ToggleButtonGroup>
 
-          {tenureTimeline?.includes(tenureYear) ? (
+          {tenureYear && tenureTimeline.includes(tenureYear) ? (
             <TenureHousingMultiChart
               apiData={dataByTenureType}
               userTargetData={processedTargets}

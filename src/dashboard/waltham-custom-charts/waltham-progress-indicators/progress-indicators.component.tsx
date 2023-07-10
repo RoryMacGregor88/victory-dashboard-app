@@ -17,11 +17,11 @@ import {
   TARGET_FONT_DEVISOR,
   ERROR_FONT_DEVISOR,
 } from '../../../constants';
-import { Targets } from '~/accounts/accounts.slice';
 import {
   TotalHousingDeliveryData,
   TenureTypeHousingData,
 } from '../../../mocks/fixtures';
+import { Targets } from '../../../types';
 
 const useStyles = makeStyles(() => ({
   header: { minHeight: '6ch' },
@@ -32,11 +32,15 @@ interface PercentageArgs {
   progress: number | undefined | null;
 }
 
+// TODO: test this? extract to utils file?
+
 /**
  * this prevents "Infinity%" values being shown, but
  * calculates any valid values, including zero
  */
 const getPercentage = ({ target, progress }: PercentageArgs) => {
+  if (!target) return null;
+
   if (progress === MIN_PERCENTAGE && target === MIN_PERCENTAGE) {
     /** target and progress are both zero, return 100% */
     return MAX_PERCENTAGE;
@@ -46,11 +50,9 @@ const getPercentage = ({ target, progress }: PercentageArgs) => {
   } else if (progress === MIN_PERCENTAGE) {
     /** progress is zero, return 0% */
     return MIN_PERCENTAGE;
-  } else if (!!progress && target > MIN_PERCENTAGE) {
+  } else if (progress && target > MIN_PERCENTAGE) {
     /** calculate percentage */
     return Math.round((progress / target) * MAX_PERCENTAGE);
-  } else {
-    return null;
   }
 };
 
@@ -133,38 +135,24 @@ const ProgressIndicators = ({
   totalData,
   tenureData,
   targets,
-}: ProgressIndicatorProps): JSX.Element => {
+}: ProgressIndicatorProps): JSX.Element | null => {
   const chartTheme = useChartTheme();
   const styles = useStyles();
 
-  const tenureCurrentYear = tenureData.find((obj) => obj.startYear === 2022);
+  const currentYear = new Date().getFullYear();
 
-  /**
-   * this is only here because mock data needs `startYear` split on
-   * the hyphen and coerced into a number
-   */
-  const adaptedTotalData = totalData?.map((obj) => {
-    const [startYear] = obj.startYear.split('-');
-    return Object.entries(obj).reduce(
-      (acc, [key, value]) => ({
-        ...acc,
-        [key]: key === 'startYear' ? Number(startYear) : value,
-      }),
-      {}
-    );
-  });
+  const tenureCurrentYear = tenureData.find(
+    (obj) => obj.startYear === currentYear
+  );
 
   /** 'Gross' values tallied up for last 5 years */
   const past5YearsTotal = useMemo(
     () =>
-      getPastYears().reduce(
-        (acc, cur) =>
-          (acc += adaptedTotalData.find((datum) => datum.startYear === cur)[
-            'Total Gross'
-          ]),
-        0
-      ),
-    [adaptedTotalData]
+      getPastYears().reduce((acc, year) => {
+        const match = totalData.find(({ startYear }) => startYear === year);
+        return (acc += match['Total Gross']);
+      }, 0),
+    [totalData]
   );
 
   /** data combined with user target for progress wheels */
@@ -172,69 +160,67 @@ const ProgressIndicators = ({
     () => [
       {
         ...PROGRESS_CHART_DATA.totalHousing,
-        target: getUser5YearTotals(targets?.totalHousing),
+        target: getUser5YearTotals(targets.totalHousing),
         progress: past5YearsTotal,
       },
       {
         ...PROGRESS_CHART_DATA.intermediate,
-        target: targets?.intermediateDelivery?.['2022'],
+        target: targets.intermediateDelivery?.[currentYear],
         progress: tenureCurrentYear?.['Intermediate'],
       },
       {
         ...PROGRESS_CHART_DATA.marketHousing,
-        target: targets?.marketHousing?.['2022'],
+        target: targets.marketHousing?.[currentYear],
         progress: tenureCurrentYear?.['Market for sale'],
       },
       {
         ...PROGRESS_CHART_DATA.socialRented,
-        target: targets?.sociallyRented?.['2022'],
+        target: targets.sociallyRented?.[currentYear],
         progress: tenureCurrentYear?.['Social Rent'],
       },
     ],
-    [past5YearsTotal, tenureCurrentYear, targets]
+    [past5YearsTotal, tenureCurrentYear, targets, currentYear]
   );
 
-  return (
+  return !targetData ? null : (
     <>
-      {targetData
-        ? targetData.map(({ target, progress, title, name, info }, i) => {
-            const percentage = getPercentage({ target, progress });
-            return (
-              <ChartWrapper
-                key={name}
-                title={title}
-                info={info}
-                classes={{ header: styles.header }}
-              >
-                <ProgressIndicatorChart
-                  color={chartTheme.colors[i]}
-                  data={[
-                    { x: 1, y: percentage ?? MIN_PERCENTAGE },
-                    {
-                      x: 2,
-                      y: MAX_PERCENTAGE - (percentage ?? MIN_PERCENTAGE),
-                    },
-                  ]}
-                  renderCenterDisplay={({
-                    radius,
-                    width,
-                  }: {
-                    radius: number;
-                    width: number;
-                  }): JSX.Element =>
-                    renderCenterDisplay({
-                      percentage,
-                      target,
-                      name,
-                      radius,
-                      width,
-                    })
-                  }
-                />
-              </ChartWrapper>
-            );
-          })
-        : null}
+      {targetData.map(({ target, progress, title, name, info }, i) => {
+        const percentage = getPercentage({ target, progress });
+        return (
+          <ChartWrapper
+            key={name}
+            title={title}
+            info={info}
+            classes={{ header: styles.header }}
+          >
+            <ProgressIndicatorChart
+              color={chartTheme.colors[i]}
+              data={[
+                { x: 1, y: percentage ?? MIN_PERCENTAGE },
+                {
+                  x: 2,
+                  y: MAX_PERCENTAGE - (percentage ?? MIN_PERCENTAGE),
+                },
+              ]}
+              renderCenterDisplay={({
+                radius,
+                width,
+              }: {
+                radius: number;
+                width: number;
+              }): JSX.Element =>
+                renderCenterDisplay({
+                  percentage,
+                  target,
+                  name,
+                  radius,
+                  width,
+                })
+              }
+            />
+          </ChartWrapper>
+        );
+      })}
     </>
   );
 };

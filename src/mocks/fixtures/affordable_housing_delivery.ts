@@ -44,6 +44,10 @@ const data: AffordableHousingData = [
     startYear: 2022,
     'Affordable Housing': 17,
   },
+  {
+    startYear: 2023,
+    'Affordable Housing': 37,
+  },
 ];
 
 export default data;

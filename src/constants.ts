@@ -1,16 +1,50 @@
+// TODO: make constants all uppercase
+
+import { HousingTenureTypes, TenureDataTypes } from './types';
+
 export const MOCK_USER = {
   orb_state: {
     mock_source_id: {
-      targets: {},
-      settings: {},
+      targets: {
+        totalHousing: {
+          2023: 350,
+          2022: 500,
+          2021: 610,
+          2020: 480,
+        },
+        intermediateDelivery: {
+          2023: 500,
+        },
+        marketHousing: {
+          2023: 500,
+        },
+        sociallyRented: {
+          2023: 500,
+        },
+        affordableHousingPercentage: {
+          2023: 100,
+          2022: 100,
+          2021: 100,
+          2020: 100,
+          2019: 100,
+          2018: 100,
+        },
+      },
+      settings: {
+        /** below types are fixed and can only be toggled between 2 values */
+        tenureDataType: 'Gross' as const,
+        approvalsGrantedDataType: 'Monthly' as const,
+      },
     },
   },
 };
 
 export const inputErrorMessage = 'Only number values are permitted.';
 
+export const ALL_TENURE_TYPES = 'All Tenure Types';
+
 /** live data tenure types */
-export const housingTenureTypes = {
+export const housingTenureTypes: HousingTenureTypes = {
   affordableHousing: 'Affordable Rent (not at LAR benchmark rents)',
   affordableHousingLondon: 'London Affordable Rent',
   intermediateDelivery: 'Intermediate',
@@ -36,12 +70,6 @@ export const progressionVsPlanningPalette = {
   'Behind Schedule': '#d6ea69',
   'On Track': '#05c3ff',
 };
-
-// TODO: don't like this, random types in constants files
-interface TenureDataTypes {
-  gross: 'Gross';
-  net: 'Net';
-}
 
 export const TENURE_DATA_TYPES: TenureDataTypes = {
   gross: 'Gross',

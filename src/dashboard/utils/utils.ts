@@ -2,29 +2,40 @@ import { WALTHAM_FILTER_RANGE, MIME_TYPE, EXTENSION } from '../../constants';
 
 import * as FileSaver from 'file-saver';
 import { utils, write } from 'xlsx';
-// TODO: why is this working
-import { ExportData } from '~/mocks/fixtures/export_data';
+import { Targets } from '../../types';
+import {
+  HousingApprovalsObjectArray,
+  TimelineData,
+  TransformedTargets,
+} from './types';
+import { ExportData } from '~/mocks/fixtures';
 
 /**
  * This function is necessary because the data entries do not always have the same
  * keys, and victory does not accept missing keys. It does however accept 'null'
  * values, so this fills any missing keys with 'null' so the data is usable.
  */
-const lineDataTransformer = (data) => {
+const lineDataTransformer = (
+  data: HousingApprovalsObjectArray
+): HousingApprovalsObjectArray | undefined => {
   if (!data) return;
 
-  /** create list of every key that appears across all data */
-  const uniqueKeys = [
-    ...new Set(data.reduce((acc, cur) => [...acc, ...Object.keys(cur)], [])),
-  ];
+  const allKeys = data.reduce((acc: string[], cur) => {
+    const keys = Object.keys(cur);
+    return [...acc, ...keys];
+  }, []);
+
+  const uniqueKeys = [...new Set(allKeys)];
 
   /**
-   * normalise each datum with every key, using data where it exists,
-   * and 'null' where it does not
+   * recreates each datum with every key from the list of unique keys,
+   * setting the values to data from datum where it exists, and'null'
+   * where it does not
    */
-  return data.map((obj) =>
-    uniqueKeys.reduce((acc, cur) => ({ ...acc, [cur]: obj[cur] ?? null }), {})
-  );
+  const padUniqueYears = (obj: HousingApprovalsObjectArray[number]) =>
+    uniqueKeys.reduce((acc, cur) => ({ ...acc, [cur]: obj[cur] ?? null }), {});
+
+  return data.map(padUniqueYears);
 };
 
 /**
@@ -33,7 +44,7 @@ const lineDataTransformer = (data) => {
  * a number on the frontend, which JavaScript type conversion reads as zero.
  * @param {object} data
  */
-const filterEmptyStrings = (data) => {
+const filterEmptyStrings = (data: unknown) => {
   // TODO: react hook form makes this obsolete
   if (!data) return;
 
@@ -49,63 +60,57 @@ const filterEmptyStrings = (data) => {
  * on a line chart, and converts any 'y' values from strings to numbers, as
  * Victory can only render number values, and will break with strings.
  *
- * If a timeline of string years is passed, it will return only values within
- * that timeline. If no timeline is passed, it will return all data.
+ * If a timeline of number years is passed, it will return only values within
+ * that timeline. If no timeline is passed, it will return all data unfiltered.
  *
  * If a timeline is provided, but the data falls outwith it, returns null.
- * @param {object} data
- * @param {number[]} timeline
- * @returns {{ x: string, y: number }[]|null}
  */
-const userTargetTransformer = (data, timeline) => {
-  if (!data) return;
+const userTargetTransformer = (
+  targetDataset: Targets[string],
+  timeline: number[]
+): TransformedTargets | null => {
+  if (!targetDataset) return null;
 
-  const result = Object.entries(data).reduce((acc, [key, value]) => {
-    const numYear = Number(key);
-    return !timeline || timeline.includes(numYear)
-      ? [...acc, { x: key, y: value }]
-      : acc;
-  }, []);
+  const transformedTargets = Object.entries(targetDataset).reduce(
+    (acc: TransformedTargets, [key, value]) => {
+      const numYear = Number(key);
+      return !timeline || timeline.includes(numYear)
+        ? [...acc, { x: key, y: value }]
+        : acc;
+    },
+    []
+  );
 
-  return result.length ? result : null;
+  return transformedTargets.length ? transformedTargets : null;
 };
 
 /**
- * This is here to reduce the totals for every year across multiple tenure types
- * into a single object consisting of year ranges and total number values.
- * @param {object} data
+ * This reduces the values for each year across multiple tenure types into
+ * a single object consisting of the year and the total number value.
  */
-const getTargetTotals = (data) => {
+const getTargetTotals = (data: Targets) => {
   if (!data) return;
 
-  // extract year/value objects, eg: [{ 2016: 123 }, { 2017: 456 }]
   return Object.entries(data).reduce(
-    (acc, [key, targets]) =>
-      key === 'totalHousing'
-        ? acc
-        : {
-            ...acc,
-            // create array of new objects with accumulated totals for values
-            ...Object.entries(targets)
-              .map(([year, target]) => {
-                let num = Number(target);
-                return { [year]: (num += acc[year] ?? 0) };
-              })
-              // reduce array of totals objects into a single object
-              .reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-          },
+    (acc: { [year: string]: number }, [key, tenureTargets]) => {
+      /** filter out 'totalHousing' object, as it is a separate totalled value */
+      if (key === 'totalHousing') return acc;
+
+      const yearTotal = Object.entries(tenureTargets)
+        .map(([year, value]) => ({ [year]: (value += acc[year] ?? 0) }))
+        /** reduce array of year/total objects into a single object */
+        .reduce((a, c) => ({ ...a, ...c }), {});
+
+      return { ...acc, ...yearTotal };
+    },
     {}
   );
 };
 
-/**
- * @param {number} years
- * @returns {number[]}
- */
 const getPastYears = (years = 5) => {
   const thisYear = new Date().getFullYear();
 
-  let yearRange = [];
+  let yearRange: number[] = [];
   for (let i = 0; i < years; i++) {
     yearRange = [...yearRange, thisYear - i];
   }
@@ -114,15 +119,14 @@ const getPastYears = (years = 5) => {
 };
 
 /**
- * This tallies up the user's 'total housing' target data for the last 5 years,
- * to be used in the progress wheels.
- * @param {object} obj
+ * This tallies up the user's 'total housing' target data for
+ * the last 5 years, to be used in the first progress wheel.
  */
-const getUser5YearTotals = (obj) => {
-  if (!obj || !Object.keys(obj).length) return;
+const getUser5YearTotals = (targetDataset: Targets[string]) => {
+  if (!targetDataset || !Object.keys(targetDataset).length) return;
 
   return getPastYears().reduce(
-    (acc, cur) => (acc += obj[cur] ? Number(obj[cur]) : 0),
+    (acc, year) => (acc += targetDataset[year] ?? 0),
     0
   );
 };
@@ -135,21 +139,21 @@ const getUser5YearTotals = (obj) => {
  * The timeline ranges from the earliest year in both datasets, to the
  * latest year in the api data, as was requested.
  *
- * Also pads up to a given constant, at a minimum.
- * @param {object[]} apiData
- * @param {object} targets
- * @returns {number[]}
+ * Also pads up to a minimum number of years.
  */
-const getDataTimeline = (apiData, targets = {}) => {
+const getDataTimeline = (apiData: TimelineData, targets = {}) => {
+  // TODO: do this for all?
   if (!apiData) return;
 
-  // if uninitiated by user, targets will be undefined, but
-  // defaulted to empty object
+  /**
+   * if uninitiated by user, targets will be undefined,
+   * but defaulted here to empty object
+   */
   const hasTargets = !!Object.keys(targets).length;
 
-  const apiYears = apiData.map((obj) => Number(obj.startYear));
+  const apiYears = apiData.map((obj) => obj.startYear);
 
-  // if targets is undefined, defaulted to object and will return empty array
+  /** if targets is undefined, defaulted to object and will return empty array */
   const targetYears = hasTargets
     ? Object.keys(targets).map((year) => Number(year))
     : [];
@@ -161,14 +165,13 @@ const getDataTimeline = (apiData, targets = {}) => {
 
   const yearRange = max - min;
 
-  // ensures a minimum year range displayed on charts
+  /** ensures a minimum year range displayed on charts */
   const startPoint =
     yearRange < WALTHAM_FILTER_RANGE
       ? min - (WALTHAM_FILTER_RANGE - yearRange)
       : min;
 
-  // TODO: reduce this?
-  let timeline = [];
+  let timeline: number[] = [];
   for (let i = startPoint; i <= max; i++) {
     timeline = [...timeline, i];
   }
@@ -176,40 +179,31 @@ const getDataTimeline = (apiData, targets = {}) => {
   return timeline;
 };
 
-/**
- * @param {object[]} chartData : all chart data
- * @param {string} selectedType : currently selected type
- * @param {string} allTypes: text for 'all of the above' option
- * @param {Object} mapping : object mapping selectedType values to names used in data
- * @param {string} yearField
- * @returns {object[]} : data filtered according to current filter
- */
-const filterByType = (
-  chartData,
+// TODO: type this properly
+interface FilterByTypeArgs<T, U> {
+  data: T;
+  selectedType: U;
+}
+
+const filterByType = <T extends T[number][]>({
+  data,
   selectedType,
-  allTypes,
-  mapping,
-  yearField = 'startYear'
-) => {
-  return selectedType === allTypes
-    ? chartData
-    : chartData?.map((datum) => ({
-        [yearField]: datum[yearField],
-        [mapping[selectedType]]: datum[mapping[selectedType]],
-      }));
+}: FilterByTypeArgs<T, keyof T[number]>) => {
+  // TODO: refactor this back to where it was
+  const test = data.map((datum: T[number]) => ({
+    startYear: datum.startYear,
+    [selectedType]: datum[selectedType],
+  }));
+  return test;
 };
 
-/**
- * @param {number[]} timeline
- * @param {number} selectedYear
- * @param {number} range
- * @returns {number[]}
- */
 const getFilteredTimeline = (
-  timeline,
-  selectedYear,
+  timeline: number[] | undefined,
+  selectedYear: number | undefined,
   range = WALTHAM_FILTER_RANGE
 ) => {
+  if (!timeline || !selectedYear) return;
+
   const index = timeline?.indexOf(selectedYear);
   return timeline?.slice(index - range, index + 1);
 };
@@ -221,30 +215,49 @@ const getFilteredTimeline = (
  * @param {string} targetProperty : target property in targets objects to use
  * @returns {object[]} : actual data, values replaced with percentages relative to target
  */
-const computePercentages = (timeline, data, targets, targetProperty) => {
-  // we return the data in the same shape as data, but values are
-  // replaced with the percentage relative to the corresponding target
-  // for years where data is zero, or target is zero, or both, then we use null // to prevent the chart from being misleading. This may result in gaps in the // chart
 
-  // No data points can be constructed if both datasets are not present
+interface ComputePercentagesArgs<T, U> {
+  timeline: number[];
+  data: T;
+  targets: Targets;
+  percentageProperty: U;
+}
+
+// TODO: this comment needs to be clearer
+const computePercentages = <T extends T[number][]>({
+  timeline,
+  data,
+  targets,
+  percentageProperty,
+}: ComputePercentagesArgs<T, keyof T[number]>) => {
+  /**
+   * we return the data in the same shape as data, but values are
+   * replaced with the percentage relative to the corresponding target
+   * for years where data is zero, or target is zero, or both, then we
+   * use null  to prevent the chart from being misleading. This may result
+   * in gaps in the  chart
+
+   * No data points can be constructed if both datasets are not present
+  */
   if (!data || !targets) return;
 
-  return timeline?.map((year) => {
-    const obj = data.find((datum) => datum.startYear === year) ?? {};
+  return timeline.map((year: number) => {
+    const obj: T[number] = data.find((datum) => datum.startYear === year) ?? {};
 
-    let percentage = null;
-    if (!!obj[targetProperty] && !!targets[obj.startYear]) {
-      percentage = Math.round(
-        (obj[targetProperty] / targets[obj.startYear]) * 100
-      );
-    }
+    const percentage =
+      obj[percentageProperty] && targets[obj.startYear]
+        ? Math.round((obj[percentageProperty] / targets[obj.startYear]) * 100)
+        : null;
+
     return {
       startYear: year.toString(),
-      [targetProperty]: percentage,
+      [percentageProperty]: percentage,
     };
   });
 };
 
+// TODO: this needs to go into where it is used, like the others
+// TODO: actually being used anywhere?
 /**
  * Generic Group Tranformer for Grouped Bar charts.
  * Reshapes data into the form expected by GroupedBarChart component.
@@ -252,44 +265,30 @@ const computePercentages = (timeline, data, targets, targetProperty) => {
  * Similar to the groupedDataTransformer in functionality, except that you don't need
  * to declare properties
  * Generic in the sense that it supports all properties (or just some)
- * @param {*} data
- * @param {string} groupColumn - name of column used for grouping (e.g. Year)
- * @param {array[string]} columns - list of columns we want to add (miss out to use all)
- * @returns
  */
-const GroupedDataTransformer = (
-  data,
-  groupColumn = 'Year',
-  requiredColumns = null
-) => {
-  const transformedData = [];
+const GroupedDataTransformer = (data, requiredColumns = null) => {
+  // TODO: change data so that it's just an object, not inside an array
   const datum = data[0];
 
-  const columns = requiredColumns ? requiredColumns : Object.keys(datum);
+  const columns = requiredColumns ?? Object.keys(datum);
 
-  // TODO: reduce this
-  columns.forEach((column) => {
-    if (column !== groupColumn) {
-      const series = data.map((cur) => {
-        return {
-          x: cur[groupColumn],
-          y: cur[column],
-        };
-      });
-      transformedData.push(series);
-    }
-  });
+  return columns.reduce((acc, cur) => {
+    const series = data.map((datum) => ({
+      x: datum.startYear,
+      y: datum[cur],
+    }));
 
-  return transformedData;
+    return [...acc, series];
+  }, []);
 };
 
 /**
  * Utilities to look at data and work out the width hints for bars.
  * For charts where groups (if any) are on the z axis use BaseWidthCalculator
- * For grouped charts, where groups appear side-by-side on x axis, use GroupedWidthCalculator
- * @param {*} data
+ * For grouped charts, where groups appear side-by-side on x axis, use
+ * GroupedWidthCalculator
  */
-const BaseWidthCalculator = (data, width) => ({
+const BaseWidthCalculator = (data: object[]) => ({
   barWidth: 100.0 / data.length,
   offset: 0,
 });
@@ -328,7 +327,7 @@ const GroupedWidthCalculator = (data, width) => {
  * takes an array of sub-arrays and creates a document for each parent
  * array, and a separate worksheet for each sub array.
  */
-const exportToCsv = (data: ExportData, filename) => {
+const exportToCsv = (data: ExportData, filename: string) => {
   const sheets = data
     .map(({ title, data }) => ({ title, data: utils.json_to_sheet(data) }))
     .reduce((acc, { title, data }) => ({ ...acc, [title]: data }), {});
