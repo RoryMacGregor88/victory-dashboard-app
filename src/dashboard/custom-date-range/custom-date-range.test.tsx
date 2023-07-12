@@ -2,7 +2,7 @@ import { it, expect, describe, vi } from 'vitest';
 
 import { render, screen, userEvent } from '../../test/test.utils';
 
-import { WalthamCustomDateRange } from './waltham-custom-date-range.component';
+import { WalthamCustomDateRange } from './custom-date-range.component';
 
 const testTimeline = [2010, 2011, 2012, 2013, 2014, 2015, 2016];
 

@@ -3,7 +3,7 @@ import { render, screen, userEvent } from '../../test/test.utils';
 import { ChartWrapper } from './chart-wrapper.component';
 
 const TITLE = 'Test Title';
-const INFO = 'It is a test info message';
+const INFO = 'Test info message';
 
 describe('< ChartWrapper/>', () => {
   it('should render the title', () => {
@@ -12,6 +12,7 @@ describe('< ChartWrapper/>', () => {
         <div>Test Children</div>
       </ChartWrapper>
     );
+
     expect(
       screen.getByRole('heading', { name: 'Test Title' })
     ).toBeInTheDocument();
@@ -23,15 +24,17 @@ describe('< ChartWrapper/>', () => {
         <div>Test Children</div>
       </ChartWrapper>
     );
+
     expect(screen.getByRole('img', { name: 'Info' })).toBeInTheDocument();
   });
 
-  it('should not render the info icon when info prop is not pass ', () => {
+  it('should not render the info icon when info prop not present', () => {
     render(
       <ChartWrapper title={TITLE}>
         <div>Test Children</div>
       </ChartWrapper>
     );
+
     expect(screen.queryByRole('img', { name: 'Info' })).not.toBeInTheDocument();
   });
 

@@ -13,7 +13,7 @@ import { StyledParentSize } from '../../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../../useChartTheme';
 import FlyoutTooltip from '../../../FlyoutTooltip';
 import { getStackDatumTotal } from '../../../tooltip-utils/tooltips-utils';
-import { WalthamCustomLegend } from '../../../waltham-custom-legend/waltham-custom-legend.component';
+import { WalthamCustomLegend } from '../../../custom-legend/custom-legend.component';
 import { TARGET_LEGEND_DATA, housingTenureTypes } from '../../../../constants';
 
 import { tenureHousingTransformer } from './tenure-housing-transformer/tenure-housing-transformer';

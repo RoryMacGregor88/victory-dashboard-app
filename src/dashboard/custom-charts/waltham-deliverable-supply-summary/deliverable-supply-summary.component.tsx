@@ -7,7 +7,7 @@ import { ChartWrapper } from '../../charts/chart-wrapper.component';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
 import { labelsForArrayOfObjects } from '../../../dashboard/tooltip-utils/tooltips-utils';
-import { WalthamCustomLegend } from '../../../dashboard/waltham-custom-legend/waltham-custom-legend.component';
+import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
 import { deliverableSupplySummaryTypes } from '../../../constants';
 
 const DeliverableSupplySummary = ({ data }) => {

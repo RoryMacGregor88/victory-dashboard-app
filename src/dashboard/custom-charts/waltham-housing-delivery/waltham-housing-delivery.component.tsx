@@ -24,7 +24,7 @@ import {
 import {
   WalthamCustomDateRange,
   useWalthamSelectStyles,
-} from '../../waltham-custom-date-range/waltham-custom-date-range.component';
+} from '../../custom-date-range/custom-date-range.component';
 
 import {
   housingTenureTypes,

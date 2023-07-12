@@ -1,27 +1,29 @@
-import { Paper, Typography, lighten, makeStyles } from '@material-ui/core';
+import {
+  Paper,
+  Typography,
+  lighten,
+  makeStyles,
+  Grid,
+} from '@material-ui/core';
 
 import { Skeleton } from '@material-ui/lab';
 
 import clsx from 'clsx';
 
 import { InfoButtonTooltip } from '../../components/info-button-tooltip/info-button-tooltip.component';
+import { ReactNode } from 'react';
+import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 
 const useStyles = makeStyles((theme) => ({
   info: {
     marginLeft: theme.spacing(2),
   },
   paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
     backgroundColor: lighten(theme.palette.background.default, 0.055),
     padding: theme.spacing(3),
     width: '100%',
   },
   header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
     marginBottom: theme.spacing(2),
   },
 }));
@@ -41,28 +43,42 @@ const skeletonStyles = makeStyles((theme) => ({
   },
 }));
 
-/**
- * @param {{
- * children: React.ReactNode
- * title: string
- * titleSize?: string
- * info?: string
- * classes?: object
- * }} props
- */
+interface Props {
+  children: ReactNode;
+  title: string;
+  titleSize?: 'small' | 'medium' | 'large';
+  info?: string;
+  classes?: Partial<ClassNameMap<'paper' | 'header'>>;
+}
+
 const ChartWrapper = ({
   children,
   title,
   titleSize = 'medium',
   info,
-  classes = {},
+  classes,
   ...rest
-}) => {
+}: Props) => {
   const styles = useStyles();
-  const { header, paper } = classes;
   return (
-    <Paper className={clsx(styles.paper, paper)} {...rest}>
-      <div className={clsx(styles.header, header)}>
+    <Grid
+      item
+      container
+      direction='column'
+      justifyContent='space-between'
+      alignItems='baseline'
+      wrap='nowrap'
+      component={Paper}
+      className={clsx(styles.paper, classes?.paper)}
+      {...rest}
+    >
+      <Grid
+        item
+        container
+        justifyContent='space-between'
+        wrap='nowrap'
+        className={clsx(styles.header, classes?.header)}
+      >
         <Typography
           component='h3'
           variant={titleSize === 'small' ? 'h4' : 'h2'}
@@ -76,15 +92,14 @@ const ChartWrapper = ({
             iconButtonClassName={styles.info}
           />
         ) : null}
-      </div>
+      </Grid>
       {children}
-    </Paper>
+    </Grid>
   );
 };
 
-export const ChartWrapperSkeleton = ({ children }) => {
+export const ChartWrapperSkeleton = ({ children }: { children: ReactNode }) => {
   const styles = skeletonStyles();
-
   return (
     <Paper className={styles.paper}>
       <span className={styles.heading}>

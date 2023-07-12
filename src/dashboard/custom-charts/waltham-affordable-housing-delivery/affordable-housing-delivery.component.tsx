@@ -10,8 +10,8 @@ import { StyledParentSize } from '../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
 import { getDataTimeline, computePercentages } from '../../utils/utils';
-import { WalthamCustomDateRange } from '../../waltham-custom-date-range/waltham-custom-date-range.component';
-import { WalthamCustomLegend } from '../../waltham-custom-legend/waltham-custom-legend.component';
+import { WalthamCustomDateRange } from '../../custom-date-range/custom-date-range.component';
+import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
 import { yellowStyle } from '../../../constants';
 
 // TODO: already have a getFilteredData function for the other charts, why this one too?

@@ -1,8 +1,10 @@
-import { makeStyles } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 
 import { ParentSize } from '@visx/responsive';
 import { VictoryAnimation, VictoryPie } from 'victory';
+import CenterDisplay from './center-display/center-display.component';
+import { ProgressIndicatorData } from '../../../types';
 
 const useStyles = makeStyles((theme) => ({
   parentSize: {
@@ -13,21 +15,27 @@ const useStyles = makeStyles((theme) => ({
     fill: theme.palette.background.default,
   },
   skeleton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     margin: `${theme.spacing(2)} 0`,
   },
 }));
 
-/**
- * @param {{
- * color: string,
- * data: {x: number, y: number}[],
- * renderCenterDisplay: function
- * }} props
- */
-const ProgressIndicatorChart = ({ color, data, renderCenterDisplay }) => {
+// TODO: formidable.com/open-source/victory/docs/victory-animation/
+
+interface Props {
+  color: string;
+  data: ProgressIndicatorData;
+  percentage: number | null;
+  target: number | null;
+  name: string;
+}
+
+const ProgressIndicatorChart = ({
+  color,
+  data,
+  percentage,
+  target,
+  name,
+}: Props) => {
   const styles = useStyles();
   return (
     <ParentSize className={styles.parentSize}>
@@ -66,12 +74,15 @@ const ProgressIndicatorChart = ({ color, data, renderCenterDisplay }) => {
               }}
             />
             <VictoryAnimation duration={1000}>
-              {() =>
-                renderCenterDisplay({
-                  radius,
-                  width,
-                })
-              }
+              {() => (
+                <CenterDisplay
+                  percentage={percentage}
+                  target={target}
+                  name={name}
+                  radius={radius}
+                  width={width}
+                />
+              )}
             </VictoryAnimation>
           </svg>
         );
@@ -80,13 +91,20 @@ const ProgressIndicatorChart = ({ color, data, renderCenterDisplay }) => {
   );
 };
 
-const ProgressIndicatorChartSkeleton = () => {
+// TODO: use this or ditch?
+export const ProgressIndicatorChartSkeleton = () => {
   const styles = useStyles();
   return (
-    <div className={styles.skeleton}>
+    <Grid
+      item
+      container
+      alignItems='center'
+      justifyContent='center'
+      className={styles.skeleton}
+    >
       <Skeleton variant='circle' width='8rem' height='8rem' />
-    </div>
+    </Grid>
   );
 };
 
-export { ProgressIndicatorChart, ProgressIndicatorChartSkeleton };
+export default ProgressIndicatorChart;

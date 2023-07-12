@@ -100,6 +100,6 @@ export const chartDataSelector = (sourceId: string, datasetName: string) =>
   createSelector(baseSelector, (state) => state[sourceId]?.[datasetName]);
 
 export const userOrbStateSelector = (sourceId: string) =>
-  createSelector(userSelector, (user) => user.orb_state[sourceId] ?? {});
+  createSelector(userSelector, (user) => user.orb_state[sourceId]);
 
 export default dashboardSlice.reducer;

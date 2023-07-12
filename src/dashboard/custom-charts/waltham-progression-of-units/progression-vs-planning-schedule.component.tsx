@@ -11,8 +11,8 @@ import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
 import { getStackDatumTotal } from '../../tooltip-utils/tooltips-utils';
 import { filterByType } from '../../utils/utils';
-import { useWalthamSelectStyles } from '../../waltham-custom-date-range/waltham-custom-date-range.component';
-import { WalthamCustomLegend } from '../../waltham-custom-legend/waltham-custom-legend.component';
+import { useWalthamSelectStyles } from '../../custom-date-range/custom-date-range.component';
+import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
 import {
   progressionVsPlanningTypes,
   progressionVsPlanningOptions,

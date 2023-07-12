@@ -9,7 +9,7 @@ import { StyledParentSize } from '../../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../../../dashboard/useChartTheme';
 import { GroupedWidthCalculator } from '../../../utils/utils';
 import FlyoutTooltip from '../../../FlyoutTooltip';
-import { WalthamCustomLegend } from '../../../waltham-custom-legend/waltham-custom-legend.component';
+import { WalthamCustomLegend } from '../../../custom-legend/custom-legend.component';
 import { TENURE_DATA_TYPES, TARGET_LEGEND_DATA } from '../../../../constants';
 
 import { totalHousingTransformer } from './total-housing-transformer/total-housing-transformer';

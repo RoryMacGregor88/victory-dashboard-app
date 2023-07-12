@@ -12,36 +12,27 @@ export type Targets = {
   [datasetName: string]: {
     [year: string]: number;
   };
-};
-
-/** 'tenureType' is defaulted, so is always a string */
-// export type Settings = {
-//   tenureType: keyof HousingTenureTypes;
-//   tenureDataType: keyof TenureDataTypes;
-//   tenureYear?: number;
-//   totalYear?: number;
-//   approvalsGrantedDataType: 'Monthly' | 'Cumulative';
-// };
+} | null;
 
 export type Settings = {
-  tenureType: string;
-  tenureDataType: 'Gross' | 'Net';
+  tenureType?: string;
+  tenureDataType?: 'Gross' | 'Net';
   tenureYear?: number;
   totalYear?: number;
-  approvalsGrantedDataType: 'Monthly' | 'Cumulative';
-};
+  approvalsGrantedDataType?: 'Monthly' | 'Cumulative';
+} | null;
 
 export type UserOrbState = {
   targets: Targets;
   settings: Settings;
 };
 
-export type ChartData =
-  | AffordableHousingData
-  | HousingApprovalsData
-  | ProgressionOfUnitsData
-  | TenureTypeHousingData
-  | TotalHousingDeliveryData;
+/** all individual datasets satisfy ChartData type */
+export type ChartData = AffordableHousingData &
+  HousingApprovalsData &
+  ProgressionOfUnitsData &
+  TenureTypeHousingData &
+  TotalHousingDeliveryData;
 
 export type ChartMetadata = {
   sourceId: string;
@@ -62,3 +53,8 @@ export type TenureDataTypes = {
   gross: 'Gross';
   net: 'Net';
 };
+
+export type ProgressIndicatorData = {
+  x: number;
+  y: number;
+}[];

@@ -25,11 +25,11 @@ import {
   SelectScreen,
   TargetScreen,
 } from './target-dialog-screens/target-dialog-screens';
-import { AffordableHousingDelivery } from './waltham-custom-charts/waltham-affordable-housing-delivery/affordable-housing-delivery.component';
-import { HousingApprovalsComponent } from './waltham-custom-charts/waltham-housing-approvals/housing-approvals.component';
-import { WalthamHousingDelivery } from './waltham-custom-charts/waltham-housing-delivery/waltham-housing-delivery.component';
-import { ProgressIndicators } from './waltham-custom-charts/waltham-progress-indicators/progress-indicators.component';
-import ProgressionVsPlanningSchedule from './waltham-custom-charts/waltham-progression-of-units/progression-vs-planning-schedule.component';
+import { AffordableHousingDelivery } from './custom-charts/waltham-affordable-housing-delivery/affordable-housing-delivery.component';
+import { HousingApprovalsComponent } from './custom-charts/waltham-housing-approvals/housing-approvals.component';
+import { WalthamHousingDelivery } from './custom-charts/waltham-housing-delivery/waltham-housing-delivery.component';
+import ProgressIndicators from './custom-charts/progress-indicators/progress-indicators.component';
+import ProgressionVsPlanningSchedule from './custom-charts/waltham-progression-of-units/progression-vs-planning-schedule.component';
 import { walthamApiMetadata, targetDatasets } from '../constants';
 import { userSelector } from '../accounts/accounts.slice';
 
@@ -46,24 +46,20 @@ import { ChartMetadata, Targets, UserOrbState } from '../types';
 
 const useStyles = makeStyles((theme) => ({
   header: {
-    padding: '2rem',
+    padding: theme.spacing(4),
     borderBottom: `1px solid ${theme.palette.primary.main}`,
     backgroundColor: theme.palette.background.default,
   },
   headerButtons: {
-    display: 'flex',
-    gap: '1rem',
+    gap: theme.spacing(2),
+    width: 'fit-content',
   },
   content: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    padding: '2rem',
+    padding: theme.spacing(4),
     backgroundColor: theme.palette.background.default,
   },
   progressIndicators: {
-    display: 'flex',
-    gap: '1rem',
+    gap: theme.spacing(2),
   },
   planningProgression: {
     height: 'fit-content',
@@ -71,18 +67,10 @@ const useStyles = makeStyles((theme) => ({
   bottomChartContainer: {
     display: 'grid',
     gridTemplateColumns: '1fr 2fr',
-    gap: '1rem',
-  },
-  columnCharts: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
   },
 }));
 
-export const Dashboard: FC<{ sourceId: string }> = ({
-  sourceId,
-}): JSX.Element => {
+export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
   const styles = useStyles();
   const dispatch = useAppDispatch();
 
@@ -103,35 +91,42 @@ export const Dashboard: FC<{ sourceId: string }> = ({
       chartDataSelector(sourceId, 'AffordableHousingDelivery')
     );
 
-  const isDataLoaded =
-    approvalsGranted &&
-    progressionVsPlanning &&
-    tenureHousingDelivery &&
-    totalHousingDelivery &&
-    affordableHousingDelivery;
-
   const user = useAppSelector(userSelector);
-
-  // TODO: need a selector if already have a user selector?
   const userOrbState = useAppSelector(userOrbStateSelector(sourceId));
 
-  const { targets, settings } = userOrbState;
-
   const [dashboardSettings, setDashboardSettings] = useState<UserOrbState>({
-    targets: {},
-    settings: {},
+    targets: null,
+    settings: null,
   });
 
+  const { targets, settings } = dashboardSettings;
+
   const [selectedDataset, setSelectedDataset] = useState<string | null>(null);
-  // TODO: why not one of these for settings? Do we need 2 pieces of state for this?
-  const [localTargets, setLocalTargets] = useState<Targets>(targets);
   const [targetDialogVisible, setTargetDialogVisible] = useState(false);
   const [exportIsLoading, setExportIsLoading] = useState(false);
 
   const dashboardSettingsRef = useRef(dashboardSettings);
 
+  // TODO: don't need this if using skeletons
+  const dataIsLoaded =
+    approvalsGranted &&
+    progressionVsPlanning &&
+    tenureHousingDelivery &&
+    totalHousingDelivery &&
+    affordableHousingDelivery &&
+    targets &&
+    settings;
+
+  /** initialise dashboardSettings in state when fetched */
+  useEffect(() => {
+    if (!targets && !settings) {
+      setDashboardSettings(userOrbState);
+    }
+  }, [settings, targets, userOrbState]);
+
   const updateWalthamOrbState = useCallback(
     (data: UserOrbState) => {
+      // TODO: why the guard?
       if (user) {
         dispatch(updateUserDashboardConfig({ user, sourceId, data }));
       }
@@ -154,13 +149,13 @@ export const Dashboard: FC<{ sourceId: string }> = ({
   /** 1. listener func must be reusable so that it can also be removed */
   /** 2. must check changes have been made to prevent firing every time */
   const saveSettingsHandler = useCallback(() => {
-    const changesMade = Object.values(dashboardSettingsRef.current).some(
-      (obj) => !!Object.keys(obj).length
+    const valuesObjects = Object.values(dashboardSettingsRef.current);
+
+    const changesMade = valuesObjects.some(
+      (obj) => !!Object.keys(obj ?? {}).length
     );
 
-    return changesMade
-      ? updateWalthamOrbState(dashboardSettingsRef.current)
-      : null;
+    if (changesMade) updateWalthamOrbState(dashboardSettingsRef.current);
   }, [updateWalthamOrbState]);
 
   // update dashboardSettingsRef to be used in saving dashboard settings every
@@ -188,7 +183,6 @@ export const Dashboard: FC<{ sourceId: string }> = ({
   };
 
   const handleAddTargetsClick = (newTargets: Targets) => {
-    setLocalTargets((prev) => ({ ...prev, ...newTargets }));
     setDashboardSettings((prev) => ({
       ...prev,
       targets: { ...prev.targets, ...newTargets },
@@ -209,7 +203,9 @@ export const Dashboard: FC<{ sourceId: string }> = ({
     setExportIsLoading(false);
   };
 
-  return !isDataLoaded ? (
+  // TODO: use skeletons instead of loadmask? Maybe leave until later?
+
+  return !dataIsLoaded ? (
     <LoadMaskFallback />
   ) : (
     <>
@@ -217,10 +213,11 @@ export const Dashboard: FC<{ sourceId: string }> = ({
         container
         justifyContent='space-between'
         alignItems='center'
+        wrap='nowrap'
         className={styles.header}
       >
         <Typography variant='h2'>Housing Delivery Dashboard</Typography>
-        <div className={styles.headerButtons}>
+        <Grid item container className={styles.headerButtons}>
           <Button size='small' onClick={handleExport}>
             {exportIsLoading ? (
               <CircularProgress size={20} color='inherit' />
@@ -231,28 +228,38 @@ export const Dashboard: FC<{ sourceId: string }> = ({
           <Button size='small' onClick={() => setTargetDialogVisible(true)}>
             Add Targets
           </Button>
-        </div>
+        </Grid>
       </Grid>
 
-      <div className={styles.content}>
-        <div className={styles.progressIndicators}>
+      <Grid item container direction='column' className={styles.content}>
+        <Grid
+          item
+          container
+          wrap='nowrap'
+          className={styles.progressIndicators}
+        >
           <ProgressIndicators
             totalData={totalHousingDelivery}
             tenureData={tenureHousingDelivery}
-            targets={localTargets}
+            targets={targets}
           />
-        </div>
+        </Grid>
 
-        <WalthamHousingDelivery
+        {/* <WalthamHousingDelivery
           totalHousingDeliveryChartData={totalHousingDelivery}
           tenureHousingDeliveryChartData={tenureHousingDelivery}
-          targets={localTargets}
+          targets={targets}
           settings={settings}
           setDashboardSettings={setDashboardSettings}
-        />
+        /> */}
 
-        <div className={styles.bottomChartContainer}>
-          <div className={styles.columnCharts}>
+        {/* <Grid
+          item
+          container
+
+          className={styles.bottomChartContainer}
+        >
+          <Grid item container direction='column'>
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
@@ -260,11 +267,11 @@ export const Dashboard: FC<{ sourceId: string }> = ({
             />
             <AffordableHousingDelivery
               data={affordableHousingDelivery}
-              targets={localTargets?.affordableHousingPercentage}
+              targets={targets?.affordableHousingPercentage}
               settings={settings}
               setDashboardSettings={setDashboardSettings}
             />
-          </div>
+          </Grid>
 
           <HousingApprovalsComponent
             x='Month'
@@ -275,8 +282,8 @@ export const Dashboard: FC<{ sourceId: string }> = ({
             settings={settings}
             setDashboardSettings={setDashboardSettings}
           />
-        </div>
-      </div>
+        </Grid> */}
+      </Grid>
 
       <Dialog
         maxWidth='md'
@@ -294,7 +301,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({
                 handleAddTargetsClick(targets)
               }
               selectedDataset={selectedDataset}
-              targets={localTargets?.[selectedDataset]}
+              targets={targets?.[selectedDataset]}
             />
           ) : (
             <SelectScreen

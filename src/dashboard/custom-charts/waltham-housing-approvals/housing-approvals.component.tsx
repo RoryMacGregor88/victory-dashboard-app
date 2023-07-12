@@ -10,7 +10,7 @@ import { ChartWrapper } from '../../charts/chart-wrapper.component';
 import { StyledParentSize } from '../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
-import { WalthamCustomLegend } from '../../waltham-custom-legend/waltham-custom-legend.component';
+import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
 import { HOUSING_APPROVAL_DATA_TYPES } from '../../../constants';
 
 import { lineDataTransformer } from '../../utils/utils';

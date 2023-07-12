@@ -1,11 +1,8 @@
-import { screen, render } from '../../../test/test.utils';
+import { describe, it } from 'vitest';
 
-import {
-  getPercentage,
-  renderCenterDisplay,
-} from './progress-indicators.component';
+import { getPercentage } from './utils';
 
-describe('WFC progress indicators', () => {
+describe('progress indicator utils', () => {
   describe('getPercentage', () => {
     it('calculates percentage values', () => {
       const percentage = getPercentage({ target: 400, progress: 100 });
@@ -50,27 +47,6 @@ describe('WFC progress indicators', () => {
     it('returns null when progress is NaN', () => {
       const percentage = getPercentage({ target: 400, progress: NaN });
       expect(percentage).toBeNull();
-    });
-  });
-
-  describe('renderCenterDisplay', () => {
-    it('renders a percentage value and target text', () => {
-      render(renderCenterDisplay({ percentage: 25, target: 100 }));
-
-      expect(screen.getByText('25%')).toBeInTheDocument();
-      expect(screen.getByText('Target 100 Units')).toBeInTheDocument();
-    });
-
-    it('displays error state when no percentage provided', () => {
-      render(
-        renderCenterDisplay({
-          percentage: null,
-          target: 100,
-          name: 'Test Name',
-        })
-      );
-
-      expect(screen.getByText('Test Name Target Required')).toBeInTheDocument();
     });
   });
 });

@@ -8,7 +8,7 @@ const MOCK_LOCATION = {
   search: `?${SOURCE_ID}=mock_source_id`,
 };
 
-const DashboardWrapper = (): JSX.Element | null => {
+const DashboardWrapper = () => {
   const location = MOCK_LOCATION;
   const searchParams = new URLSearchParams(location.search);
   const sourceId = searchParams.get(SOURCE_ID);
