@@ -22,15 +22,15 @@ import {
   userOrbStateSelector,
 } from './dashboard-slice/dashboard.slice';
 import {
-  SelectScreen,
-  TargetScreen,
+  SelectForm,
+  TargetForm,
 } from './target-dialog-screens/target-dialog-screens';
-import { AffordableHousingDelivery } from './custom-charts/waltham-affordable-housing-delivery/affordable-housing-delivery.component';
+import { AffordableHousingDelivery } from './custom-charts/affordable-housing-delivery/affordable-housing-delivery.component';
 import { HousingApprovalsComponent } from './custom-charts/waltham-housing-approvals/housing-approvals.component';
 import { WalthamHousingDelivery } from './custom-charts/waltham-housing-delivery/waltham-housing-delivery.component';
 import ProgressIndicators from './custom-charts/progress-indicators/progress-indicators.component';
 import ProgressionVsPlanningSchedule from './custom-charts/waltham-progression-of-units/progression-vs-planning-schedule.component';
-import { walthamApiMetadata, targetDatasets } from '../constants';
+import { apiMetadata, targetDatasets } from '../constants';
 import { userSelector } from '../accounts/accounts.slice';
 
 import {
@@ -42,7 +42,13 @@ import {
 } from '../mocks/fixtures';
 // TODO: why does this work
 import { ExportData } from '~/mocks/fixtures/export_data';
-import { ChartMetadata, Targets, UserOrbState } from '../types';
+import {
+  ChartMetadata,
+  Targets,
+  UserOrbState,
+  UpdateOrbStateArgs,
+  TargetCategory,
+} from '../types';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -76,55 +82,62 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
 
   /** all data, including 'name', 'version', etc */
   const approvalsGranted: HousingApprovalsData = useAppSelector(
-      chartDataSelector(sourceId, 'ApprovalsGranted')
+      chartDataSelector(sourceId, 'approvalsGranted')
     ),
     progressionVsPlanning: ProgressionOfUnitsData = useAppSelector(
-      chartDataSelector(sourceId, 'ProgressionVsPlanning')
+      chartDataSelector(sourceId, 'progressionVsPlanning')
     ),
     tenureHousingDelivery: TenureTypeHousingData = useAppSelector(
-      chartDataSelector(sourceId, 'TenureHousingDelivery')
+      chartDataSelector(sourceId, 'tenureHousingDelivery')
     ),
     totalHousingDelivery: TotalHousingDeliveryData = useAppSelector(
-      chartDataSelector(sourceId, 'TotalHousingDelivery')
+      chartDataSelector(sourceId, 'totalHousingDelivery')
     ),
     affordableHousingDelivery: AffordableHousingData = useAppSelector(
-      chartDataSelector(sourceId, 'AffordableHousingDelivery')
+      chartDataSelector(sourceId, 'affordableHousingDelivery')
     );
 
   const user = useAppSelector(userSelector);
   const userOrbState = useAppSelector(userOrbStateSelector(sourceId));
 
-  const [dashboardSettings, setDashboardSettings] = useState<UserOrbState>({
-    targets: null,
-    settings: null,
-  });
+  const [orbState, setOrbState] = useState<UserOrbState | null>(null);
 
-  const { targets, settings } = dashboardSettings;
-
-  const [selectedDataset, setSelectedDataset] = useState<string | null>(null);
+  const [selectedDataset, setSelectedDataset] = useState<TargetCategory | null>(
+    null
+  );
   const [targetDialogVisible, setTargetDialogVisible] = useState(false);
   const [exportIsLoading, setExportIsLoading] = useState(false);
 
-  const dashboardSettingsRef = useRef(dashboardSettings);
+  const orbStateRef = useRef(orbState);
 
   // TODO: don't need this if using skeletons
   const dataIsLoaded =
-    approvalsGranted &&
-    progressionVsPlanning &&
-    tenureHousingDelivery &&
-    totalHousingDelivery &&
-    affordableHousingDelivery &&
-    targets &&
-    settings;
+    !!approvalsGranted &&
+    !!progressionVsPlanning &&
+    !!tenureHousingDelivery &&
+    !!totalHousingDelivery &&
+    !!affordableHousingDelivery;
 
-  /** initialise dashboardSettings in state when fetched */
+  const { targets, settings } = orbState ?? {},
+    orbStateIsLoaded = !!targets && !!settings;
+
+  /** initialise orbState in state when fetched */
   useEffect(() => {
-    if (!targets && !settings) {
-      setDashboardSettings(userOrbState);
+    if (!!userOrbState && !orbStateIsLoaded) {
+      setOrbState(userOrbState);
     }
-  }, [settings, targets, userOrbState]);
+  }, [orbStateIsLoaded, orbState, userOrbState]);
 
-  const updateWalthamOrbState = useCallback(
+  const updateOrbState = ({
+    targets = {},
+    settings = {},
+  }: UpdateOrbStateArgs) =>
+    setOrbState((prev) => ({
+      targets: { ...(prev?.targets ?? {}), ...targets },
+      settings: { ...(prev?.settings ?? {}), ...settings },
+    }));
+
+  const saveOrbState = useCallback(
     (data: UserOrbState) => {
       // TODO: why the guard?
       if (user) {
@@ -135,7 +148,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
   );
 
   useEffect(() => {
-    walthamApiMetadata.forEach(({ datasetName, url }) => {
+    apiMetadata.forEach(({ datasetName, url }) => {
       const chartMetadata: ChartMetadata = {
         sourceId,
         datasetName,
@@ -149,25 +162,29 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
   /** 1. listener func must be reusable so that it can also be removed */
   /** 2. must check changes have been made to prevent firing every time */
   const saveSettingsHandler = useCallback(() => {
-    const valuesObjects = Object.values(dashboardSettingsRef.current);
+    /** is null before initialisation */
+    if (!orbStateRef.current) return;
 
-    const changesMade = valuesObjects.some(
-      (obj) => !!Object.keys(obj ?? {}).length
-    );
+    const valuesObjects = Object.values(orbStateRef.current),
+      changesMade = valuesObjects.some((obj) => !!Object.keys(obj).length);
 
-    if (changesMade) updateWalthamOrbState(dashboardSettingsRef.current);
-  }, [updateWalthamOrbState]);
+    if (changesMade) saveOrbState(orbStateRef.current);
+  }, [saveOrbState]);
 
-  // update dashboardSettingsRef to be used in saving dashboard settings every
-  // time dashboardSettings is updated
+  /**
+   * update orbStateRef to be used in saving dashboard
+   * settings every time orbState is updated
+   */
   useEffect(() => {
-    dashboardSettingsRef.current = dashboardSettings;
-  }, [dashboardSettings]);
+    if (!orbState) return;
+
+    orbStateRef.current = orbState;
+  }, [orbState]);
 
   /** add event listener that covers user closing/refreshing tab */
   useEffect(() => {
     window.addEventListener('beforeunload', saveSettingsHandler);
-  });
+  }, []);
 
   /** remove listener and save settings if user navigates away in-app */
   useEffect(() => {
@@ -182,11 +199,8 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
     setTargetDialogVisible(false);
   };
 
-  const handleAddTargetsClick = (newTargets: Targets) => {
-    setDashboardSettings((prev) => ({
-      ...prev,
-      targets: { ...prev.targets, ...newTargets },
-    }));
+  const handleAddTargetsClick = (targets: Targets) => {
+    updateOrbState({ targets });
     closeDialog();
   };
 
@@ -205,9 +219,9 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
 
   // TODO: use skeletons instead of loadmask? Maybe leave until later?
 
-  return !dataIsLoaded ? (
-    <LoadMaskFallback />
-  ) : (
+  if (!dataIsLoaded || !orbStateIsLoaded) return <LoadMaskFallback />;
+
+  return (
     <>
       <Grid
         container
@@ -232,7 +246,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
       </Grid>
 
       <Grid item container direction='column' className={styles.content}>
-        <Grid
+        {/* <Grid
           item
           container
           wrap='nowrap'
@@ -243,46 +257,41 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             tenureData={tenureHousingDelivery}
             targets={targets}
           />
-        </Grid>
+        </Grid> */}
 
         {/* <WalthamHousingDelivery
           totalHousingDeliveryChartData={totalHousingDelivery}
           tenureHousingDeliveryChartData={tenureHousingDelivery}
           targets={targets}
           settings={settings}
-          setDashboardSettings={setDashboardSettings}
+          setOrbState={setOrbState}
         /> */}
 
-        {/* <Grid
-          item
-          container
-
-          className={styles.bottomChartContainer}
-        >
+        <Grid item container className={styles.bottomChartContainer}>
           <Grid item container direction='column'>
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
-              setDashboardSettings={setDashboardSettings}
+              updateOrbState={updateOrbState}
             />
-            <AffordableHousingDelivery
+            {/* <AffordableHousingDelivery
               data={affordableHousingDelivery}
-              targets={targets?.affordableHousingPercentage}
+              targets={targets}
               settings={settings}
-              setDashboardSettings={setDashboardSettings}
-            />
+              updateOrbState={updateOrbState}
+            /> */}
           </Grid>
 
-          <HousingApprovalsComponent
+          {/* <HousingApprovalsComponent
             x='Month'
             xLabel='Month'
             yLabel='No. Housing Approvals Granted'
             ranges={['2019', '2020']}
             data={approvalsGranted}
             settings={settings}
-            setDashboardSettings={setDashboardSettings}
-          />
-        </Grid> */}
+            updateOrbState={updateOrbState}
+          /> */}
+        </Grid>
       </Grid>
 
       <Dialog
@@ -292,20 +301,22 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
         aria-labelledby='waltham-forest-targets-dialog'
       >
         <DialogTitle onClose={closeDialog}>
-          {selectedDataset ? targetDatasets[selectedDataset] : 'Add Targets'}
+          {!!selectedDataset ? targetDatasets[selectedDataset] : 'Add Targets'}
         </DialogTitle>
         <DialogContent>
-          {selectedDataset ? (
-            <TargetScreen
+          {!!selectedDataset ? (
+            <TargetForm
               onAddTargetsClick={(targets: Targets) =>
                 handleAddTargetsClick(targets)
               }
               selectedDataset={selectedDataset}
-              targets={targets?.[selectedDataset]}
+              targets={targets}
             />
           ) : (
-            <SelectScreen
-              onNextClick={(dataset: string) => setSelectedDataset(dataset)}
+            <SelectForm
+              onNextClick={(dataset: TargetCategory) =>
+                setSelectedDataset(dataset)
+              }
             />
           )}
         </DialogContent>

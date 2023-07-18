@@ -1,12 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, ReactNode, useMemo } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import * as Yup from 'yup';
+
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Grid, makeStyles, Select, MenuItem, Input } from '@material-ui/core';
 
-import { filterEmptyStrings, getPastYears } from '../utils/utils';
+import { getPastYears } from '../utils/utils';
 import { targetDatasets } from '../../constants';
-import { validate } from './validate';
 
 import { Button } from '../../components';
+import { TargetCategory, Targets } from '../../types';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -14,15 +20,17 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '40rem',
   },
   buttons: {
-    marginTop: '2.5rem',
-    gap: '1rem',
+    marginTop: theme.spacing(5),
+    gap: theme.spacing(2),
   },
   inputFields: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr',
-    gridGap: '1rem',
+    gridGap: theme.spacing(2),
   },
   error: {
+    gap: theme.spacing(1),
+    marginBottom: theme.spacing(4),
     color: theme.palette.error.main,
     width: '100%',
     textAlign: 'center',
@@ -31,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DEFAULT_TEXT = 'Select Type of Target';
 
-const Wrapper = ({ children }) => {
+const Wrapper = ({ children }: { children: ReactNode }) => {
   const styles = useStyles();
   return (
     <Grid
@@ -46,14 +54,20 @@ const Wrapper = ({ children }) => {
   );
 };
 
-/**
- * @param {{
- *  onNextClick: (dataset: string) => void
- * }} props
- */
-const SelectScreen = ({ onNextClick }) => {
+interface SelectFormProps {
+  onNextClick: (dataset: TargetCategory) => void;
+}
+
+const SelectForm = ({ onNextClick }: SelectFormProps) => {
   const styles = useStyles();
-  const [selectedDataset, setSelectedDataset] = useState(DEFAULT_TEXT);
+
+  type DefaultState = TargetCategory | typeof DEFAULT_TEXT;
+
+  const [selectedDataset, setSelectedDataset] =
+    useState<DefaultState>(DEFAULT_TEXT);
+
+  const isDisabled = selectedDataset === DEFAULT_TEXT;
+
   return (
     <Wrapper>
       <Grid
@@ -62,7 +76,9 @@ const SelectScreen = ({ onNextClick }) => {
         component={Select}
         value={selectedDataset}
         inputProps={{ 'aria-label': DEFAULT_TEXT }}
-        onChange={({ target: { value } }) => setSelectedDataset(value)}
+        onChange={({ target: { value } }) =>
+          setSelectedDataset(value as TargetCategory)
+        }
       >
         <MenuItem value={DEFAULT_TEXT} disabled>
           {DEFAULT_TEXT}
@@ -75,8 +91,8 @@ const SelectScreen = ({ onNextClick }) => {
       </Grid>
       <Grid item container justifyContent='flex-end' className={styles.buttons}>
         <Button
-          disabled={selectedDataset === DEFAULT_TEXT}
-          onClick={() => onNextClick(selectedDataset)}
+          disabled={isDisabled}
+          onClick={() => !isDisabled && onNextClick(selectedDataset)}
         >
           Next
         </Button>
@@ -85,55 +101,104 @@ const SelectScreen = ({ onNextClick }) => {
   );
 };
 
-/**
- * @param {{
- *  onAddTargetsClick: (targets: object) => void
- *  selectedDataset: string
- *  targets: object
- * }} props
- */
-const TargetScreen = ({ onAddTargetsClick, selectedDataset, targets = {} }) => {
+const formatYear = (year: number) => `${year}-${year + 1}`;
+
+interface TargetFormProps {
+  onAddTargetsClick: (targets: Targets) => void;
+  selectedDataset: TargetCategory;
+  targets?: Targets;
+}
+
+const TargetForm = ({
+  onAddTargetsClick,
+  selectedDataset,
+  targets = {},
+}: TargetFormProps) => {
   const styles = useStyles();
-  const [targetData, setTargetData] = useState(targets);
-  const [error, setError] = useState(undefined);
-  const isDirty = targetData !== targets;
-  const yearRange = selectedDataset === 'affordableHousingPercentage' ? 10 : 5;
 
-  useEffect(() => {
-    if (isDirty) {
-      setError(validate(targetData));
-    }
-  }, [targetData, isDirty]);
+  const yearRange = selectedDataset === 'affordableHousingDelivery' ? 10 : 5,
+    pastYears = getPastYears(yearRange);
 
-  /**
-   * @param {object} data
-   */
-  const handleChange = (data) =>
-    setTargetData((prev) => ({ ...prev, ...data }));
+  /** prevent unnecessary re-renders when interacting with form */
+  const formSetup = useMemo(
+    () =>
+      pastYears.reduce(
+        (acc, year) => ({
+          validation: {
+            ...acc.validation,
+            [year]: Yup.number()
+              .positive('Only positive numbers are permitted.')
+              .typeError('Only number values permitted.')
+              .nullable()
+              .transform((curr, orig) => (orig === '' ? null : curr)),
+          },
+          defaultValues: {
+            ...acc.defaultValues,
+            [year]: targets[selectedDataset]?.[year] ?? '',
+          },
+          emptyFormValues: {
+            ...acc.emptyFormValues,
+            [year]: '',
+          },
+        }),
+        { validation: {}, defaultValues: {}, emptyFormValues: {} }
+      ),
+    []
+  );
 
-  const handleSubmit = () =>
-    onAddTargetsClick({ [selectedDataset]: filterEmptyStrings(targetData) });
+  const { validation, defaultValues, emptyFormValues } = formSetup;
+
+  const targetFormSchema = Yup.object().shape(validation);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<Targets[TargetCategory]>({
+    mode: 'all',
+    resolver: yupResolver(targetFormSchema),
+    defaultValues,
+  });
+
+  const onSubmit = (values: Targets[TargetCategory]) =>
+    onAddTargetsClick({ [selectedDataset]: values });
+
+  const hasErrors = !!Object.keys(errors).length,
+    isDisabled = !isDirty || hasErrors;
+
+  // TODO: validation is broken, does not allow empty strings
+  // TODO: reset doesn't dirty form
 
   return (
-    <Grid item container component='form' onSubmit={handleSubmit}>
-      {error ? <span className={styles.error}>{error}</span> : null}
+    <Grid item container component='form' onSubmit={handleSubmit(onSubmit)}>
+      {hasErrors ? (
+        <Grid item container direction='column' className={styles.error}>
+          {Object.entries(errors).map(([year, error]) => (
+            <span>
+              Error in {formatYear(Number(year))}: {error?.message}
+            </span>
+          ))}
+        </Grid>
+      ) : null}
+
       <Grid item container className={styles.inputFields}>
-        {getPastYears(yearRange).map((field) => (
-          <Input
-            key={field}
-            value={targetData[field] ?? ''}
-            placeholder={`${field}-${field + 1}`}
-            onChange={({ target: { value } }) =>
-              handleChange({ [field]: value.trim() })
-            }
-          />
-        ))}
+        {pastYears.map((year) => {
+          const stringYear = String(year) as TargetCategory;
+          return (
+            <Input
+              key={stringYear}
+              {...register(stringYear)}
+              placeholder={formatYear(year)}
+            />
+          );
+        })}
       </Grid>
       <Grid item container justifyContent='flex-end' className={styles.buttons}>
-        <Button color='secondary' onClick={() => setTargetData({})}>
+        <Button color='secondary' onClick={() => reset(emptyFormValues)}>
           Reset
         </Button>
-        <Button disabled={!isDirty || !!error} type='submit'>
+        <Button disabled={isDisabled} type='submit'>
           Add Target
         </Button>
       </Grid>
@@ -141,4 +206,4 @@ const TargetScreen = ({ onAddTargetsClick, selectedDataset, targets = {} }) => {
   );
 };
 
-export { SelectScreen, TargetScreen };
+export { SelectForm, TargetForm };

@@ -1,4 +1,5 @@
 import {
+  AffordableHousingData,
   HousingApprovalsData,
   ProgressionOfUnitsData,
   TenureTypeHousingData,
@@ -12,4 +13,5 @@ export type TransformedTargets = { x: string; y: number }[];
 export type TimelineData =
   | TotalHousingDeliveryData
   | TenureTypeHousingData
-  | ProgressionOfUnitsData;
+  | ProgressionOfUnitsData
+  | AffordableHousingData;

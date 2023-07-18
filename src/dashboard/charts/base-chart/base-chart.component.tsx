@@ -1,38 +1,43 @@
+import { ReactNode } from 'react';
+
 import numeral from 'numeral';
 import { VictoryAxis, VictoryChart } from 'victory';
 
 import { useChartTheme } from '../../useChartTheme';
+import { ChartTheme } from '../../../types';
 
-/**
- * @param {{
- *  children: React.ReactNode
- *  width: number
- *  xLabel?: string
- *  yLabel?: string
- *  financialYear?: boolean
- *  theme?: object
- * }} props
- */
-const BaseChart = ({
+interface Props {
+  children: ReactNode;
+  width: number;
+  xLabel?: string;
+  yLabel?: string;
+  financialYearFormat?: boolean;
+  theme?: Partial<ChartTheme>;
+}
+
+export const BaseChart = ({
   children,
   width,
   xLabel = '',
   yLabel = '',
-  financialYear = false,
+  financialYearFormat = false,
   theme = {},
-}) => {
+}: Props) => {
   const chartTheme = { ...useChartTheme(), ...theme };
 
-  const getXTickFormat = (tick) => {
-    if (financialYear) {
+  // TODO: what's going on with this? Is it a string or a number?
+  const getXTickFormat = (tick: number) => {
+    if (financialYearFormat) {
       const year = Math.floor(tick);
       return [`${year}-`, `${year + 1}`];
     } else {
+      // TODO: what does this NaN check do?
       return isNaN(Number(tick)) ? tick.toString() : tick;
     }
   };
 
-  const getYTickFormat = (tick) =>
+  // TODO: same here, seemingly both a string and a number
+  const getYTickFormat = (tick: number) =>
     numeral(Number(tick).toLocaleString()).format(
       `${tick > 1000 ? '0.0' : '0'} a`
     );
@@ -58,5 +63,3 @@ const BaseChart = ({
     </VictoryChart>
   );
 };
-
-export { BaseChart };

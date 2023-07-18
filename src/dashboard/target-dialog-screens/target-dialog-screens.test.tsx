@@ -1,23 +1,23 @@
 import { it, expect, describe, vi } from 'vitest';
 
-import { render, userEvent, screen, waitFor } from '../../test/test.utils';
+import { render, userEvent, screen } from '../../test/test.utils';
 
 import { inputErrorMessage } from '../../constants';
-import { SelectScreen, TargetScreen } from './target-dialog-screens';
+import { SelectForm, TargetForm } from './target-dialog-screens';
 
 describe('Target Dialog Screens', () => {
-  describe('SelectScreen', () => {
+  describe('SelectForm', () => {
     const defaultValue = 'Select Type of Target';
     const datasetName =
       'Total housing target for each of the last 5 financial years';
 
     it('renders', () => {
-      render(<SelectScreen />);
+      render(<SelectForm />);
       expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
     });
 
     it('disables `Next` button until changes have been made', async () => {
-      render(<SelectScreen />);
+      render(<SelectForm />);
 
       const nextButton = screen.getByRole('button', { name: 'Next' });
       expect(nextButton).toBeDisabled();
@@ -35,7 +35,7 @@ describe('Target Dialog Screens', () => {
       const onNextClick = vi.fn(),
         expected = 'totalHousing';
 
-      render(<SelectScreen onNextClick={onNextClick} />);
+      render(<SelectForm onNextClick={onNextClick} />);
 
       await userEvent.click(screen.getByRole('button', { name: defaultValue }));
       await userEvent.click(screen.getByRole('option', { name: datasetName }));
@@ -46,27 +46,40 @@ describe('Target Dialog Screens', () => {
   });
 
   describe('Target Screen', () => {
+    const defaultProps = {
+      targets: { testDataset: {} },
+      selectedDataset: 'testDataset',
+    };
+
     it('renders', () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
       expect(
         screen.getByRole('button', { name: 'Add Target' })
       ).toBeInTheDocument();
     });
 
     it('disables `Add Target` button until changes have been made', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       expect(screen.getByRole('button', { name: 'Add Target' })).toBeDisabled();
       await userEvent.type(screen.getByPlaceholderText('2020-2021'), '123');
       expect(screen.getByRole('button', { name: 'Add Target' })).toBeEnabled();
     });
 
-    it('allows cleared targets to be saved', async () => {
+    it.only('allows cleared targets to be saved', async () => {
       const targets = {
-        '2020-2021': '123',
+        testDataset: {
+          2019: 123,
+          2020: 456,
+          2021: 789,
+          2022: 101,
+          2023: 121,
+        },
       };
 
-      render(<TargetScreen targets={targets} />);
+      render(<TargetForm {...defaultProps} targets={targets} />);
+
+      expect(screen.getByPlaceholderText('2020-2021')).toHaveValue('456');
 
       expect(screen.getByRole('button', { name: 'Add Target' })).toBeDisabled();
       await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
@@ -76,14 +89,15 @@ describe('Target Dialog Screens', () => {
     it('fires callback when changes have been made and `Add Target` button is clicked', async () => {
       const onAddTargetsClick = vi.fn(),
         expected = {
-          'test-dataset': {
+          testDataset: {
             2020: 123,
             2021: 456,
           },
         };
 
       render(
-        <TargetScreen
+        <TargetForm
+          {...defaultProps}
           onAddTargetsClick={onAddTargetsClick}
           selectedDataset='test-dataset'
         />
@@ -101,7 +115,7 @@ describe('Target Dialog Screens', () => {
     });
 
     it('clears all values when `Reset` button is clicked', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       const input1 = screen.getByPlaceholderText('2021-2022');
       const input2 = screen.getByPlaceholderText('2022-2023');
@@ -114,39 +128,37 @@ describe('Target Dialog Screens', () => {
       expect(input1).toHaveValue('');
       expect(input2).toHaveValue('');
     });
-  });
 
-  describe('validation', () => {
     it('allows numbers', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       await userEvent.type(screen.getByPlaceholderText('2021-2022'), '123');
       expect(screen.queryByText(inputErrorMessage)).not.toBeInTheDocument();
     });
 
     it('allows decimals', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       await userEvent.type(screen.getByPlaceholderText('2021-2022'), '123.456');
       expect(screen.queryByText(inputErrorMessage)).not.toBeInTheDocument();
     });
 
     it('does not allow letters', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       await userEvent.type(screen.getByPlaceholderText('2021-2022'), 'abc');
       expect(screen.getByText(inputErrorMessage)).toBeInTheDocument();
     });
 
     it('does not allow special characters', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       await userEvent.type(screen.getByPlaceholderText('2021-2022'), ';,%');
       expect(screen.getByText(inputErrorMessage)).toBeInTheDocument();
     });
 
     it('removes error message when restricted characters removed', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       const input = screen.getByPlaceholderText('2021-2022');
 
@@ -158,7 +170,7 @@ describe('Target Dialog Screens', () => {
     });
 
     it('disables `Add Targets` button if a single field fails validation', async () => {
-      render(<TargetScreen />);
+      render(<TargetForm {...defaultProps} />);
 
       const input1 = screen.getByPlaceholderText('2021-2022');
       const input2 = screen.getByPlaceholderText('2022-2023');

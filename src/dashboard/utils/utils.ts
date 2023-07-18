@@ -2,13 +2,17 @@ import { WALTHAM_FILTER_RANGE, MIME_TYPE, EXTENSION } from '../../constants';
 
 import * as FileSaver from 'file-saver';
 import { utils, write } from 'xlsx';
-import { Targets } from '../../types';
+import {
+  ProgressionVsPlanningCategory,
+  TargetCategory,
+  Targets,
+} from '../../types';
 import {
   HousingApprovalsObjectArray,
   TimelineData,
   TransformedTargets,
 } from './types';
-import { ExportData } from '~/mocks/fixtures';
+import { AffordableHousingData, ExportData } from '~/mocks/fixtures';
 
 /**
  * This function is necessary because the data entries do not always have the same
@@ -36,23 +40,6 @@ const lineDataTransformer = (
     uniqueKeys.reduce((acc, cur) => ({ ...acc, [cur]: obj[cur] ?? null }), {});
 
   return data.map(padUniqueYears);
-};
-
-/**
- * This is here because typing into a field and then deleting the input
- * results in an empty string being saved, which is then converted into
- * a number on the frontend, which JavaScript type conversion reads as zero.
- * @param {object} data
- */
-const filterEmptyStrings = (data: unknown) => {
-  // TODO: react hook form makes this obsolete
-  if (!data) return;
-
-  return Object.entries(data).reduce(
-    (acc, [key, value]) =>
-      value === '' ? acc : { ...acc, [key]: Number(value) },
-    {}
-  );
 };
 
 /**
@@ -122,7 +109,7 @@ const getPastYears = (years = 5) => {
  * This tallies up the user's 'total housing' target data for
  * the last 5 years, to be used in the first progress wheel.
  */
-const getUser5YearTotals = (targetDataset: Targets[string]) => {
+const getUser5YearTotals = (targetDataset: Targets[TargetCategory]) => {
   if (!targetDataset || !Object.keys(targetDataset).length) return;
 
   return getPastYears().reduce(
@@ -130,6 +117,11 @@ const getUser5YearTotals = (targetDataset: Targets[string]) => {
     0
   );
 };
+
+interface GetDataTimelineArgs {
+  apiData: TimelineData;
+  targets: Targets[TargetCategory];
+}
 
 /**
  * This function builds an array of string years from the years
@@ -141,10 +133,7 @@ const getUser5YearTotals = (targetDataset: Targets[string]) => {
  *
  * Also pads up to a minimum number of years.
  */
-const getDataTimeline = (apiData: TimelineData, targets = {}) => {
-  // TODO: do this for all?
-  if (!apiData) return;
-
+const getDataTimeline = ({ apiData, targets = {} }: GetDataTimelineArgs) => {
   /**
    * if uninitiated by user, targets will be undefined,
    * but defaulted here to empty object
@@ -180,22 +169,19 @@ const getDataTimeline = (apiData: TimelineData, targets = {}) => {
 };
 
 // TODO: type this properly
-interface FilterByTypeArgs<T, U> {
-  data: T;
-  selectedType: U;
+interface FilterByTypeArgs<T> {
+  data: T[];
+  selectedType: keyof T;
 }
 
-const filterByType = <T extends T[number][]>({
+const filterByType = <T>({
   data,
   selectedType,
-}: FilterByTypeArgs<T, keyof T[number]>) => {
-  // TODO: refactor this back to where it was
-  const test = data.map((datum: T[number]) => ({
+}: FilterByTypeArgs<T & { startYear: number }>) =>
+  data.map((datum) => ({
     startYear: datum.startYear,
     [selectedType]: datum[selectedType],
   }));
-  return test;
-};
 
 const getFilteredTimeline = (
   timeline: number[] | undefined,
@@ -206,54 +192,6 @@ const getFilteredTimeline = (
 
   const index = timeline?.indexOf(selectedYear);
   return timeline?.slice(index - range, index + 1);
-};
-
-/**
- * @param {number[]} timeline
- * @param {object[]} data : actual data. data points are properties
- * @param {object} targets : target data. array of objects
- * @param {string} targetProperty : target property in targets objects to use
- * @returns {object[]} : actual data, values replaced with percentages relative to target
- */
-
-interface ComputePercentagesArgs<T, U> {
-  timeline: number[];
-  data: T;
-  targets: Targets;
-  percentageProperty: U;
-}
-
-// TODO: this comment needs to be clearer
-const computePercentages = <T extends T[number][]>({
-  timeline,
-  data,
-  targets,
-  percentageProperty,
-}: ComputePercentagesArgs<T, keyof T[number]>) => {
-  /**
-   * we return the data in the same shape as data, but values are
-   * replaced with the percentage relative to the corresponding target
-   * for years where data is zero, or target is zero, or both, then we
-   * use null  to prevent the chart from being misleading. This may result
-   * in gaps in the  chart
-
-   * No data points can be constructed if both datasets are not present
-  */
-  if (!data || !targets) return;
-
-  return timeline.map((year: number) => {
-    const obj: T[number] = data.find((datum) => datum.startYear === year) ?? {};
-
-    const percentage =
-      obj[percentageProperty] && targets[obj.startYear]
-        ? Math.round((obj[percentageProperty] / targets[obj.startYear]) * 100)
-        : null;
-
-    return {
-      startYear: year.toString(),
-      [percentageProperty]: percentage,
-    };
-  });
 };
 
 // TODO: this needs to go into where it is used, like the others
@@ -346,19 +284,93 @@ const exportToCsv = (data: ExportData, filename: string) => {
   FileSaver.saveAs(dataBlob, filename + EXTENSION);
 };
 
+/**
+ * Creates an array a labels from an array of objects whose properties
+ * we want to sum up
+ *
+ * @param {object[]} data - Data to generate labels for
+ * @param {string} excludeProperty - Do not include this property in the same (e.g. If it's a label)
+ * @param {function=} formatter - Optional function which takes an object and renders it as text
+ *
+ * @returns {any[]} An array of labels to appear over each data point
+ */
+
+const labelsForArrayOfObjects = (data, excludeProperty, formatter) => {
+  if (!data || !data.length) {
+    return [];
+  }
+  const fieldsToAddUp = Object.keys(data[0]).filter(
+    (item) => item !== excludeProperty
+  );
+  return data.map((item) => {
+    let total = 0;
+    fieldsToAddUp.forEach((fieldName) => (total += item[fieldName]));
+    return formatter ? formatter(total) : total;
+  });
+};
+
+/**
+ * Creates an array a labels from an array of objects whose properties
+ * we want to sum up. We supply an array of properties whose values we need to add up
+ *
+ * @param {object[]} data - Data to generate labels for
+ * @param {string[]} includeProperties - Only sum properties in this list
+ * @param {(item: number) => string} formatter - Optional function which takes an object and renders it as text
+ *
+ * @returns {any[]} An array of labels to appear over each data point
+ */
+
+const labelsForArrayOfObjectsInclusive = (
+  data,
+  includeProperties,
+  formatter
+) => {
+  if (!data || !data.length) {
+    return [];
+  }
+  const fieldsToAddUp = Object.keys(data[0]).filter((item) =>
+    includeProperties.includes(item)
+  );
+  return data.map((obj) => {
+    // TODO: reduce this
+    let total = 0;
+    fieldsToAddUp.forEach((fieldName) => (total += obj[fieldName] ?? 0));
+    return formatter ? formatter(total) : total;
+  });
+};
+
+/**
+ * Calculates the totals of a stack chart's datum, excluding all properties
+ * except those specified, and returning a varied string depending on whether
+ * there is one or multiple properties.
+ *
+ * @param {object} datum
+ * @param {string[]} ranges
+ * @returns {string}
+ */
+const getStackDatumTotal = (datum, ranges) => {
+  if (!datum) return null;
+
+  const filteredKeys = Object.keys(datum).filter((key) => ranges.includes(key)),
+    total = filteredKeys.reduce((acc, cur) => (acc += datum[cur]), 0);
+
+  return `${ranges.length > 1 ? 'Total: ' : ''}${total}`;
+};
+
 export {
   lineDataTransformer,
   userTargetTransformer,
-  filterEmptyStrings,
   getTargetTotals,
   getPastYears,
   getUser5YearTotals,
   getDataTimeline,
   filterByType,
   getFilteredTimeline,
-  computePercentages,
   GroupedDataTransformer,
   BaseWidthCalculator,
   GroupedWidthCalculator,
   exportToCsv,
+  labelsForArrayOfObjects,
+  labelsForArrayOfObjectsInclusive,
+  getStackDatumTotal,
 };

@@ -1,40 +1,51 @@
 // TODO: make constants all uppercase
 
-import { HousingTenureTypes, TenureDataTypes } from './types';
+// TODO: move this into types file?
+import { User } from './accounts/accounts.slice';
 
-export const MOCK_USER = {
+import {
+  DatasetName,
+  HousingTenureCategories,
+  ProgressionVsPlanningCategory,
+  TargetCategory,
+  TenureDataType,
+} from './types';
+
+export const MOCK_USER: User = {
   orb_state: {
     mock_source_id: {
       targets: {
         totalHousing: {
-          2023: 350,
-          2022: 500,
-          2021: 610,
-          2020: 480,
+          2023: 1350,
+          2022: 1500,
+          2021: 1610,
+          2020: 1480,
         },
         intermediateDelivery: {
-          2023: 500,
+          2023: 106,
         },
         marketHousing: {
-          2023: 500,
+          2023: 134,
         },
         sociallyRented: {
-          2023: 500,
+          2023: 11,
         },
-        affordableHousingPercentage: {
+        affordableHousingDelivery: {
           2023: 100,
-          2022: 100,
-          2021: 100,
-          2020: 100,
-          2019: 100,
-          2018: 100,
+          2022: 80,
+          2021: 35,
+          2020: 95,
+          2019: 61,
+          2018: 23,
+          2017: 101,
+          2016: 43,
+          2015: 112,
+          2014: 59,
+          2013: 65,
         },
+        privateRental: {},
       },
-      settings: {
-        /** below types are fixed and can only be toggled between 2 values */
-        tenureDataType: 'Gross' as const,
-        approvalsGrantedDataType: 'Monthly' as const,
-      },
+      settings: {},
     },
   },
 };
@@ -43,8 +54,10 @@ export const inputErrorMessage = 'Only number values are permitted.';
 
 export const ALL_TENURE_TYPES = 'All Tenure Types';
 
+export const ALL_PROGRESSION_PLANNING_TYPES = 'Show All';
+
 /** live data tenure types */
-export const housingTenureTypes: HousingTenureTypes = {
+export const housingTenureTypes: HousingTenureCategories = {
   affordableHousing: 'Affordable Rent (not at LAR benchmark rents)',
   affordableHousingLondon: 'London Affordable Rent',
   intermediateDelivery: 'Intermediate',
@@ -53,28 +66,28 @@ export const housingTenureTypes: HousingTenureTypes = {
   sociallyRented: 'Social Rent',
 };
 
-export const progressionVsPlanningTypes = [
-  'Units Ahead of Schedule',
-  'Units Behind Schedule',
-  'Units on Track',
-];
-
-export const progressionVsPlanningOptions = {
+export const progressionVsPlanningCategories: {
+  [key in ProgressionVsPlanningCategory]: string;
+} = {
   aheadOfSchedule: 'Ahead of Schedule',
   behindSchedule: 'Behind Schedule',
   onTrack: 'On Track',
 };
 
-export const progressionVsPlanningPalette = {
+// TODO: fix this if possible
+export const progressionVsPlanningPalette: {
+  [key: string]: string;
+} = {
   'Ahead of Schedule': '#37e5d8',
   'Behind Schedule': '#d6ea69',
   'On Track': '#05c3ff',
 };
 
-export const TENURE_DATA_TYPES: TenureDataTypes = {
-  gross: 'Gross',
-  net: 'Net',
-};
+export const TENURE_DATA_TYPES: { gross: TenureDataType; net: TenureDataType } =
+  {
+    gross: 'Gross',
+    net: 'Net',
+  };
 
 export const TARGET_LEGEND_DATA = {
   name: 'Housing Requirement',
@@ -82,36 +95,40 @@ export const TARGET_LEGEND_DATA = {
 };
 
 /** live data */
-export const walthamApiMetadata = [
+export const apiMetadata: {
+  datasetName: DatasetName;
+  url: string;
+  apiSourceId: string;
+}[] = [
   {
-    datasetName: 'TenureHousingDelivery',
+    datasetName: 'tenureHousingDelivery',
     url: '/api/tenure_type_housing_delivery/latest/',
     apiSourceId: 'api/tenure_type_housing_delivery/latest',
   },
   {
-    datasetName: 'ApprovalsGranted',
+    datasetName: 'approvalsGranted',
     url: '/api/housing_approvals_over_time/latest/',
     apiSourceId: 'api/housing_approvals_over_time/latest',
   },
   {
-    datasetName: 'ProgressionVsPlanning',
+    datasetName: 'progressionVsPlanning',
     url: '/api/progression_of_units/latest/',
     apiSourceId: 'api/progression_of_units/latest',
   },
   {
-    datasetName: 'AffordableHousingDelivery',
+    datasetName: 'affordableHousingDelivery',
     url: '/api/affordable_housing_delivery/latest/',
     apiSourceId: 'api/affordable_housing_delivery/latest',
   },
   {
-    datasetName: 'TotalHousingDelivery',
+    datasetName: 'totalHousingDelivery',
     url: '/api/total_housing_delivery/v1/',
     apiSourceId: 'api/total_housing_delivery/v1',
   },
 ];
 
-// TODO: make enums for this stuff?
-export const targetDatasets: { [datasetName: string]: string } = {
+// TODO: this name is confusing, it's just for the targets
+export const targetDatasets: { [key in TargetCategory]: string } = {
   totalHousing: 'Total housing target for each of the last 5 financial years',
   sociallyRented:
     'Social Rented Housing Targets for previous 5 financial years',
@@ -120,7 +137,7 @@ export const targetDatasets: { [datasetName: string]: string } = {
     'Intermediate Housing Targets for previous 5 financial years',
   privateRental:
     'Private Rented Housing Targets for previous 5 financial years',
-  affordableHousingPercentage:
+  affordableHousingDelivery:
     'Affordable Housing Targets for previous 10 financial years',
 };
 
@@ -171,13 +188,13 @@ export const yellowStyle = {
   data: { stroke: '#f6be00' },
 };
 
-export const ALL_TYPES = 'Show All';
-
-// start index not included, so must be one less than target number,
-// for example, 5-year range would be 4, like below.
+/**
+ * start index not included, so must be one less than target number,
+ * for example, 5-year range would be 4, like below.
+ */
 export const WALTHAM_FILTER_RANGE = 4;
 
-// percentages and style ratios used in WFC progress indicators
+/** percentages and style ratios used in WFC progress indicators */
 export const MIN_PERCENTAGE = 0;
 export const MAX_PERCENTAGE = 100;
 export const PERCENT_FONT_DEVISOR = 150;

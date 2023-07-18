@@ -122,7 +122,7 @@ const TenureHousingMultiChart = ({
             width={width}
             yLabel='Housing Delivery in Units'
             xLabel='Financial Year'
-            financialYear
+            financialYearFormat
           >
             {TenureHousingStackChart({ width })}
             {transformedTargets ? TargetsLineChart({ width }) : null}

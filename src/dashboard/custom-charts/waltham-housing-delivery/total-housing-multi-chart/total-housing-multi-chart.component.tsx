@@ -107,7 +107,7 @@ const TotalHousingMultiChart = ({
             width={width}
             yLabel='Housing Delivery in Units'
             xLabel='Financial Year'
-            financialYear
+            financialYearFormat
           >
             {TotalHousingGroupChart({ width })}
             {transformedTargets ? TargetLineChart({ width }) : null}

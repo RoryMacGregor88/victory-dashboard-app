@@ -3,13 +3,14 @@ import { it, expect, describe } from 'vitest';
 import {
   lineDataTransformer,
   userTargetTransformer,
-  filterEmptyStrings,
   getTargetTotals,
   getPastYears,
   getUser5YearTotals,
   getDataTimeline,
   getFilteredTimeline,
-  computePercentages,
+  labelsForArrayOfObjects,
+  labelsForArrayOfObjectsInclusive,
+  getStackDatumTotal,
 } from './utils';
 
 describe('Waltham Forest Data Transformers', () => {
@@ -46,44 +47,6 @@ describe('Waltham Forest Data Transformers', () => {
 
       const result = lineDataTransformer(data);
       expect(result).toEqual(data);
-    });
-  });
-
-  describe('filterEmptyStrings', () => {
-    it('filters out empty string values from object', () => {
-      const data = {
-          'key-1': '123',
-          'key-2': '',
-          'key-3': '456',
-        },
-        expected = {
-          'key-1': 123,
-          'key-3': 456,
-        };
-
-      const result = filterEmptyStrings(data);
-      expect(result).toEqual(expected);
-    });
-
-    it('does not filter 0 values', () => {
-      const data = {
-          'key-1': '123',
-          'key-2': '0',
-          'key-3': '456',
-        },
-        expected = {
-          'key-1': 123,
-          'key-2': 0,
-          'key-3': 456,
-        };
-
-      const result = filterEmptyStrings(data);
-      expect(result).toEqual(expected);
-    });
-
-    it('returns undefined if data is not present', () => {
-      const result = filterEmptyStrings(undefined);
-      expect(result).toBeUndefined();
     });
   });
 
@@ -397,55 +360,78 @@ describe('Waltham Forest Data Transformers', () => {
     });
   });
 
-  describe('compute percentages', () => {
-    it('computePercentages works', () => {
-      const timeline = [2017, 2018, 2019, 2020, 2021, 2022],
-        key = 'Affordable Housing',
-        data = [
-          {
-            startYear: 2017,
-            'Affordable Housing': 62,
-          },
-          {
-            startYear: 2018,
-            'Affordable Housing': 69,
-          },
-          {
-            startYear: 2019,
-            'Affordable Housing': 54,
-          },
-          {
-            startYear: 2020,
-            'Affordable Housing': 53,
-          },
-          {
-            startYear: 2021,
-            'Affordable Housing': 0,
-          },
-          {
-            startYear: 2022,
-            'Affordable Housing': 33,
-          },
-        ],
-        targets = {
-          2018: 100,
-          2019: 100,
-          2020: 100,
-          2021: 200,
-          2022: 200,
-        };
-      const result = computePercentages(
-        timeline,
-        data,
-        targets,
-        'Affordable Housing'
-      );
-      expect(result[0][key]).toBeNull(); // not matching data
-      expect(result[1][key]).toBe(69);
-      expect(result[2][key]).toBe(54);
-      expect(result[3][key]).toBe(53);
-      expect(result[4][key]).toBeNull();
-      expect(result[5][key]).toBe(17); // 33/200
+  describe('Tooltip Utilities', () => {
+    const MOCK_DATA = [
+      { Year: '2012-2013', foo: 120, bar: 100, baz: 212 },
+      { Year: '2012-2013', foo: 220, bar: 90, baz: 219 },
+      { Year: '2012-2013', foo: 150, bar: 120, baz: 211 },
+      { Year: '2012-2013', foo: 120, bar: 190, baz: 200 },
+      { Year: '2012-2013', foo: 100, bar: 220, baz: 190 },
+    ];
+
+    describe('labelsForArrayOfObjects', () => {
+      it('adds all properties except the specified one', () => {
+        const result = labelsForArrayOfObjects(MOCK_DATA, 'Year');
+        expect(result).toEqual([432, 529, 481, 510, 510]);
+      });
+      it('allows custom formatting', () => {
+        const result = labelsForArrayOfObjects(
+          MOCK_DATA,
+          'Year',
+          (item) => `x${item}`
+        );
+        expect(result).toEqual(['x432', 'x529', 'x481', 'x510', 'x510']);
+      });
+      it('returns empty array if no data passed', () => {
+        const result = labelsForArrayOfObjects(undefined, 'Year');
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('labelsForArrayOfObjectsInclusive', () => {
+      it('adds all properties except the specified one', () => {
+        const result = labelsForArrayOfObjectsInclusive(MOCK_DATA, [
+          'foo',
+          'bar',
+        ]);
+        expect(result).toEqual([220, 310, 270, 310, 320]);
+      });
+      it('allows custom formatting', () => {
+        const result = labelsForArrayOfObjectsInclusive(
+          MOCK_DATA,
+          ['foo', 'bar'],
+          (item) => `x${item}`
+        );
+        expect(result).toEqual(['x220', 'x310', 'x270', 'x310', 'x320']);
+      });
+      it('returns empty array if no data passed', () => {
+        const result = labelsForArrayOfObjectsInclusive(undefined, ['Year']);
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe('getStackDatumTotal', () => {
+      const testData = {
+        key1: 100,
+        key2: 200,
+        key3: 'Non-related value',
+      };
+      it('totals data values', () => {
+        const ranges = ['key1', 'key2'];
+        const result = getStackDatumTotal(testData, ranges);
+        expect(result).toEqual('Total: 300');
+      });
+
+      it('shows no `Total: ` message when only one range present', () => {
+        const ranges = ['key2'];
+        const result = getStackDatumTotal(testData, ranges);
+        expect(result).toEqual('200');
+      });
+
+      it('returns undefined if no data present', () => {
+        const result = getStackDatumTotal(undefined, []);
+        expect(result).toBeUndefined();
+      });
     });
   });
 });

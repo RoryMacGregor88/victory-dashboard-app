@@ -23,32 +23,37 @@ const useStyles = makeStyles(() => ({
   header: { minHeight: '6ch' },
 }));
 
+const currentYear = new Date().getFullYear();
+
 interface ProgressIndicatorProps {
   totalData: TotalHousingDeliveryData;
   tenureData: TenureTypeHousingData;
-  targets: Targets;
+  targets?: Targets;
 }
 
 const ProgressIndicators = ({
   totalData,
   tenureData,
-  targets,
+  targets = {},
 }: ProgressIndicatorProps) => {
   const chartTheme = useChartTheme();
   const styles = useStyles();
 
-  const currentYear = new Date().getFullYear();
-
   const tenureCurrentYear = tenureData.find(
     (obj) => obj.startYear === currentYear
-  );
+  )!;
+
+  const totalHousing = targets.totalHousing ?? {},
+    intermediateDelivery = targets.intermediateDelivery ?? {},
+    marketHousing = targets.marketHousing ?? {},
+    sociallyRented = targets.sociallyRented ?? {};
 
   /** 'Gross' values tallied up for last 5 years */
   const past5YearsTotal = useMemo(
     () =>
       getPastYears().reduce((acc, year) => {
         const match = totalData.find(({ startYear }) => startYear === year);
-        return match ? (acc += match['Total Gross']) : acc;
+        return !!match ? (acc += match['Total Gross']) : acc;
       }, 0),
     [totalData]
   );
@@ -58,23 +63,23 @@ const ProgressIndicators = ({
     () => [
       {
         ...PROGRESS_CHART_DATA.totalHousing,
-        target: getUser5YearTotals(targets?.totalHousing) ?? null,
+        target: getUser5YearTotals(totalHousing) ?? null,
         progress: past5YearsTotal,
       },
       {
         ...PROGRESS_CHART_DATA.intermediate,
-        target: targets?.intermediateDelivery?.[currentYear] ?? null,
-        progress: tenureCurrentYear?.['Intermediate'] ?? null,
+        target: intermediateDelivery[currentYear] ?? null,
+        progress: tenureCurrentYear['Intermediate'] ?? null,
       },
       {
         ...PROGRESS_CHART_DATA.marketHousing,
-        target: targets?.marketHousing?.[currentYear] ?? null,
-        progress: tenureCurrentYear?.['Market for sale'] ?? null,
+        target: marketHousing[currentYear] ?? null,
+        progress: tenureCurrentYear['Market for sale'] ?? null,
       },
       {
         ...PROGRESS_CHART_DATA.socialRented,
-        target: targets?.sociallyRented?.[currentYear] ?? null,
-        progress: tenureCurrentYear?.['Social Rent'] ?? null,
+        target: sociallyRented[currentYear] ?? null,
+        progress: tenureCurrentYear['Social Rent'] ?? null,
       },
     ],
     [past5YearsTotal, tenureCurrentYear, targets, currentYear]

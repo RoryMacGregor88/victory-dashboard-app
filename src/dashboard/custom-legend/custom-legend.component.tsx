@@ -32,7 +32,7 @@ interface Props {
   padBottom?: boolean;
 }
 
-const WalthamCustomLegend = ({
+export const WalthamCustomLegend = ({
   apiLegendData,
   targetLegendData,
   width,
@@ -81,7 +81,7 @@ const WalthamCustomLegend = ({
         })}
       </Grid>
 
-      {targetLegendData ? (
+      {!!targetLegendData ? (
         <Grid
           item
           container
@@ -110,5 +110,3 @@ const WalthamCustomLegend = ({
     </Grid>
   );
 };
-
-export { WalthamCustomLegend };

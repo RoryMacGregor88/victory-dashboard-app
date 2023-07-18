@@ -216,7 +216,7 @@ export const WalthamHousingDelivery = ({
     ),
     tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
 
-  /** setup/reset for total chart */
+  /** initialisation/reset for total chart */
   useEffect(() => {
     /** timeline hasn't built yet, or year is within timeline so no need to reset */
     if (!totalTimeline || (totalYear && totalTimeline.includes(totalYear))) {
@@ -228,7 +228,7 @@ export const WalthamHousingDelivery = ({
     }
   }, [totalTimeline, totalYear, updateDateFilter]);
 
-  /** setup/reset for tenure chart */
+  /** initialisation/reset for tenure chart */
   useEffect(() => {
     /** timeline hasn't built yet, or year is within timeline so no need to reset */
     if (

@@ -1,4 +1,4 @@
-/** Re-usable type declarations */
+import { VictoryThemeDefinition } from 'victory';
 
 import {
   AffordableHousingData,
@@ -8,23 +8,65 @@ import {
   TotalHousingDeliveryData,
 } from './mocks/fixtures';
 
+/** Re-usable type declarations */
+
+export type DatasetName =
+  | 'totalHousingDelivery'
+  | 'tenureHousingDelivery'
+  | 'progressionVsPlanning'
+  | 'approvalsGranted'
+  | 'affordableHousingDelivery'
+  | 'deliverableSupplySummary';
+
+export type TenureCategory =
+  | 'affordableHousing'
+  | 'affordableHousingLondon'
+  | 'intermediateDelivery'
+  | 'intermediateOther'
+  | 'marketHousing'
+  | 'sociallyRented';
+
+export type ProgressionVsPlanningCategory =
+  | 'aheadOfSchedule'
+  | 'behindSchedule'
+  | 'onTrack';
+
+export type TargetCategory =
+  | 'totalHousing'
+  | 'sociallyRented'
+  | 'marketHousing'
+  | 'intermediateDelivery'
+  | 'privateRental'
+  | 'affordableHousingDelivery';
+
+export type TenureDataType = 'Gross' | 'Net';
+
+export type ApprovalsGrantedDataType = 'Monthly' | 'Cumulative';
+
 export type Targets = {
-  [datasetName: string]: {
+  [key in TargetCategory]?: {
     [year: string]: number;
   };
-} | null;
+};
 
 export type Settings = {
-  tenureType?: string;
-  tenureDataType?: 'Gross' | 'Net';
+  tenureCategory?: TenureCategory;
+  tenureDataType?: TenureDataType;
   tenureYear?: number;
   totalYear?: number;
-  approvalsGrantedDataType?: 'Monthly' | 'Cumulative';
-} | null;
+  approvalsGrantedDataType?: ApprovalsGrantedDataType;
+  progressionVsPlanningCategory?: ProgressionVsPlanningCategory;
+  affordableHousingTotalYear?: number;
+};
 
 export type UserOrbState = {
   targets: Targets;
   settings: Settings;
+};
+
+export type UpdateOrbStateArgs = {
+  targets?: Targets;
+  settings?: Settings;
 };
 
 /** all individual datasets satisfy ChartData type */
@@ -36,7 +78,7 @@ export type ChartData = AffordableHousingData &
 
 export type ChartMetadata = {
   sourceId: string;
-  datasetName: string;
+  datasetName: DatasetName;
   url: string;
 };
 
@@ -45,16 +87,18 @@ export type LegendData = {
   color: string;
 };
 
-export type HousingTenureTypes = {
-  [tenureType: string]: string;
-};
-
-export type TenureDataTypes = {
-  gross: 'Gross';
-  net: 'Net';
-};
+export type HousingTenureCategories = { [key in TenureCategory]: string };
 
 export type ProgressIndicatorData = {
   x: number;
   y: number;
 }[];
+
+export type ChartColors = { [key in DatasetName]: string[] };
+
+export type ChartTheme = VictoryThemeDefinition & {
+  colors: string[];
+  chartColors: ChartColors;
+  tenureStackColors: { [key: string]: string };
+  fontSize: number;
+};

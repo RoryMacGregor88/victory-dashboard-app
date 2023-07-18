@@ -50,11 +50,11 @@ const styles = makeStyles((theme) => ({
 
 interface ButtonProps {
   variant?: 'text' | 'outlined' | 'contained';
-  color?: PropTypes.Color | undefined;
+  color?: PropTypes.Color;
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
-  type?: 'button' | 'reset' | 'submit' | undefined;
-  onClick: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  type?: 'button' | 'reset' | 'submit';
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   children: ReactNode;
 }
 
