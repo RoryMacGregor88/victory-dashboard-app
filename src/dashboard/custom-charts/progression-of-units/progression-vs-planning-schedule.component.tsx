@@ -29,7 +29,7 @@ interface Props {
   updateOrbState: (orbState: UpdateOrbStateArgs) => void;
 }
 
-export const ProgressionVsPlanningSchedule = ({
+const ProgressionVsPlanningSchedule = ({
   data,
   settings,
   updateOrbState,
@@ -162,3 +162,5 @@ export const ProgressionVsPlanningSchedule = ({
     </ChartWrapper>
   );
 };
+
+export default ProgressionVsPlanningSchedule;

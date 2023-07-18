@@ -12,7 +12,7 @@ import { BaseChart } from '../../../charts/base-chart/base-chart.component';
 import { StyledParentSize } from '../../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../../useChartTheme';
 import FlyoutTooltip from '../../../FlyoutTooltip';
-import { getStackDatumTotal } from '../../../tooltip-utils/tooltips-utils';
+import { getStackDatumTotal } from '../../../utils/utils';
 import { CustomLegend } from '../../../custom-legend/custom-legend.component';
 import { TARGET_LEGEND_DATA, housingTenureTypes } from '../../../../constants';
 

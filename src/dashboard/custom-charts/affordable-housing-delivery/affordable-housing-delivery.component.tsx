@@ -88,7 +88,7 @@ interface Props {
   updateOrbState: (orbState: UpdateOrbStateArgs) => void;
 }
 
-export const AffordableHousingDelivery = ({
+const AffordableHousingDelivery = ({
   data,
   targets,
   settings,
@@ -228,3 +228,5 @@ export const AffordableHousingDelivery = ({
     </ChartWrapper>
   );
 };
+
+export default AffordableHousingDelivery;

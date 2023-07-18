@@ -10,9 +10,7 @@ import {
 } from '@material-ui/core';
 
 import { Button, LoadMaskFallback, DialogTitle } from '../components';
-
 import { useAppDispatch, useAppSelector } from '../hooks';
-
 import { exportToCsv } from './utils/utils';
 
 import {
@@ -21,15 +19,21 @@ import {
   updateUserDashboardConfig,
   userOrbStateSelector,
 } from './dashboard-slice/dashboard.slice';
+
 import {
   SelectForm,
   TargetForm,
 } from './target-dialog-screens/target-dialog-screens';
-import { AffordableHousingDelivery } from './custom-charts/affordable-housing-delivery/affordable-housing-delivery.component';
-import { HousingApprovals } from './custom-charts/housing-approvals/housing-approvals.component';
-import { HousingDelivery } from './custom-charts/housing-delivery/housing-delivery.component';
-import { ProgressIndicators } from './custom-charts/progress-indicators/progress-indicators.component';
-import { ProgressionVsPlanningSchedule } from './custom-charts/progression-of-units/progression-vs-planning-schedule.component';
+
+import {
+  AffordableHousingDelivery,
+  DeliverableSupplySummary,
+  HousingApprovals,
+  HousingDelivery,
+  ProgressIndicators,
+  ProgressionVsPlanningSchedule,
+} from './custom-charts';
+
 import { apiMetadata, targetDatasets } from '../constants';
 import { userSelector } from '../accounts/accounts.slice';
 
@@ -40,8 +44,10 @@ import {
   ProgressionOfUnitsData,
   HousingApprovalsData,
 } from '../mocks/fixtures';
+
 // TODO: why does this work
 import { ExportData } from '~/mocks/fixtures/export_data';
+
 import {
   ChartMetadata,
   Targets,
@@ -96,6 +102,9 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
     affordableHousingDelivery: AffordableHousingData = useAppSelector(
       chartDataSelector(sourceId, 'affordableHousingDelivery')
     );
+  // deliverableSupplySummary = useSelector(
+  //   chartDataSelector(sourceId, 'deliverableSupplySummary')
+  // );
 
   const user = useAppSelector(userSelector);
   const userOrbState = useAppSelector(userOrbStateSelector(sourceId));
@@ -221,6 +230,55 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
 
   if (!dataIsLoaded || !orbStateIsLoaded) return <LoadMaskFallback />;
 
+  const MOCK_DSS_DATA = {
+    name: 'Mock Data for Deliverable Supply Summary Graph',
+    version: '1.0.0',
+    properties: {
+      name: 'Housing Delivery in Units',
+      label: 'Housing Delivery in Units',
+      units: 'Units',
+      description:
+        'Deliverable Supply Summary in Units for each financial year',
+      data: [
+        {
+          'Large Sites - With Planning Permission': 1100,
+          'Non Self Contained Accomodation With Planning Permission': 100,
+          'Windfall Allowance From Small Sites': 250,
+          'Sites on the Brownfield Land Site': 800,
+          Year: '2020-2022',
+        },
+        {
+          'Large Sites - With Planning Permission': 1100,
+          'Non Self Contained Accomodation With Planning Permission': 200,
+          'Windfall Allowance From Small Sites': 400,
+          'Sites on the Brownfield Land Site': 650,
+          Year: '2022-2023',
+        },
+        {
+          'Large Sites - With Planning Permission': 920,
+          'Non Self Contained Accomodation With Planning Permission': 250,
+          'Windfall Allowance From Small Sites': 250,
+          'Sites on the Brownfield Land Site': 600,
+          Year: '2023-2024',
+        },
+        {
+          'Large Sites - With Planning Permission': 1400,
+          'Non Self Contained Accomodation With Planning Permission': 200,
+          'Windfall Allowance From Small Sites': 350,
+          'Sites on the Brownfield Land Site': 800,
+          Year: '2024-2025',
+        },
+        {
+          'Large Sites - With Planning Permission': 1900,
+          'Non Self Contained Accomodation With Planning Permission': 50,
+          'Windfall Allowance From Small Sites': 300,
+          'Sites on the Brownfield Land Site': 1800,
+          Year: '2025-2026',
+        },
+      ],
+    },
+  };
+
   return (
     <>
       <Grid
@@ -246,7 +304,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
       </Grid>
 
       <Grid item container direction='column' className={styles.content}>
-        <Grid
+        {/* <Grid
           item
           container
           wrap='nowrap'
@@ -257,32 +315,31 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             tenureData={tenureHousingDelivery}
             targets={targets}
           />
-        </Grid>
-
-        <HousingDelivery
+        </Grid> */}
+        {/* <HousingDelivery
           totalHousingDeliveryChartData={totalHousingDelivery}
           tenureHousingDeliveryChartData={tenureHousingDelivery}
           targets={targets}
           settings={settings}
           updateOrbState={updateOrbState}
-        />
-
+        /> */}
         <Grid item container className={styles.bottomChartContainer}>
           <Grid item container direction='column'>
-            <ProgressionVsPlanningSchedule
+            {/* <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
               updateOrbState={updateOrbState}
-            />
-            <AffordableHousingDelivery
+            /> */}
+            <DeliverableSupplySummary data={MOCK_DSS_DATA} />
+            {/* <AffordableHousingDelivery
               data={affordableHousingDelivery}
               targets={targets}
               settings={settings}
               updateOrbState={updateOrbState}
-            />
+            /> */}
           </Grid>
 
-          <HousingApprovals
+          {/* <HousingApprovals
             x='Month'
             xLabel='Month'
             yLabel='No. Housing Approvals Granted'
@@ -290,7 +347,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             data={approvalsGranted}
             settings={settings}
             updateOrbState={updateOrbState}
-          />
+          /> */}
         </Grid>
       </Grid>
 

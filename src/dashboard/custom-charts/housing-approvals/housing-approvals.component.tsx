@@ -32,6 +32,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+// TODO: no tests
+
 interface Props {
   x?: string;
   xLabel?: string;
@@ -42,7 +44,7 @@ interface Props {
   updateOrbState: (orbState: UpdateOrbStateArgs) => void;
 }
 
-export const HousingApprovals = ({
+const HousingApprovals = ({
   x = 'x',
   xLabel = '',
   yLabel = '',
@@ -136,3 +138,5 @@ export const HousingApprovals = ({
     </ChartWrapper>
   );
 };
+
+export default HousingApprovals;

@@ -39,9 +39,10 @@ import {
   TotalHousingDeliveryData,
 } from '../../../mocks/fixtures';
 import {
-  HousingTenureTypes,
   Settings,
   Targets,
+  TenureCategory,
+  TenureDataType,
   UserOrbState,
 } from '../../../types';
 
@@ -75,11 +76,11 @@ const useStyles = makeStyles((theme) => ({
 
 interface TenureDataFilterProps {
   timeline: number[];
-  tenureYear: Settings['tenureYear'];
-  tenureType: Settings['tenureType'];
-  housingTenureTypes: HousingTenureTypes;
+  tenureYear: Settings[TenureCategory];
+  tenureType: Settings[TenureDataType];
+  housingTenureTypes: TenureCategory;
   handleYearRangeSelect: (year: number) => void;
-  handleTenureTypeSelect: (type: keyof HousingTenureTypes) => void;
+  handleTenureTypeSelect: (type: keyof TenureCategory) => void;
 }
 
 const TenureDataFilter = ({
@@ -90,6 +91,7 @@ const TenureDataFilter = ({
   handleYearRangeSelect,
   handleTenureTypeSelect,
 }: TenureDataFilterProps) => {
+  // TODO: destructure this and any others
   const styles = useStyles();
   const { root, select } = useSelectStyles({});
   return (
@@ -104,7 +106,7 @@ const TenureDataFilter = ({
         <Select
           value={tenureType}
           onChange={({ target: { value } }) =>
-            handleTenureTypeSelect(value as keyof HousingTenureTypes)
+            handleTenureTypeSelect(value as keyof TenureCategory)
           }
           classes={{ root, select }}
           disableUnderline
@@ -134,15 +136,15 @@ interface HousingDeliveryProps {
   tenureHousingDeliveryChartData: TenureTypeHousingData;
   targets: Targets;
   settings: Settings;
-  setDashboardSettings: React.Dispatch<React.SetStateAction<UserOrbState>>;
+  updateOrbState: (orbState: UserOrbState) => void;
 }
 
-export const HousingDelivery = ({
+const HousingDelivery = ({
   totalHousingDeliveryChartData,
   tenureHousingDeliveryChartData,
   targets,
   settings,
-  setDashboardSettings,
+  updateOrbState,
 }: HousingDeliveryProps) => {
   const styles = useStyles();
 
@@ -166,18 +168,18 @@ export const HousingDelivery = ({
         ...newSettings,
       }));
 
-      setDashboardSettings((prev: UserOrbState) => ({
+      updateOrbState((prev: UserOrbState) => ({
         ...prev,
         settings: { ...prev.settings, ...newSettings },
       }));
     },
-    [setDashboardSettings]
+    [updateOrbState]
   );
 
-  const handleTenureTypeSelect = (value: keyof HousingTenureTypes) => {
+  const handleTenureTypeSelect = (value: keyof TenureCategory) => {
     setConfiguration((prev) => ({ ...prev, tenureType: value }));
 
-    setDashboardSettings((prev: UserOrbState) => ({
+    updateOrbState((prev: UserOrbState) => ({
       ...prev,
       settings: { ...prev.settings, tenureType: value },
     }));
@@ -186,7 +188,7 @@ export const HousingDelivery = ({
   const handleToggleClick = (_: SyntheticEvent, type: 'Gross' | 'Net') => {
     setConfiguration((prev) => ({ ...prev, tenureDataType: type }));
 
-    setDashboardSettings((prev: UserOrbState) => ({
+    updateOrbState((prev: UserOrbState) => ({
       ...prev,
       settings: { ...prev.settings, tenureDataType: type },
     }));
@@ -318,3 +320,5 @@ export const HousingDelivery = ({
     </Grid>
   );
 };
+
+export default HousingDelivery;
