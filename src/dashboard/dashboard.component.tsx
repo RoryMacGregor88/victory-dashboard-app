@@ -26,10 +26,10 @@ import {
   TargetForm,
 } from './target-dialog-screens/target-dialog-screens';
 import { AffordableHousingDelivery } from './custom-charts/affordable-housing-delivery/affordable-housing-delivery.component';
-import { HousingApprovalsComponent } from './custom-charts/waltham-housing-approvals/housing-approvals.component';
-import { WalthamHousingDelivery } from './custom-charts/waltham-housing-delivery/waltham-housing-delivery.component';
-import ProgressIndicators from './custom-charts/progress-indicators/progress-indicators.component';
-import ProgressionVsPlanningSchedule from './custom-charts/waltham-progression-of-units/progression-vs-planning-schedule.component';
+import { HousingApprovals } from './custom-charts/housing-approvals/housing-approvals.component';
+import { HousingDelivery } from './custom-charts/housing-delivery/housing-delivery.component';
+import { ProgressIndicators } from './custom-charts/progress-indicators/progress-indicators.component';
+import { ProgressionVsPlanningSchedule } from './custom-charts/progression-of-units/progression-vs-planning-schedule.component';
 import { apiMetadata, targetDatasets } from '../constants';
 import { userSelector } from '../accounts/accounts.slice';
 
@@ -246,7 +246,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
       </Grid>
 
       <Grid item container direction='column' className={styles.content}>
-        {/* <Grid
+        <Grid
           item
           container
           wrap='nowrap'
@@ -257,15 +257,15 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             tenureData={tenureHousingDelivery}
             targets={targets}
           />
-        </Grid> */}
+        </Grid>
 
-        {/* <WalthamHousingDelivery
+        <HousingDelivery
           totalHousingDeliveryChartData={totalHousingDelivery}
           tenureHousingDeliveryChartData={tenureHousingDelivery}
           targets={targets}
           settings={settings}
-          setOrbState={setOrbState}
-        /> */}
+          updateOrbState={updateOrbState}
+        />
 
         <Grid item container className={styles.bottomChartContainer}>
           <Grid item container direction='column'>
@@ -274,15 +274,15 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
               settings={settings}
               updateOrbState={updateOrbState}
             />
-            {/* <AffordableHousingDelivery
+            <AffordableHousingDelivery
               data={affordableHousingDelivery}
               targets={targets}
               settings={settings}
               updateOrbState={updateOrbState}
-            /> */}
+            />
           </Grid>
 
-          {/* <HousingApprovalsComponent
+          <HousingApprovals
             x='Month'
             xLabel='Month'
             yLabel='No. Housing Approvals Granted'
@@ -290,7 +290,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             data={approvalsGranted}
             settings={settings}
             updateOrbState={updateOrbState}
-          /> */}
+          />
         </Grid>
       </Grid>
 
@@ -298,7 +298,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
         maxWidth='md'
         open={targetDialogVisible}
         onClose={closeDialog}
-        aria-labelledby='waltham-forest-targets-dialog'
+        aria-labelledby='targets-dialog'
       >
         <DialogTitle onClose={closeDialog}>
           {!!selectedDataset ? targetDatasets[selectedDataset] : 'Add Targets'}

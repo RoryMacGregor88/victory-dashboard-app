@@ -1,8 +1,8 @@
 import { Select, MenuItem, makeStyles } from '@material-ui/core';
 
-import { WALTHAM_FILTER_RANGE } from '../../constants';
+import { DEFAULT_FILTER_RANGE } from '../../constants';
 
-const useWalthamSelectStyles = makeStyles((theme) => ({
+const useSelectStyles = makeStyles((theme) => ({
   root: {
     padding: '0.5rem',
     width: '10rem',
@@ -26,13 +26,13 @@ const useWalthamSelectStyles = makeStyles((theme) => ({
  *  range?: number,
  * }} props
  */
-const WalthamCustomDateRange = ({
+const CustomDateRange = ({
   timeline,
   value,
   onSelect,
-  range = WALTHAM_FILTER_RANGE,
+  range = DEFAULT_FILTER_RANGE,
 }) => {
-  const { root, select } = useWalthamSelectStyles({});
+  const { root, select } = useSelectStyles({});
   return (
     <Select
       value={value ?? ''}
@@ -58,4 +58,4 @@ const WalthamCustomDateRange = ({
   );
 };
 
-export { WalthamCustomDateRange, useWalthamSelectStyles };
+export { CustomDateRange, useSelectStyles };

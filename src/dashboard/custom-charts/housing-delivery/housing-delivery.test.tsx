@@ -2,7 +2,7 @@ import { it, expect, describe, vi } from 'vitest';
 
 import { render, userEvent, screen, waitFor } from '../../../test/test.utils';
 
-import { WalthamHousingDelivery } from './waltham-housing-delivery.component';
+import { HousingDelivery } from './housing-delivery.component';
 
 import tenureData from '../../../mocks/fixtures/tenure_type_housing_delivery';
 import totalData from '../../../mocks/fixtures/total_housing_delivery';
@@ -16,14 +16,14 @@ const defaultData = {
 
 let setDashboardSettings = null;
 
-describe('WalthamHousingDelivery', () => {
+describe('HousingDelivery', () => {
   beforeEach(() => {
     setDashboardSettings = vi.fn();
   });
 
   it('sets default values if no saved settings', async () => {
     render(
-      <WalthamHousingDelivery
+      <HousingDelivery
         {...defaultData}
         setDashboardSettings={setDashboardSettings}
       />
@@ -53,7 +53,7 @@ describe('WalthamHousingDelivery', () => {
     };
 
     render(
-      <WalthamHousingDelivery
+      <HousingDelivery
         {...defaultData}
         settings={settings}
         setDashboardSettings={setDashboardSettings}
@@ -83,7 +83,7 @@ describe('WalthamHousingDelivery', () => {
       };
 
     render(
-      <WalthamHousingDelivery
+      <HousingDelivery
         {...defaultData}
         targets={targets}
         settings={settings}
@@ -104,7 +104,7 @@ describe('WalthamHousingDelivery', () => {
 
   it('calls setDashboardSettings function when filters are changed', async () => {
     render(
-      <WalthamHousingDelivery
+      <HousingDelivery
         {...defaultData}
         settings={{ tenureYear: 2019 }}
         setDashboardSettings={setDashboardSettings}

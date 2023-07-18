@@ -192,7 +192,7 @@ export const yellowStyle = {
  * start index not included, so must be one less than target number,
  * for example, 5-year range would be 4, like below.
  */
-export const WALTHAM_FILTER_RANGE = 4;
+export const DEFAULT_FILTER_RANGE = 4;
 
 /** percentages and style ratios used in WFC progress indicators */
 export const MIN_PERCENTAGE = 0;

@@ -32,7 +32,7 @@ interface Props {
   padBottom?: boolean;
 }
 
-export const WalthamCustomLegend = ({
+export const CustomLegend = ({
   apiLegendData,
   targetLegendData,
   width,

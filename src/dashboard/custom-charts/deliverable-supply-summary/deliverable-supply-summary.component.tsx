@@ -6,19 +6,21 @@ import { BaseChart } from '../../charts/base-chart/base-chart.component';
 import { ChartWrapper } from '../../charts/chart-wrapper.component';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
-import { labelsForArrayOfObjects } from '../../../dashboard/tooltip-utils/tooltips-utils';
-import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
+import { labelsForArrayOfObjects } from '../../../dashboard/utils/utils';
+import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import { deliverableSupplySummaryTypes } from '../../../constants';
 
-const DeliverableSupplySummary = ({ data }) => {
+export const DeliverableSupplySummary = ({ data }) => {
   const chartTheme = useChartTheme();
-  // This chart was implemented but was subsequently dropped when it was
-  // found to have been done too early. Currently not used but code kept
-  // here in case it is needed again
+  /**
+   * This chart was implemented but was subsequently dropped when it was
+   * found to have been done too early. Currently not used but code kept
+   * here in case it is needed again
+   */
   const updatedTheme = {
     ...chartTheme,
     stack: {
-      colorScale: chartTheme.walthamChartColors.deliverableSupplySummary,
+      colorScale: chartTheme.chartColors.deliverableSupplySummary,
     },
   };
 
@@ -29,11 +31,11 @@ const DeliverableSupplySummary = ({ data }) => {
 
   const legendData = deliverableSupplySummaryTypes.map((range, i) => ({
     name: range,
-    color: chartTheme.walthamChartColors.deliverableSupplySummary[i],
+    color: chartTheme.chartColors.deliverableSupplySummary[i],
   }));
 
   const DeliverableSupplySummaryLegend = () => {
-    return <WalthamCustomLegend apiLegendData={legendData} width={1024} />;
+    return <CustomLegend apiLegendData={legendData} width={1024} />;
   };
 
   const apiData = data?.properties[0]?.data;
@@ -84,5 +86,3 @@ const DeliverableSupplySummary = ({ data }) => {
     </ChartWrapper>
   );
 };
-
-export default DeliverableSupplySummary;

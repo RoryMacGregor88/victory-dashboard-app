@@ -2,20 +2,20 @@ import { it, expect, describe, vi } from 'vitest';
 
 import { render, screen, userEvent } from '../../test/test.utils';
 
-import { WalthamCustomDateRange } from './custom-date-range.component';
+import { CustomDateRange } from './custom-date-range.component';
 
 const testTimeline = [2010, 2011, 2012, 2013, 2014, 2015, 2016];
 
 let onSelect = null;
 
-describe('WalthamCustomDateRange', () => {
+describe('CustomDateRange', () => {
   beforeEach(() => {
     onSelect = vi.fn();
   });
 
   it('renders options in 5-year intervals', () => {
     render(
-      <WalthamCustomDateRange
+      <CustomDateRange
         timeline={testTimeline}
         value={2016}
         onSelect={onSelect}
@@ -29,7 +29,7 @@ describe('WalthamCustomDateRange', () => {
 
   it('selects when onChange called', async () => {
     render(
-      <WalthamCustomDateRange
+      <CustomDateRange
         timeline={testTimeline}
         value={2016}
         onSelect={onSelect}
@@ -49,7 +49,7 @@ describe('WalthamCustomDateRange', () => {
 
   it('filters entries out with no 5-year range', async () => {
     render(
-      <WalthamCustomDateRange
+      <CustomDateRange
         timeline={testTimeline}
         value={2016}
         onSelect={onSelect}

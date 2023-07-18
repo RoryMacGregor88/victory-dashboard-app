@@ -8,8 +8,8 @@ import { StyledParentSize } from '../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
 import { filterByType, getStackDatumTotal } from '../../utils/utils';
-import { useWalthamSelectStyles } from '../../custom-date-range/custom-date-range.component';
-import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
+import { useSelectStyles } from '../../custom-date-range/custom-date-range.component';
+import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import {
   progressionVsPlanningCategories,
   progressionVsPlanningPalette,
@@ -29,13 +29,13 @@ interface Props {
   updateOrbState: (orbState: UpdateOrbStateArgs) => void;
 }
 
-const ProgressionVsPlanningSchedule = ({
+export const ProgressionVsPlanningSchedule = ({
   data,
   settings,
   updateOrbState,
 }: Props) => {
   const chartTheme = useChartTheme();
-  const { root, select } = useWalthamSelectStyles({});
+  const { root, select } = useSelectStyles({});
 
   const selectedCategory =
     settings.progressionVsPlanningCategory ?? ALL_TENURE_TYPES;
@@ -81,19 +81,19 @@ const ProgressionVsPlanningSchedule = ({
             ? progressVsPlanningValues
             : [progressionVsPlanningCategories[selectedCategory]];
 
-          const x = 'Year';
+          const selectedType = showAllData
+            ? null
+            : (progressionVsPlanningCategories[
+                selectedCategory
+              ] as keyof ProgressionOfUnitsData[number]);
 
-          const filteredData = showAllData
-            ? data
-            : filterByType<ProgressionOfUnitsData[number]>({
-                data,
-                selectedType: progressionVsPlanningCategories[selectedCategory],
-              });
+          const filteredData = filterByType<ProgressionOfUnitsData[number]>({
+            data,
+            selectedType,
+          });
 
           // TODO: skeleton here?
           if (!filteredData) return null;
-
-          console.log('filteredData: ', filteredData);
 
           return (
             <>
@@ -104,10 +104,7 @@ const ProgressionVsPlanningSchedule = ({
                 wrap='nowrap'
               >
                 <Grid item>
-                  <WalthamCustomLegend
-                    apiLegendData={apiLegendData}
-                    width={width}
-                  />
+                  <CustomLegend apiLegendData={apiLegendData} width={width} />
                 </Grid>
                 <Grid item>
                   <Select
@@ -145,7 +142,7 @@ const ProgressionVsPlanningSchedule = ({
                       labelComponent={FlyoutTooltip()}
                       key={range}
                       data={filteredData}
-                      x={x}
+                      x='startYear'
                       y={range}
                       labels={({ datum }) => getStackDatumTotal(datum, ranges)}
                       style={{
@@ -165,5 +162,3 @@ const ProgressionVsPlanningSchedule = ({
     </ChartWrapper>
   );
 };
-
-export default ProgressionVsPlanningSchedule;

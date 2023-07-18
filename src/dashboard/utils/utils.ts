@@ -1,46 +1,10 @@
-import { WALTHAM_FILTER_RANGE, MIME_TYPE, EXTENSION } from '../../constants';
+import { DEFAULT_FILTER_RANGE, MIME_TYPE, EXTENSION } from '../../constants';
 
 import * as FileSaver from 'file-saver';
 import { utils, write } from 'xlsx';
-import {
-  ProgressionVsPlanningCategory,
-  TargetCategory,
-  Targets,
-} from '../../types';
-import {
-  HousingApprovalsObjectArray,
-  TimelineData,
-  TransformedTargets,
-} from './types';
-import { AffordableHousingData, ExportData } from '~/mocks/fixtures';
-
-/**
- * This function is necessary because the data entries do not always have the same
- * keys, and victory does not accept missing keys. It does however accept 'null'
- * values, so this fills any missing keys with 'null' so the data is usable.
- */
-const lineDataTransformer = (
-  data: HousingApprovalsObjectArray
-): HousingApprovalsObjectArray | undefined => {
-  if (!data) return;
-
-  const allKeys = data.reduce((acc: string[], cur) => {
-    const keys = Object.keys(cur);
-    return [...acc, ...keys];
-  }, []);
-
-  const uniqueKeys = [...new Set(allKeys)];
-
-  /**
-   * recreates each datum with every key from the list of unique keys,
-   * setting the values to data from datum where it exists, and'null'
-   * where it does not
-   */
-  const padUniqueYears = (obj: HousingApprovalsObjectArray[number]) =>
-    uniqueKeys.reduce((acc, cur) => ({ ...acc, [cur]: obj[cur] ?? null }), {});
-
-  return data.map(padUniqueYears);
-};
+import { TargetCategory, Targets } from '../../types';
+import { TimelineData, TransformedTargets } from './types';
+import { ExportData } from '~/mocks/fixtures';
 
 /**
  * This function transforms a key/value object into X/Y data to be rendered
@@ -53,7 +17,7 @@ const lineDataTransformer = (
  * If a timeline is provided, but the data falls outwith it, returns null.
  */
 const userTargetTransformer = (
-  targetDataset: Targets[string],
+  targetDataset: Targets[TargetCategory],
   timeline: number[]
 ): TransformedTargets | null => {
   if (!targetDataset) return null;
@@ -156,8 +120,8 @@ const getDataTimeline = ({ apiData, targets = {} }: GetDataTimelineArgs) => {
 
   /** ensures a minimum year range displayed on charts */
   const startPoint =
-    yearRange < WALTHAM_FILTER_RANGE
-      ? min - (WALTHAM_FILTER_RANGE - yearRange)
+    yearRange < DEFAULT_FILTER_RANGE
+      ? min - (DEFAULT_FILTER_RANGE - yearRange)
       : min;
 
   let timeline: number[] = [];
@@ -171,22 +135,25 @@ const getDataTimeline = ({ apiData, targets = {} }: GetDataTimelineArgs) => {
 // TODO: type this properly
 interface FilterByTypeArgs<T> {
   data: T[];
-  selectedType: keyof T;
+  selectedType: keyof T | null;
 }
 
 const filterByType = <T>({
   data,
   selectedType,
-}: FilterByTypeArgs<T & { startYear: number }>) =>
-  data.map((datum) => ({
+}: FilterByTypeArgs<T & { startYear: number }>) => {
+  if (!selectedType) return data;
+
+  return data.map((datum) => ({
     startYear: datum.startYear,
-    [selectedType]: datum[selectedType],
+    [selectedType]: Number(datum[selectedType]),
   }));
+};
 
 const getFilteredTimeline = (
   timeline: number[] | undefined,
   selectedYear: number | undefined,
-  range = WALTHAM_FILTER_RANGE
+  range = DEFAULT_FILTER_RANGE
 ) => {
   if (!timeline || !selectedYear) return;
 
@@ -358,7 +325,6 @@ const getStackDatumTotal = (datum, ranges) => {
 };
 
 export {
-  lineDataTransformer,
   userTargetTransformer,
   getTargetTotals,
   getPastYears,

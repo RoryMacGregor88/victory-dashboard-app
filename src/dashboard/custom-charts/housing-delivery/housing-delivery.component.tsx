@@ -22,8 +22,8 @@ import {
   getFilteredTimeline,
 } from '../../utils/utils';
 import {
-  WalthamCustomDateRange,
-  useWalthamSelectStyles,
+  CustomDateRange,
+  useSelectStyles,
 } from '../../custom-date-range/custom-date-range.component';
 
 import {
@@ -91,7 +91,7 @@ const TenureDataFilter = ({
   handleTenureTypeSelect,
 }: TenureDataFilterProps) => {
   const styles = useStyles();
-  const { root, select } = useWalthamSelectStyles({});
+  const { root, select } = useSelectStyles({});
   return (
     <Grid
       container
@@ -119,7 +119,7 @@ const TenureDataFilter = ({
       </Grid>
 
       <Grid item>
-        <WalthamCustomDateRange
+        <CustomDateRange
           timeline={timeline}
           value={tenureYear}
           onSelect={handleYearRangeSelect}
@@ -137,7 +137,7 @@ interface HousingDeliveryProps {
   setDashboardSettings: React.Dispatch<React.SetStateAction<UserOrbState>>;
 }
 
-export const WalthamHousingDelivery = ({
+export const HousingDelivery = ({
   totalHousingDeliveryChartData,
   tenureHousingDeliveryChartData,
   targets,
@@ -262,7 +262,7 @@ export const WalthamHousingDelivery = ({
           title='Total Housing Delivery'
           info='Total housing delivery values per financial year. The data source is the PLD (Planning London Data Hub).'
         >
-          <WalthamCustomDateRange
+          <CustomDateRange
             timeline={totalTimeline}
             value={totalYear}
             onSelect={(value: number) => updateDateFilter({ totalYear: value })}

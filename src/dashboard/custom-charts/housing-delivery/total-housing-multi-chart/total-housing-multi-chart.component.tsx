@@ -9,7 +9,7 @@ import { StyledParentSize } from '../../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../../../dashboard/useChartTheme';
 import { GroupedWidthCalculator } from '../../../utils/utils';
 import FlyoutTooltip from '../../../FlyoutTooltip';
-import { WalthamCustomLegend } from '../../../custom-legend/custom-legend.component';
+import { CustomLegend } from '../../../custom-legend/custom-legend.component';
 import { TENURE_DATA_TYPES, TARGET_LEGEND_DATA } from '../../../../constants';
 
 import { totalHousingTransformer } from './total-housing-transformer/total-housing-transformer';
@@ -26,7 +26,7 @@ const TotalHousingMultiChart = ({
   userTargetData,
   filteredTimeline,
 }) => {
-  const { walthamChartColors } = useChartTheme();
+  const { chartColors } = useChartTheme();
 
   /**
    * Transform API/target data to correct data shape, and create a
@@ -43,7 +43,7 @@ const TotalHousingMultiChart = ({
 
   const apiLegendData = Object.values(TENURE_DATA_TYPES).map((type, i) => ({
     name: type,
-    color: walthamChartColors.totalHousing[i],
+    color: chartColors.totalHousing[i],
   }));
 
   const TotalHousingGroupChart = ({ width }) => {
@@ -59,7 +59,7 @@ const TotalHousingMultiChart = ({
             labelComponent={FlyoutTooltip()}
             style={{
               data: {
-                fill: walthamChartColors.totalHousing[i],
+                fill: chartColors.totalHousing[i],
                 width: barWidth,
               },
             }}
@@ -98,7 +98,7 @@ const TotalHousingMultiChart = ({
     <StyledParentSize>
       {({ width }) => (
         <>
-          <WalthamCustomLegend
+          <CustomLegend
             apiLegendData={apiLegendData}
             targetLegendData={transformedTargets ? TARGET_LEGEND_DATA : null}
             width={width}

@@ -14,8 +14,8 @@ import { ChartWrapper } from '../../charts/chart-wrapper.component';
 import { StyledParentSize } from '../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
-import { WalthamCustomDateRange } from '../../custom-date-range/custom-date-range.component';
-import { WalthamCustomLegend } from '../../custom-legend/custom-legend.component';
+import { CustomDateRange } from '../../custom-date-range/custom-date-range.component';
+import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import { yellowStyle } from '../../../constants';
 import { AffordableHousingData } from '../../../mocks/fixtures';
 import {
@@ -88,7 +88,7 @@ interface Props {
   updateOrbState: (orbState: UpdateOrbStateArgs) => void;
 }
 
-const AffordableHousingDelivery = ({
+export const AffordableHousingDelivery = ({
   data,
   targets,
   settings,
@@ -191,7 +191,7 @@ const AffordableHousingDelivery = ({
             </Grid>
           ) : (
             <>
-              <WalthamCustomDateRange
+              <CustomDateRange
                 timeline={timeline}
                 value={affordableHousingTotalYear}
                 onSelect={(year: number) =>
@@ -200,7 +200,7 @@ const AffordableHousingDelivery = ({
                   })
                 }
               />
-              <WalthamCustomLegend
+              <CustomLegend
                 width={width}
                 apiLegendData={apiLegendData}
                 padTop
@@ -228,4 +228,3 @@ const AffordableHousingDelivery = ({
     </ChartWrapper>
   );
 };
-export { AffordableHousingDelivery };

@@ -31,7 +31,7 @@ interface ProgressIndicatorProps {
   targets?: Targets;
 }
 
-const ProgressIndicators = ({
+export const ProgressIndicators = ({
   totalData,
   tenureData,
   targets = {},
@@ -115,5 +115,3 @@ const ProgressIndicators = ({
     );
   });
 };
-
-export default ProgressIndicators;
