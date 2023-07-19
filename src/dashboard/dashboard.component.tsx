@@ -43,6 +43,7 @@ import {
   AffordableHousingData,
   ProgressionOfUnitsData,
   HousingApprovalsData,
+  DeliverableSupplySummaryData,
 } from '../mocks/fixtures';
 
 // TODO: why does this work
@@ -83,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
+  // TODO: deconstruct
   const styles = useStyles();
   const dispatch = useAppDispatch();
 
@@ -101,10 +103,10 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
     ),
     affordableHousingDelivery: AffordableHousingData = useAppSelector(
       chartDataSelector(sourceId, 'affordableHousingDelivery')
+    ),
+    deliverableSupplySummary: DeliverableSupplySummaryData = useAppSelector(
+      chartDataSelector(sourceId, 'deliverableSupplySummary')
     );
-  // deliverableSupplySummary = useSelector(
-  //   chartDataSelector(sourceId, 'deliverableSupplySummary')
-  // );
 
   const user = useAppSelector(userSelector);
   const userOrbState = useAppSelector(userOrbStateSelector(sourceId));
@@ -119,13 +121,14 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
 
   const orbStateRef = useRef(orbState);
 
-  // TODO: don't need this if using skeletons
+  // TODO: don't need this if using skeletons, eventually remove
   const dataIsLoaded =
     !!approvalsGranted &&
     !!progressionVsPlanning &&
     !!tenureHousingDelivery &&
     !!totalHousingDelivery &&
-    !!affordableHousingDelivery;
+    !!affordableHousingDelivery &&
+    !!deliverableSupplySummary;
 
   const { targets, settings } = orbState ?? {},
     orbStateIsLoaded = !!targets && !!settings;
@@ -164,6 +167,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
         url,
       };
 
+      // TODO: Promise.all for this?
       dispatch(fetchDashboardData(chartMetadata));
     });
   }, [sourceId, dispatch]);
@@ -230,55 +234,6 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
 
   if (!dataIsLoaded || !orbStateIsLoaded) return <LoadMaskFallback />;
 
-  const MOCK_DSS_DATA = {
-    name: 'Mock Data for Deliverable Supply Summary Graph',
-    version: '1.0.0',
-    properties: {
-      name: 'Housing Delivery in Units',
-      label: 'Housing Delivery in Units',
-      units: 'Units',
-      description:
-        'Deliverable Supply Summary in Units for each financial year',
-      data: [
-        {
-          'Large Sites - With Planning Permission': 1100,
-          'Non Self Contained Accomodation With Planning Permission': 100,
-          'Windfall Allowance From Small Sites': 250,
-          'Sites on the Brownfield Land Site': 800,
-          Year: '2020-2022',
-        },
-        {
-          'Large Sites - With Planning Permission': 1100,
-          'Non Self Contained Accomodation With Planning Permission': 200,
-          'Windfall Allowance From Small Sites': 400,
-          'Sites on the Brownfield Land Site': 650,
-          Year: '2022-2023',
-        },
-        {
-          'Large Sites - With Planning Permission': 920,
-          'Non Self Contained Accomodation With Planning Permission': 250,
-          'Windfall Allowance From Small Sites': 250,
-          'Sites on the Brownfield Land Site': 600,
-          Year: '2023-2024',
-        },
-        {
-          'Large Sites - With Planning Permission': 1400,
-          'Non Self Contained Accomodation With Planning Permission': 200,
-          'Windfall Allowance From Small Sites': 350,
-          'Sites on the Brownfield Land Site': 800,
-          Year: '2024-2025',
-        },
-        {
-          'Large Sites - With Planning Permission': 1900,
-          'Non Self Contained Accomodation With Planning Permission': 50,
-          'Windfall Allowance From Small Sites': 300,
-          'Sites on the Brownfield Land Site': 1800,
-          Year: '2025-2026',
-        },
-      ],
-    },
-  };
-
   return (
     <>
       <Grid
@@ -316,39 +271,35 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             targets={targets}
           />
         </Grid> */}
-        {/* <HousingDelivery
-          totalHousingDeliveryChartData={totalHousingDelivery}
-          tenureHousingDeliveryChartData={tenureHousingDelivery}
+        <HousingDelivery
+          totalHousingDeliveryData={totalHousingDelivery}
+          tenureHousingDeliveryData={tenureHousingDelivery}
           targets={targets}
           settings={settings}
           updateOrbState={updateOrbState}
-        /> */}
-        <Grid item container className={styles.bottomChartContainer}>
+        />
+        {/* <Grid item container className={styles.bottomChartContainer}>
           <Grid item container direction='column'>
-            {/* <ProgressionVsPlanningSchedule
+            <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
               updateOrbState={updateOrbState}
-            /> */}
-            <DeliverableSupplySummary data={MOCK_DSS_DATA} />
-            {/* <AffordableHousingDelivery
+            />
+            <DeliverableSupplySummary data={deliverableSupplySummary} />
+            <AffordableHousingDelivery
               data={affordableHousingDelivery}
               targets={targets}
               settings={settings}
               updateOrbState={updateOrbState}
-            /> */}
+            />
           </Grid>
 
-          {/* <HousingApprovals
-            x='Month'
-            xLabel='Month'
-            yLabel='No. Housing Approvals Granted'
-            ranges={['2019', '2020']}
+          <HousingApprovals
             data={approvalsGranted}
             settings={settings}
             updateOrbState={updateOrbState}
-          /> */}
-        </Grid>
+          />
+        </Grid> */}
       </Grid>
 
       <Dialog

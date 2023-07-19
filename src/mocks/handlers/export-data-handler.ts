@@ -6,4 +6,4 @@ const getExportData = rest.get('*/export/', (_, res, ctx) =>
   res(ctx.status(200), ctx.json(data))
 );
 
-export { getExportData };
+export default getExportData;

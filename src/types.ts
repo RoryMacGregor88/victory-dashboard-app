@@ -2,6 +2,7 @@ import { VictoryThemeDefinition } from 'victory';
 
 import {
   AffordableHousingData,
+  DeliverableSupplySummaryData,
   HousingApprovalsData,
   ProgressionOfUnitsData,
   TenureTypeHousingData,
@@ -74,7 +75,8 @@ export type ChartData = AffordableHousingData &
   HousingApprovalsData &
   ProgressionOfUnitsData &
   TenureTypeHousingData &
-  TotalHousingDeliveryData;
+  TotalHousingDeliveryData &
+  DeliverableSupplySummaryData;
 
 export type ChartMetadata = {
   sourceId: string;

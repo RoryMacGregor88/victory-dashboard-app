@@ -7,4 +7,4 @@ const getProgressionOfUnitsData = rest.get(
   (_, res, ctx) => res(ctx.status(200), ctx.json(data))
 );
 
-export { getProgressionOfUnitsData };
+export default getProgressionOfUnitsData;

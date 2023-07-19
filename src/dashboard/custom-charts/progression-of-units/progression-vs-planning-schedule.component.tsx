@@ -87,6 +87,8 @@ const ProgressionVsPlanningSchedule = ({
                 selectedCategory
               ] as keyof ProgressionOfUnitsData[number]);
 
+          const x = 'startYear';
+
           const filteredData = filterByType<ProgressionOfUnitsData[number]>({
             data,
             selectedType,
@@ -142,7 +144,7 @@ const ProgressionVsPlanningSchedule = ({
                       labelComponent={FlyoutTooltip()}
                       key={range}
                       data={filteredData}
-                      x='startYear'
+                      x={x}
                       y={range}
                       labels={({ datum }) => getStackDatumTotal(datum, ranges)}
                       style={{

@@ -125,6 +125,11 @@ export const apiMetadata: {
     url: '/api/total_housing_delivery/v1/',
     apiSourceId: 'api/total_housing_delivery/v1',
   },
+  {
+    datasetName: 'deliverableSupplySummary',
+    url: '/api/deliverable_supply_summary/latest/',
+    apiSourceId: 'api/deliverable_supply_summary/latest',
+  },
 ];
 
 // TODO: this name is confusing, it's just for the targets

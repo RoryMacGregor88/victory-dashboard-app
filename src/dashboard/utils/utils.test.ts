@@ -7,7 +7,6 @@ import {
   getUser5YearTotals,
   getDataTimeline,
   getFilteredTimeline,
-  labelsForArrayOfObjects,
   labelsForArrayOfObjectsInclusive,
   getStackDatumTotal,
 } from './utils';
@@ -331,25 +330,6 @@ describe('Utility Functions', () => {
       { Year: '2012-2013', foo: 120, bar: 190, baz: 200 },
       { Year: '2012-2013', foo: 100, bar: 220, baz: 190 },
     ];
-
-    describe('labelsForArrayOfObjects', () => {
-      it('adds all properties except the specified one', () => {
-        const result = labelsForArrayOfObjects(MOCK_DATA, 'Year');
-        expect(result).toEqual([432, 529, 481, 510, 510]);
-      });
-      it('allows custom formatting', () => {
-        const result = labelsForArrayOfObjects(
-          MOCK_DATA,
-          'Year',
-          (item) => `x${item}`
-        );
-        expect(result).toEqual(['x432', 'x529', 'x481', 'x510', 'x510']);
-      });
-      it('returns empty array if no data passed', () => {
-        const result = labelsForArrayOfObjects(undefined, 'Year');
-        expect(result).toEqual([]);
-      });
-    });
 
     describe('labelsForArrayOfObjectsInclusive', () => {
       it('adds all properties except the specified one', () => {

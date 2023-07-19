@@ -35,24 +35,12 @@ const useStyles = makeStyles(() => ({
 // TODO: no tests
 
 interface Props {
-  x?: string;
-  xLabel?: string;
-  yLabel?: string;
-  ranges?: string[];
   data: HousingApprovalsData;
   settings: Settings;
   updateOrbState: (orbState: UpdateOrbStateArgs) => void;
 }
 
-const HousingApprovals = ({
-  x = 'x',
-  xLabel = '',
-  yLabel = '',
-  ranges = ['y'],
-  data,
-  settings,
-  updateOrbState,
-}: Props) => {
+const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
   const { chartColors } = useChartTheme();
   const { paper, toggleButtonGroup } = useStyles();
 
@@ -83,6 +71,10 @@ const HousingApprovals = ({
     },
   ];
 
+  const ranges = ['2019', '2020'],
+    xLabel = 'Month',
+    yLabel = 'No. Housing Approvals Granted';
+
   return (
     <ChartWrapper
       title='No. of housing approvals granted over time'
@@ -110,7 +102,8 @@ const HousingApprovals = ({
             <BaseChart width={width} xLabel={xLabel} yLabel={yLabel}>
               <VictoryGroup>
                 {ranges.map((range, i) => {
-                  const stroke = chartColors.approvalsGranted[i];
+                  const stroke = chartColors.approvalsGranted[i],
+                    x = 'Month';
                   return (
                     <VictoryGroup key={range}>
                       <VictoryLine

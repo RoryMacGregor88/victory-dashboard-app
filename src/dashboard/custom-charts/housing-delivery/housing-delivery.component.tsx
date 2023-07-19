@@ -132,16 +132,16 @@ const TenureDataFilter = ({
 };
 
 interface HousingDeliveryProps {
-  totalHousingDeliveryChartData: TotalHousingDeliveryData;
-  tenureHousingDeliveryChartData: TenureTypeHousingData;
+  totalHousingDeliveryData: TotalHousingDeliveryData;
+  tenureHousingDeliveryData: TenureTypeHousingData;
   targets: Targets;
   settings: Settings;
   updateOrbState: (orbState: UserOrbState) => void;
 }
 
 const HousingDelivery = ({
-  totalHousingDeliveryChartData,
-  tenureHousingDeliveryChartData,
+  totalHousingDeliveryData,
+  tenureHousingDeliveryData,
   targets,
   settings,
   updateOrbState,
@@ -204,16 +204,16 @@ const HousingDelivery = ({
   const dataByTenureType = useMemo(
     () =>
       showAllData
-        ? tenureHousingDeliveryChartData
+        ? tenureHousingDeliveryData
         : filterByType<TenureTypeHousingData>({
-            data: tenureHousingDeliveryChartData,
+            data: tenureHousingDeliveryData,
             selectedType: housingTenureTypes[tenureType],
           }),
-    [tenureHousingDeliveryChartData, tenureType, showAllData]
+    [tenureHousingDeliveryData, tenureType, showAllData]
   );
 
   const totalTimeline = getDataTimeline(
-      totalHousingDeliveryChartData,
+      totalHousingDeliveryData,
       targets?.totalHousing
     ),
     tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
@@ -270,7 +270,7 @@ const HousingDelivery = ({
             onSelect={(value: number) => updateDateFilter({ totalYear: value })}
           />
           <TotalHousingMultiChart
-            apiData={totalHousingDeliveryChartData}
+            apiData={totalHousingDeliveryData}
             userTargetData={targets?.totalHousing}
             filteredTimeline={getFilteredTimeline(totalTimeline, totalYear)}
           />

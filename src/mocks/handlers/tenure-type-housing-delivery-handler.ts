@@ -7,4 +7,4 @@ const getTenureTypeHousingDeliveryData = rest.get(
   (_, res, ctx) => res(ctx.status(200), ctx.json(data))
 );
 
-export { getTenureTypeHousingDeliveryData };
+export default getTenureTypeHousingDeliveryData;

@@ -7,4 +7,4 @@ const getTotalHousingDeliveryData = rest.get(
   (_, res, ctx) => res(ctx.status(200), ctx.json(data))
 );
 
-export { getTotalHousingDeliveryData };
+export default getTotalHousingDeliveryData;
