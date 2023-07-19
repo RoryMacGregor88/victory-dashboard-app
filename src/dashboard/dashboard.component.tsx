@@ -70,22 +70,32 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(4),
     backgroundColor: theme.palette.background.default,
+    gap: theme.spacing(2),
   },
   progressIndicators: {
     gap: theme.spacing(2),
   },
-  planningProgression: {
-    height: 'fit-content',
-  },
   bottomChartContainer: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 2fr',
+    gap: theme.spacing(2),
+  },
+  topChartContainer: {
+    gap: theme.spacing(2),
+  },
+  leftBottomChartContainer: {
+    gap: theme.spacing(2),
   },
 }));
 
-export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
-  // TODO: deconstruct
-  const styles = useStyles();
+export const Dashboard = ({ sourceId }: { sourceId: string }) => {
+  const {
+    header,
+    headerButtons,
+    content,
+    progressIndicators,
+    bottomChartContainer,
+    topChartContainer,
+    leftBottomChartContainer,
+  } = useStyles();
   const dispatch = useAppDispatch();
 
   /** all data, including 'name', 'version', etc */
@@ -243,10 +253,10 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
         justifyContent='space-between'
         alignItems='center'
         wrap='nowrap'
-        className={styles.header}
+        className={header}
       >
         <Typography variant='h2'>Housing Delivery Dashboard</Typography>
-        <Grid item container className={styles.headerButtons}>
+        <Grid item container className={headerButtons}>
           <Button size='small' onClick={handleExport}>
             {exportIsLoading ? (
               <CircularProgress size={20} color='inherit' />
@@ -260,13 +270,8 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
         </Grid>
       </Grid>
 
-      <Grid item container direction='column' className={styles.content}>
-        <Grid
-          item
-          container
-          wrap='nowrap'
-          className={styles.progressIndicators}
-        >
+      <Grid item container direction='column' className={content}>
+        <Grid item container wrap='nowrap' className={progressIndicators}>
           <ProgressIndicators
             totalData={totalHousingDelivery}
             tenureData={tenureHousingDelivery}
@@ -282,15 +287,32 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
           updateOrbState={updateOrbState}
         />
 
-        <Grid item container className={styles.bottomChartContainer}>
-          <Grid item container direction='column'>
+        <Grid
+          item
+          container
+          direction='column'
+          className={bottomChartContainer}
+        >
+          <Grid item container wrap='nowrap' className={topChartContainer}>
+            <DeliverableSupplySummary data={deliverableSupplySummary} />
+            <HousingApprovals
+              data={approvalsGranted}
+              settings={settings}
+              updateOrbState={updateOrbState}
+            />
+          </Grid>
+
+          <Grid
+            item
+            container
+            wrap='nowrap'
+            className={leftBottomChartContainer}
+          >
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
               updateOrbState={updateOrbState}
             />
-
-            <DeliverableSupplySummary data={deliverableSupplySummary} />
 
             <AffordableHousingDelivery
               data={affordableHousingDelivery}
@@ -299,12 +321,6 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
               updateOrbState={updateOrbState}
             />
           </Grid>
-
-          <HousingApprovals
-            data={approvalsGranted}
-            settings={settings}
-            updateOrbState={updateOrbState}
-          />
         </Grid>
       </Grid>
 

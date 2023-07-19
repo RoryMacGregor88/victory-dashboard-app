@@ -45,12 +45,11 @@ import {
   TenureCategory,
   TenureDataType,
   UserOrbState,
-  TargetCategory,
 } from '../../../types';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    backgroundColor: '#1b2227', //TODO: use theme
+    backgroundColor: '#1b2227',
     borderRadius: theme.shape.borderRadius,
     paddingBottom: theme.spacing(2),
     height: 'fit-content',
@@ -58,22 +57,19 @@ const useStyles = makeStyles((theme) => ({
   header: {
     padding: theme.spacing(2),
   },
-  selectFilters: {
-    width: 'fit-content',
-    marginLeft: 'auto',
+  controls: {
+    marginBottom: theme.spacing(2),
     gap: theme.spacing(2),
   },
-  charts: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
+  selectFilters: {
+    width: '50%',
     gap: theme.spacing(2),
   },
   buttons: {
-    width: '40%',
-    marginLeft: '60%',
-    // TODO: can use theme?
-    marginBottom: '-1rem',
+    width: '50%',
+  },
+  charts: {
+    gap: theme.spacing(2),
   },
 }));
 
@@ -99,7 +95,7 @@ const TenureDataFilter = ({
   return (
     <Grid
       container
-      justifyContent='space-between'
+      justifyContent='flex-start'
       alignItems='center'
       wrap='nowrap'
       className={selectFilters}
@@ -152,7 +148,7 @@ const HousingDelivery = ({
   settings,
   updateOrbState,
 }: HousingDeliveryProps) => {
-  const { container, charts, header, buttons } = useStyles();
+  const { container, charts, header, buttons, controls } = useStyles();
 
   const tenureCategory = settings.tenureCategory ?? ALL_TENURE_CATEGORIES,
     tenureDataType = settings.tenureDataType ?? TENURE_DATA_TYPES.gross,
@@ -206,7 +202,7 @@ const HousingDelivery = ({
   /** initialisation/reset for total chart */
   useEffect(() => {
     /** timeline hasn't built yet, or year is within timeline so no need to reset */
-    if (!totalTimeline || (totalYear && totalTimeline.includes(totalYear))) {
+    if (!totalTimeline || totalTimeline.includes(totalYear)) {
       return;
     } else {
       updateDateFilter({
@@ -218,10 +214,7 @@ const HousingDelivery = ({
   /** initialisation/reset for tenure chart */
   useEffect(() => {
     /** timeline hasn't built yet, or year is within timeline so no need to reset */
-    if (
-      !tenureTimeline ||
-      (tenureYear && tenureTimeline.includes(tenureYear))
-    ) {
+    if (!tenureTimeline || tenureTimeline.includes(tenureYear)) {
       return;
     } else {
       updateDateFilter({
@@ -244,7 +237,14 @@ const HousingDelivery = ({
         </Grid>
       </Grid>
 
-      <Grid item className={charts}>
+      <Grid
+        item
+        container
+        justifyContent='space-between'
+        alignItems='stretch'
+        wrap='nowrap'
+        className={charts}
+      >
         <ChartWrapper
           title='Total Housing Delivery'
           info='Total housing delivery values per financial year. The data source is the PLD (Planning London Data Hub).'
@@ -265,30 +265,39 @@ const HousingDelivery = ({
           title='Housing Delivery by Tenure Type'
           info='Housing delivery values broken down by tenure type per financial year. The data source is the PLD (Planning London Data Hub).'
         >
-          <TenureDataFilter
-            timeline={tenureTimeline}
-            tenureYear={tenureYear}
-            tenureCategory={tenureCategory}
-            housingTenureTypes={housingTenureTypes}
-            handleYearRangeSelect={(year) =>
-              updateDateFilter({ tenureYear: year })
-            }
-            handleTenureTypeSelect={handleTenureTypeSelect}
-          />
-          <ToggleButtonGroup
-            size='small'
-            value={tenureDataType}
-            orientation='horizontal'
-            onChange={handleToggleClick}
-            className={buttons}
+          <Grid
+            item
+            container
+            justifyContent='space-between'
+            wrap='nowrap'
+            className={controls}
           >
-            <ToggleButton value={TENURE_DATA_TYPES.gross}>
-              {TENURE_DATA_TYPES.gross}
-            </ToggleButton>
-            <ToggleButton value={TENURE_DATA_TYPES.net}>
-              {TENURE_DATA_TYPES.net}
-            </ToggleButton>
-          </ToggleButtonGroup>
+            <TenureDataFilter
+              timeline={tenureTimeline}
+              tenureYear={tenureYear}
+              tenureCategory={tenureCategory}
+              housingTenureTypes={housingTenureTypes}
+              handleYearRangeSelect={(year) =>
+                updateDateFilter({ tenureYear: year })
+              }
+              handleTenureTypeSelect={handleTenureTypeSelect}
+            />
+
+            <ToggleButtonGroup
+              size='small'
+              value={tenureDataType}
+              orientation='horizontal'
+              onChange={handleToggleClick}
+              className={buttons}
+            >
+              <ToggleButton value={TENURE_DATA_TYPES.gross}>
+                {TENURE_DATA_TYPES.gross}
+              </ToggleButton>
+              <ToggleButton value={TENURE_DATA_TYPES.net}>
+                {TENURE_DATA_TYPES.net}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
 
           {tenureTimeline.includes(tenureYear) ? (
             <TenureHousingMultiChart
