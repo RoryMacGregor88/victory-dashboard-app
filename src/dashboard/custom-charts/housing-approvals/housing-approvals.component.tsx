@@ -60,7 +60,7 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
     return housingApprovalsTransformer(dataArray);
   }, [data, approvalsGrantedDataType]);
 
-  const apiLegendData: LegendData[] = [
+  const legendData: LegendData[] = [
     {
       name: 'Actual 2019',
       color: chartColors.approvalsGranted[0],
@@ -98,7 +98,9 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
                 {HOUSING_APPROVAL_DATA_TYPES.cumulative}
               </ToggleButton>
             </ToggleButtonGroup>
-            <CustomLegend apiLegendData={apiLegendData} width={width} />
+
+            <CustomLegend apiData={legendData} width={width} />
+
             <BaseChart width={width} xLabel={xLabel} yLabel={yLabel}>
               <VictoryGroup>
                 {ranges.map((range, i) => {

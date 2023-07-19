@@ -134,29 +134,27 @@ const getDataTimeline = ({ apiData, targets = {} }: GetDataTimelineArgs) => {
 
 // TODO: type this properly
 interface FilterByTypeArgs<T> {
-  data: T[];
+  apiData: T[];
   selectedType: keyof T | null;
 }
 
 const filterByType = <T>({
-  data,
+  apiData,
   selectedType,
 }: FilterByTypeArgs<T & { startYear: number }>) => {
-  if (!selectedType) return data;
+  if (!selectedType) return apiData;
 
-  return data.map((datum) => ({
+  return apiData.map((datum) => ({
     startYear: datum.startYear,
     [selectedType]: Number(datum[selectedType]),
   }));
 };
 
 const getFilteredTimeline = (
-  timeline: number[] | undefined,
-  selectedYear: number | undefined,
+  timeline: number[],
+  selectedYear: number,
   range = DEFAULT_FILTER_RANGE
 ) => {
-  if (!timeline || !selectedYear) return;
-
   const index = timeline?.indexOf(selectedYear);
   return timeline?.slice(index - range, index + 1);
 };

@@ -23,14 +23,14 @@ import { useMemo } from 'react';
  * @param {{
  *  apiData: any[]
  *  userTargetData: any[]
- *  tenureType: string
+ *  tenureCategory: string
  *  filteredTimeline: number[]
  * }} props
  */
 const TenureHousingMultiChart = ({
   apiData,
   userTargetData,
-  tenureType,
+  tenureCategory,
   filteredTimeline,
 }) => {
   const { tenureStackColors } = useChartTheme();
@@ -46,22 +46,20 @@ const TenureHousingMultiChart = ({
 
   const housingTenureRanges = Object.values(housingTenureTypes);
 
-  const apiLegendData = Object.entries(housingTenureTypes).map(
-    ([key, value]) => ({
-      name: value,
-      color: tenureStackColors[key],
-    })
-  );
+  const legendData = Object.entries(housingTenureTypes).map(([key, value]) => ({
+    name: value,
+    color: tenureStackColors[key],
+  }));
 
   const TenureHousingStackChart = ({ width }) => {
     const barWidth = width / 20;
 
-    const ranges = tenureType
-      ? [housingTenureTypes[tenureType]]
+    const ranges = tenureCategory
+      ? [housingTenureTypes[tenureCategory]]
       : housingTenureRanges;
 
-    const colorScale = tenureType
-      ? [tenureStackColors[tenureType]]
+    const colorScale = tenureCategory
+      ? [tenureStackColors[tenureCategory]]
       : Object.values(tenureStackColors);
 
     return (
@@ -113,8 +111,8 @@ const TenureHousingMultiChart = ({
       {({ width }: { width: number }) => (
         <>
           <CustomLegend
-            apiLegendData={apiLegendData}
-            targetLegendData={transformedTargets ? TARGET_LEGEND_DATA : null}
+            apiData={legendData}
+            targetData={transformedTargets ? TARGET_LEGEND_DATA : null}
             width={width}
             padTop
           />

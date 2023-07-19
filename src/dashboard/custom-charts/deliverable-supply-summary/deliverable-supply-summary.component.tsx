@@ -52,7 +52,7 @@ const DeliverableSupplySummary = ({ data }: Props) => {
               theme={updatedTheme}
               financialYearFormat
             >
-              <CustomLegend apiLegendData={legendData} width={1024} />
+              <CustomLegend apiData={legendData} width={1024} />
               <VictoryStack>
                 {ranges?.map((range) => (
                   <VictoryBar

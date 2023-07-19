@@ -5,7 +5,7 @@ import { User } from './accounts/accounts.slice';
 
 import {
   DatasetName,
-  HousingTenureCategories,
+  TenureCategories,
   ProgressionVsPlanningCategory,
   TargetCategory,
   TenureDataType,
@@ -52,12 +52,12 @@ export const MOCK_USER: User = {
 
 export const inputErrorMessage = 'Only number values are permitted.';
 
-export const ALL_TENURE_TYPES = 'All Tenure Types';
+export const ALL_TENURE_CATEGORIES = 'All Tenure Types';
 
 export const ALL_PROGRESSION_PLANNING_TYPES = 'Show All';
 
 /** live data tenure types */
-export const housingTenureTypes: HousingTenureCategories = {
+export const housingTenureTypes: TenureCategories = {
   affordableHousing: 'Affordable Rent (not at LAR benchmark rents)',
   affordableHousingLondon: 'London Affordable Rent',
   intermediateDelivery: 'Intermediate',

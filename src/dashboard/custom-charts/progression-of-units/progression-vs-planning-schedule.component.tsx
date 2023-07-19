@@ -13,7 +13,7 @@ import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import {
   progressionVsPlanningCategories,
   progressionVsPlanningPalette,
-  ALL_TENURE_TYPES,
+  ALL_TENURE_CATEGORIES,
 } from '../../../constants';
 import { ProgressionOfUnitsData } from '../../../mocks/fixtures';
 import {
@@ -38,7 +38,7 @@ const ProgressionVsPlanningSchedule = ({
   const { root, select } = useSelectStyles({});
 
   const selectedCategory =
-    settings.progressionVsPlanningCategory ?? ALL_TENURE_TYPES;
+    settings.progressionVsPlanningCategory ?? ALL_TENURE_CATEGORIES;
 
   const progressVsPlanningValues = Object.values(
     progressionVsPlanningCategories
@@ -56,7 +56,7 @@ const ProgressionVsPlanningSchedule = ({
     },
   };
 
-  const apiLegendData = progressVsPlanningValues.map((range, i) => ({
+  const legendData = progressVsPlanningValues.map((range, i) => ({
     name: `Units ${range}` /** example: 'Units' + 'Ahead of Schedule' */,
     color: chartTheme.chartColors.progressionVsPlanning[i],
   }));
@@ -75,7 +75,7 @@ const ProgressionVsPlanningSchedule = ({
         {({ width }: { width: number }) => {
           const barWidth = width / 20;
 
-          const showAllData = selectedCategory === ALL_TENURE_TYPES;
+          const showAllData = selectedCategory === ALL_TENURE_CATEGORIES;
 
           const ranges = showAllData
             ? progressVsPlanningValues
@@ -90,7 +90,7 @@ const ProgressionVsPlanningSchedule = ({
           const x = 'startYear';
 
           const filteredData = filterByType<ProgressionOfUnitsData[number]>({
-            data,
+            apiData: data,
             selectedType,
           });
 
@@ -106,7 +106,7 @@ const ProgressionVsPlanningSchedule = ({
                 wrap='nowrap'
               >
                 <Grid item>
-                  <CustomLegend apiLegendData={apiLegendData} width={width} />
+                  <CustomLegend apiData={legendData} width={width} />
                 </Grid>
                 <Grid item>
                   <Select
@@ -117,8 +117,8 @@ const ProgressionVsPlanningSchedule = ({
                     classes={{ root, select }}
                     disableUnderline
                   >
-                    <MenuItem value={ALL_TENURE_TYPES}>
-                      {ALL_TENURE_TYPES}
+                    <MenuItem value={ALL_TENURE_CATEGORIES}>
+                      {ALL_TENURE_CATEGORIES}
                     </MenuItem>
                     {Object.entries(progressionVsPlanningCategories).map(
                       ([key, value]) => (

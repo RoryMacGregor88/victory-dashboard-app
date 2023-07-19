@@ -100,7 +100,7 @@ const AffordableHousingDelivery = ({
     affordableHousingTotalYear =
       settings?.affordableHousingTotalYear ?? thisYear;
 
-  const apiLegendData = [
+  const legendData = [
     {
       name: '% affordable housing delivered out of yearly target',
       color: chartColors.affordableHousingDelivery[0],
@@ -200,11 +200,7 @@ const AffordableHousingDelivery = ({
                   })
                 }
               />
-              <CustomLegend
-                width={width}
-                apiLegendData={apiLegendData}
-                padTop
-              />
+              <CustomLegend width={width} apiData={legendData} padTop />
               <BaseChart
                 yLabel='Affordable Housing %'
                 xLabel='Financial Year'

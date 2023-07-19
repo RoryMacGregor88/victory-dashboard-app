@@ -10,8 +10,9 @@ export type HousingApprovalsObjectArray = HousingApprovalsData[number]['data'];
 
 export type TransformedTargets = { x: string; y: number }[];
 
+/** data is possible filtered beore passed to timeline fuction */
 export type TimelineData =
-  | TotalHousingDeliveryData
-  | TenureTypeHousingData
-  | ProgressionOfUnitsData
-  | AffordableHousingData;
+  | Partial<TotalHousingDeliveryData>
+  | Partial<TenureTypeHousingData>
+  | Partial<ProgressionOfUnitsData>
+  | Partial<AffordableHousingData>;

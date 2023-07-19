@@ -89,7 +89,7 @@ export type LegendData = {
   color: string;
 };
 
-export type HousingTenureCategories = { [key in TenureCategory]: string };
+export type TenureCategories = { [key in TenureCategory]: string };
 
 export type ProgressIndicatorData = {
   x: number;

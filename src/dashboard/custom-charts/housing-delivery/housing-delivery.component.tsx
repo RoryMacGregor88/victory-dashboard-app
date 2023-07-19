@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useState,
-  useEffect,
-  useMemo,
-  SyntheticEvent,
-} from 'react';
+import { useEffect, useMemo, SyntheticEvent } from 'react';
 
 import {
   Grid,
@@ -15,12 +9,14 @@ import {
 } from '@material-ui/core';
 
 import { ChartWrapper } from '../../charts/chart-wrapper.component';
+
 import {
   getDataTimeline,
   getTargetTotals,
   filterByType,
   getFilteredTimeline,
 } from '../../utils/utils';
+
 import {
   CustomDateRange,
   useSelectStyles,
@@ -29,70 +25,76 @@ import {
 import {
   housingTenureTypes,
   TENURE_DATA_TYPES,
-  ALL_TENURE_TYPES,
+  ALL_TENURE_CATEGORIES,
 } from '../../../constants';
+
 import { TenureHousingMultiChart } from './tenure-housing-multi-chart/tenure-housing-multi-chart.component';
 import { TotalHousingMultiChart } from './total-housing-multi-chart/total-housing-multi-chart.component';
+
 import { ToggleButton, ToggleButtonGroup } from '../../../components';
+
 import {
   TenureTypeHousingData,
   TotalHousingDeliveryData,
 } from '../../../mocks/fixtures';
+
 import {
+  TenureCategories,
   Settings,
   Targets,
   TenureCategory,
   TenureDataType,
   UserOrbState,
+  TargetCategory,
 } from '../../../types';
 
 const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: '#1b2227', //TODO: use theme
     borderRadius: theme.shape.borderRadius,
-    paddingBottom: '1rem',
+    paddingBottom: theme.spacing(2),
     height: 'fit-content',
   },
   header: {
-    padding: '1rem',
+    padding: theme.spacing(2),
   },
   selectFilters: {
     width: 'fit-content',
     marginLeft: 'auto',
-    gap: '1rem',
+    gap: theme.spacing(2),
   },
   charts: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'stretch',
-    gap: '1rem',
+    gap: theme.spacing(2),
   },
   buttons: {
     width: '40%',
     marginLeft: '60%',
+    // TODO: can use theme?
     marginBottom: '-1rem',
   },
 }));
 
 interface TenureDataFilterProps {
   timeline: number[];
-  tenureYear: Settings[TenureCategory];
-  tenureType: Settings[TenureDataType];
-  housingTenureTypes: TenureCategory;
+  tenureYear: number;
+  tenureCategory: TenureCategory | typeof ALL_TENURE_CATEGORIES;
+  housingTenureTypes: TenureCategories;
   handleYearRangeSelect: (year: number) => void;
-  handleTenureTypeSelect: (type: keyof TenureCategory) => void;
+  handleTenureTypeSelect: (type: TenureCategory) => void;
 }
 
 const TenureDataFilter = ({
   timeline,
   tenureYear,
-  tenureType,
+  tenureCategory,
   housingTenureTypes,
   handleYearRangeSelect,
   handleTenureTypeSelect,
 }: TenureDataFilterProps) => {
-  // TODO: destructure this and any others
-  const styles = useStyles();
+  const { selectFilters } = useStyles();
   const { root, select } = useSelectStyles({});
   return (
     <Grid
@@ -100,18 +102,20 @@ const TenureDataFilter = ({
       justifyContent='space-between'
       alignItems='center'
       wrap='nowrap'
-      className={styles.selectFilters}
+      className={selectFilters}
     >
       <Grid item>
         <Select
-          value={tenureType}
+          value={tenureCategory}
           onChange={({ target: { value } }) =>
-            handleTenureTypeSelect(value as keyof TenureCategory)
+            handleTenureTypeSelect(value as TenureCategory)
           }
           classes={{ root, select }}
           disableUnderline
         >
-          <MenuItem value={ALL_TENURE_TYPES}>{ALL_TENURE_TYPES}</MenuItem>
+          <MenuItem value={ALL_TENURE_CATEGORIES}>
+            {ALL_TENURE_CATEGORIES}
+          </MenuItem>
           {Object.entries(housingTenureTypes).map(([key, value]) => (
             <MenuItem key={key} value={key}>
               {value}
@@ -131,6 +135,8 @@ const TenureDataFilter = ({
   );
 };
 
+const thisYear = new Date().getFullYear();
+
 interface HousingDeliveryProps {
   totalHousingDeliveryData: TotalHousingDeliveryData;
   tenureHousingDeliveryData: TenureTypeHousingData;
@@ -146,59 +152,35 @@ const HousingDelivery = ({
   settings,
   updateOrbState,
 }: HousingDeliveryProps) => {
-  const styles = useStyles();
+  const { container, charts, header, buttons } = useStyles();
 
-  type Configuration = Omit<Settings, 'approvalsGrantedDataType'>;
+  const tenureCategory = settings.tenureCategory ?? ALL_TENURE_CATEGORIES,
+    tenureDataType = settings.tenureDataType ?? TENURE_DATA_TYPES.gross,
+    tenureYear = settings.tenureYear ?? thisYear,
+    totalYear = settings.totalYear ?? thisYear;
 
-  /** select dropdowns and/or toggle buttons */
-  const [configuration, setConfiguration] = useState<Configuration>({
-    tenureType: settings.tenureType ?? ALL_TENURE_TYPES,
-    tenureDataType: TENURE_DATA_TYPES.gross,
-    tenureYear: settings.tenureYear,
-    totalYear: settings.totalYear,
-  });
-
-  const { tenureType, tenureDataType, tenureYear, totalYear } = configuration;
-
-  // TODO: do we need 2 piece of state for this? Can they all just read from the dashboardSettings?
-  const updateDateFilter = useCallback(
-    (newSettings: Partial<Settings>) => {
-      setConfiguration((prev) => ({
-        ...prev,
-        ...newSettings,
-      }));
-
-      updateOrbState((prev: UserOrbState) => ({
-        ...prev,
-        settings: { ...prev.settings, ...newSettings },
-      }));
-    },
-    [updateOrbState]
-  );
-
-  const handleTenureTypeSelect = (value: keyof TenureCategory) => {
-    setConfiguration((prev) => ({ ...prev, tenureType: value }));
-
-    updateOrbState((prev: UserOrbState) => ({
-      ...prev,
-      settings: { ...prev.settings, tenureType: value },
-    }));
+  type UpdateDateFilterArgs = {
+    totalYear?: number;
+    tenureYear?: number;
   };
 
-  const handleToggleClick = (_: SyntheticEvent, type: 'Gross' | 'Net') => {
-    setConfiguration((prev) => ({ ...prev, tenureDataType: type }));
+  // TODO: is this a number? Is this for both or just one?
+  const updateDateFilter = (data: UpdateDateFilterArgs) =>
+    updateOrbState({ settings: { ...data } });
 
-    updateOrbState((prev: UserOrbState) => ({
-      ...prev,
-      settings: { ...prev.settings, tenureDataType: type },
-    }));
-  };
+  const handleTenureTypeSelect = (tenureCategory: TenureCategory) =>
+    updateOrbState({ settings: { tenureCategory } });
 
-  const showAllData = tenureType === ALL_TENURE_TYPES;
+  const handleToggleClick = (
+    _: SyntheticEvent,
+    tenureDataType: TenureDataType
+  ) => updateOrbState({ settings: { tenureDataType } });
+
+  const showAllData = tenureCategory === ALL_TENURE_CATEGORIES;
 
   const processedTargets = showAllData
     ? getTargetTotals(targets)
-    : targets[tenureType];
+    : targets[tenureCategory];
 
   // TODO: why is this one memoized, bit other is not? (Progression/Planning)
   const dataByTenureType = useMemo(
@@ -206,17 +188,20 @@ const HousingDelivery = ({
       showAllData
         ? tenureHousingDeliveryData
         : filterByType<TenureTypeHousingData>({
-            data: tenureHousingDeliveryData,
-            selectedType: housingTenureTypes[tenureType],
+            apiData: tenureHousingDeliveryData,
+            selectedType: housingTenureTypes[tenureCategory],
           }),
-    [tenureHousingDeliveryData, tenureType, showAllData]
-  );
+    [tenureHousingDeliveryData, tenureCategory, showAllData]
+  ) as Partial<TenureTypeHousingData>;
 
-  const totalTimeline = getDataTimeline(
-      totalHousingDeliveryData,
-      targets?.totalHousing
-    ),
-    tenureTimeline = getDataTimeline(dataByTenureType, processedTargets);
+  const totalTimeline = getDataTimeline({
+      apiData: totalHousingDeliveryData,
+      targets: targets?.totalHousing,
+    }),
+    tenureTimeline = getDataTimeline({
+      apiData: dataByTenureType,
+      targets: processedTargets,
+    });
 
   /** initialisation/reset for total chart */
   useEffect(() => {
@@ -246,20 +231,20 @@ const HousingDelivery = ({
   }, [tenureTimeline, tenureYear, updateDateFilter]);
 
   return (
-    <Grid container direction='column' className={styles.container}>
+    <Grid container direction='column' className={container}>
       <Grid
         item
         container
         justifyContent='space-between'
         alignItems='center'
-        className={styles.header}
+        className={header}
       >
         <Grid item component={Typography} variant='h1'>
           Housing Delivery
         </Grid>
       </Grid>
 
-      <Grid item className={styles.charts}>
+      <Grid item className={charts}>
         <ChartWrapper
           title='Total Housing Delivery'
           info='Total housing delivery values per financial year. The data source is the PLD (Planning London Data Hub).'
@@ -267,12 +252,12 @@ const HousingDelivery = ({
           <CustomDateRange
             timeline={totalTimeline}
             value={totalYear}
-            onSelect={(value: number) => updateDateFilter({ totalYear: value })}
+            onSelect={(totalYear: number) => updateDateFilter({ totalYear })}
           />
           <TotalHousingMultiChart
-            apiData={totalHousingDeliveryData}
-            userTargetData={targets?.totalHousing}
-            filteredTimeline={getFilteredTimeline(totalTimeline, totalYear)}
+            data={totalHousingDeliveryData}
+            targets={targets}
+            timeline={getFilteredTimeline(totalTimeline, totalYear)}
           />
         </ChartWrapper>
 
@@ -283,7 +268,7 @@ const HousingDelivery = ({
           <TenureDataFilter
             timeline={tenureTimeline}
             tenureYear={tenureYear}
-            tenureType={tenureType}
+            tenureCategory={tenureCategory}
             housingTenureTypes={housingTenureTypes}
             handleYearRangeSelect={(year) =>
               updateDateFilter({ tenureYear: year })
@@ -295,7 +280,7 @@ const HousingDelivery = ({
             value={tenureDataType}
             orientation='horizontal'
             onChange={handleToggleClick}
-            className={styles.buttons}
+            className={buttons}
           >
             <ToggleButton value={TENURE_DATA_TYPES.gross}>
               {TENURE_DATA_TYPES.gross}
@@ -305,16 +290,18 @@ const HousingDelivery = ({
             </ToggleButton>
           </ToggleButtonGroup>
 
-          {tenureYear && tenureTimeline.includes(tenureYear) ? (
+          {/* {tenureYear && tenureTimeline.includes(tenureYear) ? (
             <TenureHousingMultiChart
               apiData={dataByTenureType}
               userTargetData={processedTargets}
-              tenureType={
-                tenureType !== ALL_TENURE_TYPES ? tenureType : undefined
+              tenureCategory={
+                tenureCategory !== ALL_TENURE_CATEGORIES
+                  ? tenureCategory
+                  : undefined
               }
               filteredTimeline={getFilteredTimeline(tenureTimeline, tenureYear)}
             />
-          ) : null}
+          ) : null} */}
         </ChartWrapper>
       </Grid>
     </Grid>

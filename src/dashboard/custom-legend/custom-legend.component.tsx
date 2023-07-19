@@ -25,16 +25,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface Props {
-  apiLegendData: LegendData[];
-  targetLegendData?: { name: string; color: string };
+  apiData: LegendData[];
+  targetData?: { name: string; color: string } | null;
   width: number;
   padTop?: boolean;
   padBottom?: boolean;
 }
 
 export const CustomLegend = ({
-  apiLegendData,
-  targetLegendData,
+  apiData,
+  targetData,
   width,
   padTop = false,
   padBottom = false,
@@ -53,7 +53,7 @@ export const CustomLegend = ({
         wrap='wrap'
         className={styles.apiLegend}
       >
-        {apiLegendData?.map(({ name, color }) => {
+        {apiData?.map(({ name, color }) => {
           const legendItemMargin = width * RATIOS.iconSpacing;
           return (
             <Grid
@@ -81,7 +81,7 @@ export const CustomLegend = ({
         })}
       </Grid>
 
-      {!!targetLegendData ? (
+      {!!targetData ? (
         <Grid
           item
           container
@@ -94,7 +94,7 @@ export const CustomLegend = ({
             style={{
               width: width * RATIOS.lineIconWidth,
               height: width * RATIOS.lineIconHeight,
-              backgroundColor: `${targetLegendData.color}`,
+              backgroundColor: `${targetData.color}`,
               marginRight: width * RATIOS.iconSpacing,
             }}
           />
@@ -103,7 +103,7 @@ export const CustomLegend = ({
               fontSize: fontSizeLimit,
             }}
           >
-            {targetLegendData.name}
+            {targetData.name}
           </span>
         </Grid>
       ) : null}

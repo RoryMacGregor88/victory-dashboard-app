@@ -13,28 +13,27 @@ import { CustomLegend } from '../../../custom-legend/custom-legend.component';
 import { TENURE_DATA_TYPES, TARGET_LEGEND_DATA } from '../../../../constants';
 
 import { totalHousingTransformer } from './total-housing-transformer/total-housing-transformer';
+import { TotalHousingDeliveryData } from '../../../../mocks/fixtures';
+import { Targets } from '../../../../types';
 
-/**
- * @param {{
- *  apiData: object[]
- *  userTargetData: object[]
- *  filteredTimeline: number[]
- * }} props
- */
-const TotalHousingMultiChart = ({
-  apiData,
-  userTargetData,
-  filteredTimeline,
-}) => {
+interface Props {
+  data: TotalHousingDeliveryData;
+  targets: Targets;
+  timeline: number[];
+}
+
+const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
   const { chartColors } = useChartTheme();
+
+  const targetDataset = targets.totalHousing;
 
   /**
    * Transform API/target data to correct data shape, and create a
    * reliable timeline form earliest year to latest year
    */
   const transformerOutput = useMemo(
-    () => totalHousingTransformer(apiData, userTargetData, filteredTimeline),
-    [apiData, userTargetData, filteredTimeline]
+    () => totalHousingTransformer(data, targetDataset, timeline),
+    [data, targetDataset, timeline]
   );
 
   if (!transformerOutput) return null;
@@ -43,77 +42,79 @@ const TotalHousingMultiChart = ({
 
   const apiLegendData = Object.values(TENURE_DATA_TYPES).map((type, i) => ({
     name: type,
-    color: chartColors.totalHousing[i],
+    color: chartColors.totalHousingDelivery[i],
   }));
-
-  const TotalHousingGroupChart = ({ width }) => {
-    const { barWidth, offset } = GroupedWidthCalculator(transformedData, width);
-    return (
-      <VictoryGroup offset={offset}>
-        {transformedData?.map((arr, i) => (
-          <VictoryBar
-            // eslint-disable-next-line react/no-array-index-key
-            key={`dataset-${i}`}
-            data={arr}
-            labels={({ datum }) => `${datum.y}`}
-            labelComponent={FlyoutTooltip()}
-            style={{
-              data: {
-                fill: chartColors.totalHousing[i],
-                width: barWidth,
-              },
-            }}
-          />
-        ))}
-      </VictoryGroup>
-    );
-  };
-
-  const TargetLineChart = ({ width }) => {
-    const color = '#d13aff',
-      scatterWidth = width / 2,
-      props = {
-        data: transformedTargets,
-      };
-    return (
-      <VictoryGroup>
-        <VictoryScatter
-          {...props}
-          labelComponent={FlyoutTooltip()}
-          labels={({ datum }) => `Total: ${datum._y}`}
-          style={{
-            data: {
-              stroke: darken(color, 0.2),
-              width: scatterWidth,
-              fill: color,
-            },
-          }}
-        />
-        <VictoryLine {...props} style={{ data: { stroke: color } }} />
-      </VictoryGroup>
-    );
-  };
 
   return (
     <StyledParentSize>
-      {({ width }) => (
-        <>
-          <CustomLegend
-            apiLegendData={apiLegendData}
-            targetLegendData={transformedTargets ? TARGET_LEGEND_DATA : null}
-            width={width}
-          />
-          <BaseChart
-            width={width}
-            yLabel='Housing Delivery in Units'
-            xLabel='Financial Year'
-            financialYearFormat
-          >
-            {TotalHousingGroupChart({ width })}
-            {transformedTargets ? TargetLineChart({ width }) : null}
-          </BaseChart>
-        </>
-      )}
+      {({ width }: { width: number }) => {
+        /** props for bar chart (data) */
+        const { barWidth, offset } = GroupedWidthCalculator(
+          transformedData,
+          width
+        );
+
+        /** props for live chart (targets) */
+        const color = '#d13aff',
+          scatterWidth = width / 2;
+
+        return (
+          <>
+            <CustomLegend
+              apiData={apiLegendData}
+              targetData={!!transformedTargets ? TARGET_LEGEND_DATA : null}
+              width={width}
+            />
+            <BaseChart
+              width={width}
+              yLabel='Housing Delivery in Units'
+              xLabel='Financial Year'
+              financialYearFormat
+            >
+              <VictoryGroup offset={offset}>
+                {transformedData?.map((arr, i) => {
+                  const key = arr[i].x;
+                  return (
+                    <VictoryBar
+                      key={key}
+                      data={arr}
+                      labels={({ datum: { _y } }) => `${_y}`}
+                      labelComponent={FlyoutTooltip()}
+                      style={{
+                        data: {
+                          fill: chartColors.totalHousingDelivery[i],
+                          width: barWidth,
+                        },
+                      }}
+                    />
+                  );
+                })}
+              </VictoryGroup>
+
+              {!!transformedTargets ? (
+                <VictoryGroup>
+                  <VictoryScatter
+                    data={transformedTargets}
+                    labelComponent={FlyoutTooltip()}
+                    labels={({ datum: { _y } }) => `Total: ${_y}`}
+                    style={{
+                      data: {
+                        stroke: darken(color, 0.2),
+                        width: scatterWidth,
+                        fill: color,
+                      },
+                    }}
+                  />
+                  <VictoryLine
+                    data={transformedTargets}
+                    style={{ data: { stroke: color } }}
+                  />
+                </VictoryGroup>
+              ) : null}
+            </BaseChart>
+          </>
+        );
+      }}
     </StyledParentSize>
   );
 };
