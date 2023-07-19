@@ -28,8 +28,8 @@ import {
   ALL_TENURE_CATEGORIES,
 } from '../../../constants';
 
-import { TenureHousingMultiChart } from './tenure-housing-multi-chart/tenure-housing-multi-chart.component';
-import { TotalHousingMultiChart } from './total-housing-multi-chart/total-housing-multi-chart.component';
+import TenureHousingMultiChart from './tenure-housing-multi-chart/tenure-housing-multi-chart.component';
+import TotalHousingMultiChart from './total-housing-multi-chart/total-housing-multi-chart.component';
 
 import { ToggleButton, ToggleButtonGroup } from '../../../components';
 
@@ -290,18 +290,18 @@ const HousingDelivery = ({
             </ToggleButton>
           </ToggleButtonGroup>
 
-          {/* {tenureYear && tenureTimeline.includes(tenureYear) ? (
+          {tenureTimeline.includes(tenureYear) ? (
             <TenureHousingMultiChart
               apiData={dataByTenureType}
-              userTargetData={processedTargets}
+              targets={processedTargets}
               tenureCategory={
                 tenureCategory !== ALL_TENURE_CATEGORIES
                   ? tenureCategory
                   : undefined
               }
-              filteredTimeline={getFilteredTimeline(tenureTimeline, tenureYear)}
+              timeline={getFilteredTimeline(tenureTimeline, tenureYear)}
             />
-          ) : null} */}
+          ) : null}
         </ChartWrapper>
       </Grid>
     </Grid>

@@ -1,41 +1,42 @@
+import { TotalHousingDeliveryData } from '../../../../../mocks/fixtures';
 import { userTargetTransformer } from '../../../../utils/utils';
+import { TargetCategory, Targets } from '../../../../../types';
 
-/**
- * @param {object[]} apiData
- * @param {object} targets
- * @param {number[]} filteredTimeline
- * @returns {{
- *  transformedData: { x: number, y: number }[][]
- *  transformedTargets: { x: string, y: number }[]
- * }}
- */
-export const totalHousingTransformer = (
-  apiData,
-  targets = {},
-  filteredTimeline
-) => {
-  if (!apiData || !filteredTimeline) return;
+interface Args {
+  data: TotalHousingDeliveryData;
+  targetDataset: Targets[TargetCategory];
+  timeline: number[];
+}
 
-  const transformedTargets = userTargetTransformer(targets, filteredTimeline);
+type TransformedData = {
+  gross: { x: string; y: number | null }[];
+  net: [{ x: string; y: number | null }];
+};
 
-  const transformedData = Object.values(
-    filteredTimeline.reduce(
-      (acc, year) => {
-        const obj = apiData.find((datum) => datum.startYear === year) ?? {};
-        return {
-          gross: [
-            ...acc.gross,
-            { x: year.toString(), y: obj['Total Gross'] ?? null },
-          ],
-          net: [
-            ...acc.net,
-            { x: year.toString(), y: obj['Total Net'] ?? null },
-          ],
-        };
-      },
-      { gross: [], net: [] }
-    )
+export const totalHousingTransformer = ({
+  data,
+  targetDataset = {},
+  timeline,
+}: Args) => {
+  const transformedTargets = userTargetTransformer(targetDataset, timeline);
+
+  // TODO: broken types
+  const transformedDataObject = timeline.reduce(
+    (acc: TransformedData, year: number) => {
+      const obj = data.find(({ startYear }) => startYear === year)!;
+      return {
+        gross: [
+          ...acc.gross,
+          { x: year.toString(), y: obj['Total Gross'] ?? null },
+        ],
+        net: [...acc.net, { x: year.toString(), y: obj['Total Net'] ?? null }],
+      };
+    },
+    { gross: [], net: [] }
   );
+
+  /** only the array values of gross/net are required */
+  const transformedData = Object.values(transformedDataObject);
 
   return { transformedData, transformedTargets };
 };

@@ -196,34 +196,6 @@ const BaseWidthCalculator = (data: object[]) => ({
   offset: 0,
 });
 
-/**
- * Work out bar widths for Grouped Bar charts.
- * Introduced to allow us to avoid using magic numbers for formatting, and allowing us
- * to anticipate and test for having >2 groups in future
- * @param {*} data
- * @param {*} width
- * @returns {*} - object with suggested barWidth and offset values
- */
-const GroupedWidthCalculator = (data, width) => {
-  // magic numbers, tweak to change feel
-  const barGapMultiplier = 1.44; // gap between bars, where 1 = bar width
-  const minBarWidth = 3; // can be no narrower than this
-
-  const keys = Object.keys(data);
-
-  const groupCount = keys.length;
-  const thinness = groupCount * 2; // increase to narrow the bars
-  const dataPointCount = data?.[keys[0]].length; // TODO: this doesn't look right
-  const zoneWidth = width / dataPointCount;
-  const barWidth = minBarWidth + zoneWidth / (groupCount * thinness);
-  const offset = barWidth * barGapMultiplier;
-
-  return {
-    barWidth,
-    offset,
-  };
-};
-
 // TODO: test this
 
 /**
@@ -307,7 +279,6 @@ export {
   getFilteredTimeline,
   GroupedDataTransformer,
   BaseWidthCalculator,
-  GroupedWidthCalculator,
   exportToCsv,
   labelsForArrayOfObjectsInclusive,
   getStackDatumTotal,

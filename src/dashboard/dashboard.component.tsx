@@ -232,6 +232,8 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
 
   // TODO: use skeletons instead of loadmask? Maybe leave until later?
 
+  // TODO: compose HousingDelivery
+
   if (!dataIsLoaded || !orbStateIsLoaded) return <LoadMaskFallback />;
 
   return (
@@ -259,7 +261,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
       </Grid>
 
       <Grid item container direction='column' className={styles.content}>
-        {/* <Grid
+        <Grid
           item
           container
           wrap='nowrap'
@@ -270,8 +272,8 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             tenureData={tenureHousingDelivery}
             targets={targets}
           />
-        </Grid> */}
-        // TODO: compose this
+        </Grid>
+
         <HousingDelivery
           totalHousingDeliveryData={totalHousingDelivery}
           tenureHousingDeliveryData={tenureHousingDelivery}
@@ -279,14 +281,17 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
           settings={settings}
           updateOrbState={updateOrbState}
         />
-        {/* <Grid item container className={styles.bottomChartContainer}>
+
+        <Grid item container className={styles.bottomChartContainer}>
           <Grid item container direction='column'>
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
               updateOrbState={updateOrbState}
             />
+
             <DeliverableSupplySummary data={deliverableSupplySummary} />
+
             <AffordableHousingDelivery
               data={affordableHousingDelivery}
               targets={targets}
@@ -300,7 +305,7 @@ export const Dashboard: FC<{ sourceId: string }> = ({ sourceId }) => {
             settings={settings}
             updateOrbState={updateOrbState}
           />
-        </Grid> */}
+        </Grid>
       </Grid>
 
       <Dialog

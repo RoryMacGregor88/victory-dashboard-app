@@ -4,6 +4,8 @@ import { useChartTheme } from '../../useChartTheme';
 import { GroupedWidthCalculator } from '../../utils';
 import { BaseChart } from '../base-chart/base-chart.component';
 
+// TODO: how many of these charts are not bieng used, check them all
+
 /**
  * @param {{
  * xLabel?: string

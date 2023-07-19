@@ -66,7 +66,6 @@ const ChartWrapper = ({
       container
       direction='column'
       justifyContent='space-between'
-      alignItems='baseline'
       wrap='nowrap'
       component={Paper}
       className={clsx(styles.paper, classes?.paper)}

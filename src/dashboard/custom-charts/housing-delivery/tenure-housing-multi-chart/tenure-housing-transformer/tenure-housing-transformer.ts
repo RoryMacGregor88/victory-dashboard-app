@@ -1,27 +1,33 @@
 import { userTargetTransformer } from '../../../../utils/utils';
 import { housingTenureTypes } from '../../../../../constants';
+import { TenureTypeHousingData } from '../../../../../mocks/fixtures';
+import { TargetCategory, Targets } from '../../../../../types';
 
 /**
- * @param {object[]} apiData
- * @param {object} targets
- * @returns {{
- *  transformedData: object[]
- *  transformedTargets: { x: string, y: number }[]
- * }}
+ * Pads missing data for years on the timeline with null values
  */
-export const tenureHousingTransformer = (
+
+interface Args {
+  apiData: TenureTypeHousingData;
+  targets: Targets[TargetCategory];
+  timeline: number[];
+}
+
+export const tenureHousingTransformer = ({
   apiData,
   targets = {},
-  filteredTimeline
-) => {
+  timeline,
+}: Args) => {
   if (!apiData) return;
 
-  const transformedTargets = userTargetTransformer(targets, filteredTimeline);
+  const transformedTargets = userTargetTransformer(targets, timeline);
 
-  const transformedData = filteredTimeline.map((year) => {
-    const obj = apiData.find((datum) => datum.startYear === year);
+  const transformedData = timeline.map((year) => {
+    const obj = apiData.find(({ startYear }) => startYear === year)!;
+
     /** Victory does not work with number values, so must be stringified. */
-    return obj
+    // TODO: doesn't sound right
+    return !!obj
       ? { ...obj, startYear: String(obj.startYear) }
       : {
           startYear: String(year),
@@ -31,8 +37,6 @@ export const tenureHousingTransformer = (
           ),
         };
   });
-
-  // console.log('TEST: ', transformedData);
 
   return { transformedData, transformedTargets };
 };

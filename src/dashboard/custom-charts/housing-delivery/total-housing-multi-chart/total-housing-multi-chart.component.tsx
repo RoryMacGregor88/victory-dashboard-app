@@ -7,7 +7,7 @@ import { VictoryGroup, VictoryBar, VictoryLine, VictoryScatter } from 'victory';
 import { BaseChart } from '../../../charts/base-chart/base-chart.component';
 import { StyledParentSize } from '../../../charts/styled-parent-size.component';
 import { useChartTheme } from '../../../../dashboard/useChartTheme';
-import { GroupedWidthCalculator } from '../../../utils/utils';
+import { pairedWidthCalculator } from '../utils/utils';
 import FlyoutTooltip from '../../../FlyoutTooltip';
 import { CustomLegend } from '../../../custom-legend/custom-legend.component';
 import { TENURE_DATA_TYPES, TARGET_LEGEND_DATA } from '../../../../constants';
@@ -32,11 +32,9 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
    * reliable timeline form earliest year to latest year
    */
   const transformerOutput = useMemo(
-    () => totalHousingTransformer(data, targetDataset, timeline),
+    () => totalHousingTransformer({ data, targetDataset, timeline }),
     [data, targetDataset, timeline]
   );
-
-  if (!transformerOutput) return null;
 
   const { transformedData, transformedTargets } = transformerOutput;
 
@@ -45,14 +43,16 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
     color: chartColors.totalHousingDelivery[i],
   }));
 
+  if (!transformerOutput) return null;
+
   return (
     <StyledParentSize>
       {({ width }: { width: number }) => {
         /** props for bar chart (data) */
-        const { barWidth, offset } = GroupedWidthCalculator(
-          transformedData,
-          width
-        );
+        const { barWidth, offset } = pairedWidthCalculator({
+          data: transformedData,
+          width,
+        });
 
         /** props for live chart (targets) */
         const color = '#d13aff',
@@ -72,7 +72,7 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
               financialYearFormat
             >
               <VictoryGroup offset={offset}>
-                {transformedData?.map((arr, i) => {
+                {transformedData.map((arr, i) => {
                   const key = arr[i].x;
                   return (
                     <VictoryBar
@@ -119,4 +119,4 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
   );
 };
 
-export { TotalHousingMultiChart };
+export default TotalHousingMultiChart;
