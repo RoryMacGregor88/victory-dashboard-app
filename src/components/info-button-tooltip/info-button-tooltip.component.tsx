@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ReactNode, MouseEvent } from 'react';
 
 import {
   ClickAwayListener,
@@ -33,28 +33,33 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.black,
   },
 }));
+interface Props {
+  placement?:
+    | 'left'
+    | 'bottom-end'
+    | 'bottom-start'
+    | 'bottom'
+    | 'left-end'
+    | 'left-start'
+    | 'right-end'
+    | 'right-start'
+    | 'right'
+    | 'top-end'
+    | 'top-start'
+    | 'top';
+  tooltipContent: ReactNode;
+  iconButtonClassName?: string;
+}
 
-/**
- * @param {{
- *   placement?: "left" | "bottom-end" | "bottom-start" | "bottom" | "left-end" | "left-start" | "right-end" | "right-start" | "right" | "top-end" | "top-start" | "top"
- *   tooltipContent: React.ReactNode
- *   iconButtonClassName?: string
- * }} props
- */
 export const InfoButtonTooltip = ({
   tooltipContent,
   placement = 'left',
   iconButtonClassName,
-}) => {
+}: Props) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-  const styles = useStyles();
+  const { content, open, infoButton } = useStyles();
 
-  /**
-   * @param {React.MouseEvent<HTMLButtonElement, MouseEvent>} e
-   */
-  const handleIconClick = (e) => {
-    setIsInfoVisible((c) => !c);
-  };
+  const handleIconClick = () => setIsInfoVisible((c) => !c);
 
   return (
     <ClickAwayListener onClickAway={() => setIsInfoVisible(false)}>
@@ -67,7 +72,7 @@ export const InfoButtonTooltip = ({
         open={isInfoVisible}
         title={
           typeof tooltipContent === 'string' ? (
-            <Typography className={styles.content}>{tooltipContent}</Typography>
+            <Typography className={content}>{tooltipContent}</Typography>
           ) : (
             tooltipContent
           )
@@ -76,8 +81,8 @@ export const InfoButtonTooltip = ({
         <IconButton
           color='inherit'
           className={clsx(
-            styles.infoButton,
-            isInfoVisible ? styles.open : null,
+            infoButton,
+            isInfoVisible ? open : null,
             iconButtonClassName
           )}
           aria-label='Info'

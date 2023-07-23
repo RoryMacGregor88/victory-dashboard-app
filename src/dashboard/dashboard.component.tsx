@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useState, useRef, FC } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 
 import {
   makeStyles,
   CircularProgress,
-  Grid,
   Typography,
   Dialog,
   DialogContent,
 } from '@material-ui/core';
 
-import { Button, LoadMaskFallback, DialogTitle } from '../components';
+import { Button, LoadMaskFallback, DialogTitle, Grid } from '../components';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { exportToCsv } from './utils/utils';
 
@@ -64,38 +63,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
   },
   headerButtons: {
-    gap: theme.spacing(2),
     width: 'fit-content',
   },
   content: {
     padding: theme.spacing(4),
     backgroundColor: theme.palette.background.default,
-    gap: theme.spacing(2),
-  },
-  progressIndicators: {
-    gap: theme.spacing(2),
-  },
-  bottomChartContainer: {
-    gap: theme.spacing(2),
-  },
-  topChartContainer: {
-    gap: theme.spacing(2),
-  },
-  leftBottomChartContainer: {
-    gap: theme.spacing(2),
   },
 }));
 
 export const Dashboard = ({ sourceId }: { sourceId: string }) => {
-  const {
-    header,
-    headerButtons,
-    content,
-    progressIndicators,
-    bottomChartContainer,
-    topChartContainer,
-    leftBottomChartContainer,
-  } = useStyles();
+  const { header, headerButtons, content } = useStyles();
   const dispatch = useAppDispatch();
 
   /** all data, including 'name', 'version', etc */
@@ -177,7 +154,6 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
         url,
       };
 
-      // TODO: Promise.all for this?
       dispatch(fetchDashboardData(chartMetadata));
     });
   }, [sourceId, dispatch]);
@@ -242,8 +218,6 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
 
   // TODO: use skeletons instead of loadmask? Maybe leave until later?
 
-  // TODO: compose HousingDelivery
-
   if (!dataIsLoaded || !orbStateIsLoaded) return <LoadMaskFallback />;
 
   return (
@@ -271,7 +245,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
       </Grid>
 
       <Grid item container direction='column' className={content}>
-        <Grid item container wrap='nowrap' className={progressIndicators}>
+        <Grid item container wrap='nowrap'>
           <ProgressIndicators
             totalData={totalHousingDelivery}
             tenureData={tenureHousingDelivery}
@@ -279,6 +253,9 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
           />
         </Grid>
 
+        {/* parent component that wraps both Total Housing and
+         * Tenure Housing charts
+         */}
         <HousingDelivery
           totalHousingDeliveryData={totalHousingDelivery}
           tenureHousingDeliveryData={tenureHousingDelivery}
@@ -287,13 +264,8 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
           updateOrbState={updateOrbState}
         />
 
-        <Grid
-          item
-          container
-          direction='column'
-          className={bottomChartContainer}
-        >
-          <Grid item container wrap='nowrap' className={topChartContainer}>
+        <Grid item container direction='column'>
+          <Grid item container wrap='nowrap'>
             <DeliverableSupplySummary data={deliverableSupplySummary} />
             <HousingApprovals
               data={approvalsGranted}
@@ -302,12 +274,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
             />
           </Grid>
 
-          <Grid
-            item
-            container
-            wrap='nowrap'
-            className={leftBottomChartContainer}
-          >
+          <Grid item container wrap='nowrap'>
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}

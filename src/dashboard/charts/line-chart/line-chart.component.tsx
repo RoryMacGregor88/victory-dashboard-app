@@ -5,6 +5,8 @@ import { VictoryLine, VictoryScatter, VictoryGroup } from 'victory';
 import { useChartTheme } from '../../useChartTheme';
 import { BaseChart } from '../base-chart/base-chart.component';
 
+// TODO: is this not being used?
+
 /**
  * @param {{
  *  xLabel?: string

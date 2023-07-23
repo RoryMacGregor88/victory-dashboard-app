@@ -1,6 +1,9 @@
 import clsx from 'clsx';
 
-import { ToggleButton as MuiToggleButton } from '@material-ui/lab';
+import {
+  ToggleButton as MuiToggleButton,
+  ToggleButtonProps,
+} from '@material-ui/lab';
 
 import { darken, makeStyles } from '@material-ui/core';
 
@@ -48,10 +51,7 @@ const useStyles = makeStyles((theme) => ({
   sizeLarge: {},
 }));
 
-/**
- * @param {import('@material-ui/lab').ToggleButtonProps} props
- */
-export const ToggleButton = ({ classes = {}, ...props }) => {
+export const ToggleButton = ({ classes = {}, ...props }: ToggleButtonProps) => {
   const styles = useStyles();
   const { root, selected, disabled, sizeSmall, sizeLarge, ...rest } = classes;
 

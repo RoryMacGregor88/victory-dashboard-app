@@ -146,7 +146,9 @@ const ProgressionVsPlanningSchedule = ({
                       data={filteredData}
                       x={x}
                       y={range}
-                      labels={({ datum }) => getStackDatumTotal(datum, ranges)}
+                      labels={({ datum }) =>
+                        getStackDatumTotal({ datum, ranges })
+                      }
                       style={{
                         data: {
                           width: barWidth,

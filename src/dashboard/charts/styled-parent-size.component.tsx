@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 
-import { ParentSize } from '@visx/responsive';
+import { ParentSize, ParentSizeState } from '@visx/responsive';
+import { ReactNode } from 'react';
 
 const useStyles = makeStyles(() => ({
   parentSize: {
@@ -11,7 +12,16 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const StyledParentSize = ({ children }) => {
-  const styles = useStyles({});
-  return <ParentSize className={styles.parentSize}>{children}</ParentSize>;
+interface Props {
+  children: (
+    args: {
+      ref: HTMLDivElement | null;
+      resize: (state: ParentSizeState) => void;
+    } & ParentSizeState
+  ) => React.ReactNode;
+}
+
+export const StyledParentSize = ({ children }: Props) => {
+  const { parentSize } = useStyles({});
+  return <ParentSize className={parentSize}>{children}</ParentSize>;
 };

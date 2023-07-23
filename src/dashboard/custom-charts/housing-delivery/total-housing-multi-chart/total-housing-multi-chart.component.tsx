@@ -10,7 +10,11 @@ import { useChartTheme } from '../../../../dashboard/useChartTheme';
 import { pairedWidthCalculator } from '../utils/utils';
 import FlyoutTooltip from '../../../FlyoutTooltip';
 import { CustomLegend } from '../../../custom-legend/custom-legend.component';
-import { TENURE_DATA_TYPES, TARGET_LEGEND_DATA } from '../../../../constants';
+import {
+  TENURE_DATA_TYPES,
+  TARGET_LEGEND_DATA,
+  DEFAULT_TARGET_COLOR,
+} from '../../../../constants';
 
 import { totalHousingTransformer } from './total-housing-transformer/total-housing-transformer';
 import { TotalHousingDeliveryData } from '../../../../mocks/fixtures';
@@ -36,6 +40,8 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
     [data, targetDataset, timeline]
   );
 
+  if (!transformerOutput) return null;
+
   const { transformedData, transformedTargets } = transformerOutput;
 
   const apiLegendData = Object.values(TENURE_DATA_TYPES).map((type, i) => ({
@@ -43,19 +49,17 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
     color: chartColors.totalHousingDelivery[i],
   }));
 
-  if (!transformerOutput) return null;
-
   return (
     <StyledParentSize>
       {({ width }: { width: number }) => {
-        /** props for bar chart (data) */
+        /** props for histogram chart (data) */
         const { barWidth, offset } = pairedWidthCalculator({
           data: transformedData,
           width,
         });
 
-        /** props for live chart (targets) */
-        const color = '#d13aff',
+        /** props for line chart (targets) */
+        const color = DEFAULT_TARGET_COLOR,
           scatterWidth = width / 2;
 
         return (

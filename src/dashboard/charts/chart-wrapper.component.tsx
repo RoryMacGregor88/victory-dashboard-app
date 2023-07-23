@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import {
   Paper,
   Typography,
@@ -6,16 +8,16 @@ import {
   Grid,
 } from '@material-ui/core';
 
+import { ClassNameMap } from '@material-ui/core/styles/withStyles';
+
 import { Skeleton } from '@material-ui/lab';
 
 import clsx from 'clsx';
 
 import { InfoButtonTooltip } from '../../components/info-button-tooltip/info-button-tooltip.component';
-import { ReactNode } from 'react';
-import { ClassNameMap } from '@material-ui/core/styles/withStyles';
 
 const useStyles = makeStyles((theme) => ({
-  info: {
+  iconInfo: {
     marginLeft: theme.spacing(2),
   },
   paper: {
@@ -59,7 +61,7 @@ const ChartWrapper = ({
   classes,
   ...rest
 }: Props) => {
-  const styles = useStyles();
+  const { paper, header, iconInfo } = useStyles();
   return (
     <Grid
       item
@@ -68,7 +70,7 @@ const ChartWrapper = ({
       justifyContent='space-between'
       wrap='nowrap'
       component={Paper}
-      className={clsx(styles.paper, classes?.paper)}
+      className={clsx(paper, classes?.paper)}
       {...rest}
     >
       <Grid
@@ -76,7 +78,7 @@ const ChartWrapper = ({
         container
         justifyContent='space-between'
         wrap='nowrap'
-        className={clsx(styles.header, classes?.header)}
+        className={clsx(header, classes?.header)}
       >
         <Typography
           component='h3'
@@ -88,7 +90,7 @@ const ChartWrapper = ({
         {info ? (
           <InfoButtonTooltip
             tooltipContent={info}
-            iconButtonClassName={styles.info}
+            iconButtonClassName={iconInfo}
           />
         ) : null}
       </Grid>
@@ -98,10 +100,10 @@ const ChartWrapper = ({
 };
 
 export const ChartWrapperSkeleton = ({ children }: { children: ReactNode }) => {
-  const styles = skeletonStyles();
+  const { paper, heading } = skeletonStyles();
   return (
-    <Paper className={styles.paper}>
-      <span className={styles.heading}>
+    <Paper className={paper}>
+      <span className={heading}>
         <Skeleton variant='text' width={300} />
         <Skeleton variant='circle' width={15} height={15} />
       </span>

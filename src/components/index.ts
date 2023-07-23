@@ -4,5 +4,6 @@ export { ToggleButton } from './toggle-button/toggle-button.component';
 export { ToggleButtonGroup } from './toggle-button-group/toggle-button-group.component';
 export { Button } from './button/button.component';
 export { DialogTitle } from './dialog/dialog-title.component';
+export { Grid } from './grid.component';
 
 export * from './icons';

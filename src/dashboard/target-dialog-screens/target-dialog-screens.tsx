@@ -6,12 +6,12 @@ import * as Yup from 'yup';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { Grid, makeStyles, Select, MenuItem, Input } from '@material-ui/core';
+import { makeStyles, Select, MenuItem, Input } from '@material-ui/core';
 
 import { getPastYears } from '../utils/utils';
 import { targetDatasets } from '../../constants';
 
-import { Button } from '../../components';
+import { Button, Grid } from '../../components';
 import { TargetCategory, Targets } from '../../types';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
   },
   buttons: {
     marginTop: theme.spacing(5),
-    gap: theme.spacing(2),
   },
   inputFields: {
     display: 'grid',
@@ -29,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
     gridGap: theme.spacing(2),
   },
   error: {
-    gap: theme.spacing(1),
     marginBottom: theme.spacing(4),
     color: theme.palette.error.main,
     width: '100%',
@@ -40,14 +38,14 @@ const useStyles = makeStyles((theme) => ({
 const DEFAULT_TEXT = 'Select Type of Target';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
-  const styles = useStyles();
+  const { wrapper } = useStyles();
   return (
     <Grid
       container
       direction='column'
       justifyContent='space-between'
       alignItems='center'
-      className={styles.wrapper}
+      className={wrapper}
     >
       {children}
     </Grid>
@@ -59,7 +57,7 @@ interface SelectFormProps {
 }
 
 const SelectForm = ({ onNextClick }: SelectFormProps) => {
-  const styles = useStyles();
+  const { buttons } = useStyles();
 
   type DefaultState = TargetCategory | typeof DEFAULT_TEXT;
 
@@ -89,7 +87,7 @@ const SelectForm = ({ onNextClick }: SelectFormProps) => {
           </MenuItem>
         ))}
       </Grid>
-      <Grid item container justifyContent='flex-end' className={styles.buttons}>
+      <Grid item container justifyContent='flex-end' className={buttons}>
         <Button
           disabled={isDisabled}
           onClick={() => !isDisabled && onNextClick(selectedDataset)}
@@ -114,7 +112,7 @@ const TargetForm = ({
   selectedDataset,
   targets = {},
 }: TargetFormProps) => {
-  const styles = useStyles();
+  const { error, inputFields, buttons } = useStyles();
 
   const yearRange = selectedDataset === 'affordableHousingDelivery' ? 10 : 5,
     pastYears = getPastYears(yearRange);
@@ -173,7 +171,7 @@ const TargetForm = ({
   return (
     <Grid item container component='form' onSubmit={handleSubmit(onSubmit)}>
       {hasErrors ? (
-        <Grid item container direction='column' className={styles.error}>
+        <Grid item container direction='column' className={error}>
           {Object.entries(errors).map(([year, error]) => (
             <span>
               Error in {formatYear(Number(year))}: {error?.message}
@@ -182,7 +180,7 @@ const TargetForm = ({
         </Grid>
       ) : null}
 
-      <Grid item container className={styles.inputFields}>
+      <Grid item container className={inputFields}>
         {pastYears.map((year) => {
           const stringYear = String(year) as TargetCategory;
           return (
@@ -194,7 +192,7 @@ const TargetForm = ({
           );
         })}
       </Grid>
-      <Grid item container justifyContent='flex-end' className={styles.buttons}>
+      <Grid item container justifyContent='flex-end' className={buttons}>
         <Button color='secondary' onClick={() => reset(emptyFormValues)}>
           Reset
         </Button>

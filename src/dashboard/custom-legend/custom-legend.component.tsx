@@ -11,12 +11,18 @@ const RATIOS = {
   },
   MAX_FONT_SIZE = 16;
 
+interface StylesProps {
+  padTop?: boolean;
+  padBottom?: boolean;
+  maxHeight?: number;
+}
+
 const useStyles = makeStyles(() => ({
   apiLegend: {
     width: '100%',
-    maxHeight: '5rem',
-    marginTop: ({ padTop }) => (padTop ? '1rem' : '0'),
-    marginBottom: ({ padBottom }) => (padBottom ? '1rem' : '0'),
+    maxHeight: ({ maxHeight }: StylesProps) => maxHeight ?? '5rem',
+    marginTop: ({ padTop }: StylesProps) => (padTop ? '1rem' : '0'),
+    marginBottom: ({ padBottom }: StylesProps) => (padBottom ? '1rem' : '0'),
   },
   legendItem: { width: 'fit-content' },
   userTarget: {

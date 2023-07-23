@@ -37,7 +37,7 @@ const ProgressIndicators = ({
   targets = {},
 }: ProgressIndicatorProps) => {
   const chartTheme = useChartTheme();
-  const styles = useStyles();
+  const { header } = useStyles();
 
   const tenureCurrentYear = tenureData.find(
     (obj) => obj.startYear === currentYear
@@ -98,12 +98,7 @@ const ProgressIndicators = ({
       ];
 
     return (
-      <ChartWrapper
-        key={name}
-        title={title}
-        info={info}
-        classes={{ header: styles.header }}
-      >
+      <ChartWrapper key={name} title={title} info={info} classes={{ header }}>
         <ProgressWheel
           color={chartTheme.colors[i]}
           percentage={percentage}

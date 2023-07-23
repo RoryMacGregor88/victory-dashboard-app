@@ -89,9 +89,11 @@ export const TENURE_DATA_TYPES: { gross: TenureDataType; net: TenureDataType } =
     net: 'Net',
   };
 
+export const DEFAULT_TARGET_COLOR = '#d13aff';
+
 export const TARGET_LEGEND_DATA = {
   name: 'Housing Requirement',
-  color: '#d13aff',
+  color: DEFAULT_TARGET_COLOR,
 };
 
 /** live data */

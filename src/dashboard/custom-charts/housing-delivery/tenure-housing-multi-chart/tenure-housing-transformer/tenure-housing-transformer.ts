@@ -8,7 +8,7 @@ import { TargetCategory, Targets } from '../../../../../types';
  */
 
 interface Args {
-  apiData: TenureTypeHousingData;
+  apiData: Partial<TenureTypeHousingData>;
   targets: Targets[TargetCategory];
   timeline: number[];
 }
@@ -26,7 +26,7 @@ export const tenureHousingTransformer = ({
     const obj = apiData.find(({ startYear }) => startYear === year)!;
 
     /** Victory does not work with number values, so must be stringified. */
-    // TODO: doesn't sound right
+    // TODO: doesn't sound right^, Victory should work with numbers
     return !!obj
       ? { ...obj, startYear: String(obj.startYear) }
       : {

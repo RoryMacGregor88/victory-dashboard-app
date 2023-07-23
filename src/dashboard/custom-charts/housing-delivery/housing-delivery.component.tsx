@@ -1,12 +1,6 @@
 import { useEffect, useMemo, SyntheticEvent } from 'react';
 
-import {
-  Grid,
-  Select,
-  MenuItem,
-  Typography,
-  makeStyles,
-} from '@material-ui/core';
+import { Select, MenuItem, Typography, makeStyles } from '@material-ui/core';
 
 import { ChartWrapper } from '../../charts/chart-wrapper.component';
 
@@ -31,7 +25,7 @@ import {
 import TenureHousingMultiChart from './tenure-housing-multi-chart/tenure-housing-multi-chart.component';
 import TotalHousingMultiChart from './total-housing-multi-chart/total-housing-multi-chart.component';
 
-import { ToggleButton, ToggleButtonGroup } from '../../../components';
+import { ToggleButton, ToggleButtonGroup, Grid } from '../../../components';
 
 import {
   TenureTypeHousingData,
@@ -59,17 +53,12 @@ const useStyles = makeStyles((theme) => ({
   },
   controls: {
     marginBottom: theme.spacing(2),
-    gap: theme.spacing(2),
   },
   selectFilters: {
     width: '50%',
-    gap: theme.spacing(2),
   },
   buttons: {
     width: '50%',
-  },
-  charts: {
-    gap: theme.spacing(2),
   },
 }));
 
@@ -148,7 +137,7 @@ const HousingDelivery = ({
   settings,
   updateOrbState,
 }: HousingDeliveryProps) => {
-  const { container, charts, header, buttons, controls } = useStyles();
+  const { container, header, buttons, controls } = useStyles();
 
   const tenureCategory = settings.tenureCategory ?? ALL_TENURE_CATEGORIES,
     tenureDataType = settings.tenureDataType ?? TENURE_DATA_TYPES.gross,
@@ -243,7 +232,6 @@ const HousingDelivery = ({
         justifyContent='space-between'
         alignItems='stretch'
         wrap='nowrap'
-        className={charts}
       >
         <ChartWrapper
           title='Total Housing Delivery'
@@ -257,7 +245,10 @@ const HousingDelivery = ({
           <TotalHousingMultiChart
             data={totalHousingDeliveryData}
             targets={targets}
-            timeline={getFilteredTimeline(totalTimeline, totalYear)}
+            timeline={getFilteredTimeline({
+              timeline: totalTimeline,
+              selectedYear: totalYear,
+            })}
           />
         </ChartWrapper>
 
@@ -308,7 +299,10 @@ const HousingDelivery = ({
                   ? tenureCategory
                   : undefined
               }
-              timeline={getFilteredTimeline(tenureTimeline, tenureYear)}
+              timeline={getFilteredTimeline({
+                timeline: tenureTimeline,
+                selectedYear: tenureYear,
+              })}
             />
           ) : null}
         </ChartWrapper>

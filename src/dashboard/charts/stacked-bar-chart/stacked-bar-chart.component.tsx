@@ -2,6 +2,8 @@ import { VictoryBar, VictoryStack } from 'victory';
 
 import { BaseChart } from '../base-chart/base-chart.component';
 
+// TODO: not being used?
+
 /**
  * @param {{
  * xLabel?: string

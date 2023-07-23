@@ -104,7 +104,7 @@ const getDataTimeline = ({ apiData, targets = {} }: GetDataTimelineArgs) => {
    */
   const hasTargets = !!Object.keys(targets).length;
 
-  const apiYears = apiData.map((obj) => obj.startYear);
+  const apiYears = apiData.map(({ startYear }) => startYear);
 
   /** if targets is undefined, defaulted to object and will return empty array */
   const targetYears = hasTargets
@@ -150,39 +150,19 @@ const filterByType = <T>({
   }));
 };
 
-const getFilteredTimeline = (
-  timeline: number[],
-  selectedYear: number,
-  range = DEFAULT_FILTER_RANGE
-) => {
+interface GetFilteredTimelineArgs {
+  timeline: number[];
+  selectedYear: number;
+  range?: number;
+}
+
+const getFilteredTimeline = ({
+  timeline,
+  selectedYear,
+  range = DEFAULT_FILTER_RANGE,
+}: GetFilteredTimelineArgs) => {
   const index = timeline?.indexOf(selectedYear);
   return timeline?.slice(index - range, index + 1);
-};
-
-// TODO: this needs to go into where it is used, like the others
-// TODO: actually being used anywhere?
-/**
- * Generic Group Tranformer for Grouped Bar charts.
- * Reshapes data into the form expected by GroupedBarChart component.
- * Brought in to allow me to test bar chart width functionality for 2,3,4 and more groups
- * Similar to the groupedDataTransformer in functionality, except that you don't need
- * to declare properties
- * Generic in the sense that it supports all properties (or just some)
- */
-const GroupedDataTransformer = (data, requiredColumns = null) => {
-  // TODO: change data so that it's just an object, not inside an array
-  const datum = data[0];
-
-  const columns = requiredColumns ?? Object.keys(datum);
-
-  return columns.reduce((acc, cur) => {
-    const series = data.map((datum) => ({
-      x: datum.startYear,
-      y: datum[cur],
-    }));
-
-    return [...acc, series];
-  }, []);
 };
 
 /**
@@ -222,47 +202,18 @@ const exportToCsv = (data: ExportData, filename: string) => {
 };
 
 /**
- * Creates an array a labels from an array of objects whose properties
- * we want to sum up. We supply an array of properties whose values we need to add up
- *
- * @param {object[]} data - Data to generate labels for
- * @param {string[]} includeProperties - Only sum properties in this list
- * @param {(item: number) => string} formatter - Optional function which takes an object and renders it as text
- *
- * @returns {any[]} An array of labels to appear over each data point
+ * Calculates the total value of a stack histogram chart's datum object,
+ * pulling values from the keys (ranges) specified. The reason for this is
+ * that some data will include year keys like 2021, and we don't want them
+ * added to the total.
  */
 
-const labelsForArrayOfObjectsInclusive = (
-  data,
-  includeProperties,
-  formatter
-) => {
-  if (!data || !data.length) {
-    return [];
-  }
-  const fieldsToAddUp = Object.keys(data[0]).filter((item) =>
-    includeProperties.includes(item)
-  );
-  return data.map((obj) => {
-    // TODO: reduce this
-    let total = 0;
-    fieldsToAddUp.forEach((fieldName) => (total += obj[fieldName] ?? 0));
-    return formatter ? formatter(total) : total;
-  });
-};
+interface GetStackDatumTotalsArgs {
+  datum: { [key: string]: number };
+  ranges: string[];
+}
 
-/**
- * Calculates the totals of a stack chart's datum, excluding all properties
- * except those specified, and returning a varied string depending on whether
- * there is one or multiple properties.
- *
- * @param {object} datum
- * @param {string[]} ranges
- * @returns {string}
- */
-const getStackDatumTotal = (datum, ranges) => {
-  if (!datum) return null;
-
+const getStackDatumTotal = ({ datum, ranges }: GetStackDatumTotalsArgs) => {
   const filteredKeys = Object.keys(datum).filter((key) => ranges.includes(key)),
     total = filteredKeys.reduce((acc, cur) => (acc += datum[cur]), 0);
 
@@ -277,9 +228,7 @@ export {
   getDataTimeline,
   filterByType,
   getFilteredTimeline,
-  GroupedDataTransformer,
   BaseWidthCalculator,
   exportToCsv,
-  labelsForArrayOfObjectsInclusive,
   getStackDatumTotal,
 };

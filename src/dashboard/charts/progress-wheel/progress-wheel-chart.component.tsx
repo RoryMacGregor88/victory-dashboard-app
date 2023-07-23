@@ -36,9 +36,9 @@ const ProgressIndicatorChart = ({
   target,
   name,
 }: Props) => {
-  const styles = useStyles();
+  const { parentSize, circle } = useStyles();
   return (
-    <ParentSize className={styles.parentSize}>
+    <ParentSize className={parentSize}>
       {({ width }) => {
         const halfWidth = width / 2,
           radius = halfWidth / 2,
@@ -55,7 +55,7 @@ const ProgressIndicatorChart = ({
               cx={radius}
               cy={radius}
               r={bgCirlceRadius > 0 ? bgCirlceRadius : 0}
-              className={styles.circle}
+              className={circle}
             />
             <VictoryPie
               standalone={false}
@@ -93,14 +93,14 @@ const ProgressIndicatorChart = ({
 
 // TODO: use this or ditch?
 export const ProgressIndicatorChartSkeleton = () => {
-  const styles = useStyles();
+  const { ekeleton } = useStyles();
   return (
     <Grid
       item
       container
       alignItems='center'
       justifyContent='center'
-      className={styles.skeleton}
+      className={skeleton}
     >
       <Skeleton variant='circle' width='8rem' height='8rem' />
     </Grid>

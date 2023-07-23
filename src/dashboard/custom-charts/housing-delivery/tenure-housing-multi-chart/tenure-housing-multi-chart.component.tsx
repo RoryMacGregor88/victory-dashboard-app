@@ -14,7 +14,11 @@ import { useChartTheme } from '../../../useChartTheme';
 import FlyoutTooltip from '../../../FlyoutTooltip';
 import { getStackDatumTotal } from '../../../utils/utils';
 import { CustomLegend } from '../../../custom-legend/custom-legend.component';
-import { TARGET_LEGEND_DATA, housingTenureTypes } from '../../../../constants';
+import {
+  DEFAULT_TARGET_COLOR,
+  TARGET_LEGEND_DATA,
+  housingTenureTypes,
+} from '../../../../constants';
 
 import { tenureHousingTransformer } from './tenure-housing-transformer/tenure-housing-transformer';
 import { useMemo } from 'react';
@@ -22,7 +26,7 @@ import { TenureTypeHousingData } from '../../../../mocks/fixtures';
 import { TargetCategory, Targets, TenureCategory } from '../../../../types';
 
 interface Props {
-  apiData: TenureTypeHousingData;
+  apiData: Partial<TenureTypeHousingData>;
   targets: Targets[TargetCategory];
   tenureCategory?: TenureCategory;
   timeline: number[];
@@ -65,7 +69,7 @@ const TenureHousingMultiChart = ({
           ? [tenureStackColors[tenureCategory]]
           : Object.values(tenureStackColors);
 
-        const color = '#d13aff',
+        const color = DEFAULT_TARGET_COLOR,
           scatterWidth = width / 2;
 
         return (
@@ -89,7 +93,9 @@ const TenureHousingMultiChart = ({
                     data={transformedData}
                     x='startYear'
                     y={range}
-                    labels={({ datum }) => getStackDatumTotal(datum, ranges)}
+                    labels={({ datum }) =>
+                      getStackDatumTotal({ datum, ranges })
+                    }
                     labelComponent={FlyoutTooltip()}
                     style={{ data: { width: barWidth } }}
                   />

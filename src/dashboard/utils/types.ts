@@ -10,7 +10,7 @@ export type HousingApprovalsObjectArray = HousingApprovalsData[number]['data'];
 
 export type TransformedTargets = { x: string; y: number }[];
 
-/** data is possible filtered beore passed to timeline fuction */
+/** data is possibly filtered before passed to timeline fuction */
 export type TimelineData =
   | Partial<TotalHousingDeliveryData>
   | Partial<TenureTypeHousingData>
