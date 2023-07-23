@@ -5,7 +5,7 @@ import { darken } from '@material-ui/core';
 import { VictoryGroup, VictoryBar, VictoryLine, VictoryScatter } from 'victory';
 
 import { BaseChart } from '../../../charts/base-chart/base-chart.component';
-import { StyledParentSize } from '../../../charts/styled-parent-size.component';
+import { StyledParentSize } from '../../../../components';
 import { useChartTheme } from '../../../../dashboard/useChartTheme';
 import { pairedWidthCalculator } from '../utils/utils';
 import FlyoutTooltip from '../../../FlyoutTooltip';

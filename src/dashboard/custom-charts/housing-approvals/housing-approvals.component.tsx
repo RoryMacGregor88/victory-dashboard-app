@@ -7,7 +7,7 @@ import { VictoryGroup, VictoryLine, VictoryScatter } from 'victory';
 
 import { BaseChart } from '../../charts/base-chart/base-chart.component';
 import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { StyledParentSize } from '../../charts/styled-parent-size.component';
+import { StyledParentSize } from '../../../components';
 import { useChartTheme } from '../../useChartTheme';
 import FlyoutTooltip from '../../FlyoutTooltip';
 import { CustomLegend } from '../../custom-legend/custom-legend.component';

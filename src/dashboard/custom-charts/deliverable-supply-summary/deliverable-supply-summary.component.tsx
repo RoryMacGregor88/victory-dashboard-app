@@ -7,7 +7,7 @@ import FlyoutTooltip from '../../FlyoutTooltip';
 import { getStackTotals } from './utils/utils';
 import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import { deliverableSupplySummaryTypes } from '../../../constants';
-import { StyledParentSize } from '../../charts/styled-parent-size.component';
+import { StyledParentSize } from '../../../components';
 import { DeliverableSupplySummaryData } from '../../../mocks/fixtures/deliverable_supply_summary';
 
 interface Props {

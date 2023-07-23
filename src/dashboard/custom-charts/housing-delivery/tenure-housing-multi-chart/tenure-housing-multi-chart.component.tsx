@@ -9,7 +9,7 @@ import {
 } from 'victory';
 
 import { BaseChart } from '../../../charts/base-chart/base-chart.component';
-import { StyledParentSize } from '../../../charts/styled-parent-size.component';
+import { StyledParentSize } from '../../../../components';
 import { useChartTheme } from '../../../useChartTheme';
 import FlyoutTooltip from '../../../FlyoutTooltip';
 import { getStackDatumTotal } from '../../../utils/utils';
