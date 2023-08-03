@@ -1,6 +1,6 @@
-import { it, expect, describe, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { render, screen, userEvent } from '../../test/test.utils';
+import { render, screen, userEvent } from '~/test/test.utils';
 
 import { CustomDateRange } from './custom-date-range.component';
 
@@ -19,11 +19,11 @@ describe('CustomDateRange', () => {
         timeline={testTimeline}
         value={2016}
         onSelect={onSelect}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('button', { name: '2012-2013 - 2016-2017' })
+      screen.getByRole('button', { name: '2012-2013 - 2016-2017' }),
     ).toBeInTheDocument();
   });
 
@@ -33,15 +33,15 @@ describe('CustomDateRange', () => {
         timeline={testTimeline}
         value={2016}
         onSelect={onSelect}
-      />
+      />,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: '2012-2013 - 2016-2017' })
+      screen.getByRole('button', { name: '2012-2013 - 2016-2017' }),
     );
 
     await userEvent.click(
-      screen.getByRole('option', { name: '2011-2012 - 2015-2016' })
+      screen.getByRole('option', { name: '2011-2012 - 2015-2016' }),
     );
 
     expect(onSelect).toHaveBeenCalledWith(2015);
@@ -53,11 +53,11 @@ describe('CustomDateRange', () => {
         timeline={testTimeline}
         value={2016}
         onSelect={onSelect}
-      />
+      />,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: '2012-2013 - 2016-2017' })
+      screen.getByRole('button', { name: '2012-2013 - 2016-2017' }),
     );
 
     [

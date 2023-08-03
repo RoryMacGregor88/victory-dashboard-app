@@ -1,4 +1,4 @@
-import { HousingApprovalsObjectArray } from '../../../utils/types';
+import { HousingApprovalsObjectArray } from '~/dashboard/utils/types';
 
 /**
  * This function is necessary because the data entries do not always have the same
@@ -6,7 +6,7 @@ import { HousingApprovalsObjectArray } from '../../../utils/types';
  * values, so this fills any missing keys with 'null' so the data is usable.
  */
 export const housingApprovalsTransformer = (
-  data: HousingApprovalsObjectArray
+  data: HousingApprovalsObjectArray,
 ): HousingApprovalsObjectArray => {
   const allKeys = data.reduce((acc: string[], cur) => {
     const keys = Object.keys(cur);

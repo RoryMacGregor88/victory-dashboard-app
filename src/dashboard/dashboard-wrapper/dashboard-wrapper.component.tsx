@@ -1,5 +1,5 @@
-import { LoadMaskFallback } from '../../components';
-import { Dashboard } from '../dashboard.component';
+import { LoadMaskFallback } from '~/components';
+import { Dashboard } from '~/dashboard/dashboard.component';
 
 const SOURCE_ID = 'source_id';
 

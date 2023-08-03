@@ -1,9 +1,10 @@
 import { rest } from 'msw';
 
+import { MOCK_USER } from '~/constants';
+import { server } from '~/mocks/server';
+import { render, screen, waitFor } from '~/test/test.utils';
+
 import { DashboardWrapper } from './dashboard-wrapper.component';
-import { MOCK_USER } from '../../constants';
-import { server } from '../../mocks/server';
-import { render, screen, waitFor } from '../../test/test.utils';
 
 const state = {
   dashboard: {

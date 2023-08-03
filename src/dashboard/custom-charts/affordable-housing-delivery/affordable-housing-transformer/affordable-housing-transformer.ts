@@ -1,5 +1,5 @@
-import { AffordableHousingData } from '../../../../mocks/fixtures';
-import { Targets, TargetCategory } from '../../../../types';
+import { AffordableHousingData } from '~/mocks/fixtures';
+import { TargetCategory, Targets } from '~/types';
 
 interface Args {
   apiData: AffordableHousingData;
@@ -17,7 +17,7 @@ export const affordableHousingTransformer = ({
       targetValue = targets?.[match.startYear]!;
 
     const percentage = Math.round(
-      (match['Affordable Housing'] / targetValue) * 100
+      (match['Affordable Housing'] / targetValue) * 100,
     );
 
     return [

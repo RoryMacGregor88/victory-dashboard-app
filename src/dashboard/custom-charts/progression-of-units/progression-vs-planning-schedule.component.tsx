@@ -1,27 +1,25 @@
 import { Grid, MenuItem, Select } from '@material-ui/core';
 import { ColorScalePropType, VictoryBar, VictoryStack } from 'victory';
 
-import { FlyoutTooltip } from '~/components';
-
-import { StyledParentSize } from '../../../components';
+import { FlyoutTooltip, StyledParentSize } from '~/components';
 import {
   ALL_TENURE_CATEGORIES,
   progressionVsPlanningCategories,
   progressionVsPlanningPalette,
-} from '../../../constants';
-import { ProgressionOfUnitsData } from '../../../mocks/fixtures';
+} from '~/constants';
+import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { useSelectStyles } from '~/dashboard/custom-date-range/custom-date-range.component';
+import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { filterByType, getStackDatumTotal } from '~/dashboard/utils/utils';
+import { ProgressionOfUnitsData } from '~/mocks/fixtures';
 import {
   ChartTheme,
   ProgressionVsPlanningCategory,
   Settings,
   UpdateOrbStateArgs,
-} from '../../../types';
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { useSelectStyles } from '../../custom-date-range/custom-date-range.component';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
-import { useChartTheme } from '../../useChartTheme';
-import { filterByType, getStackDatumTotal } from '../../utils/utils';
+} from '~/types';
 
 interface Props {
   data: ProgressionOfUnitsData;
@@ -94,7 +92,7 @@ const ProgressionVsPlanningSchedule = ({
             selectedType,
           });
 
-          // TODO: skeleton here?
+          // TODO: skeleton here? Also, use ternary
           if (!filteredData) return null;
 
           return (

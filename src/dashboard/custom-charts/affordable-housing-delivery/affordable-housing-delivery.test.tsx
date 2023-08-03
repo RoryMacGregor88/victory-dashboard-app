@@ -1,9 +1,9 @@
-import { it, expect, describe, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import mockData from '../../../mocks/fixtures/affordable_housing_delivery';
-import { render, screen } from '../../../test/test.utils';
+import mockData from '~/mocks/fixtures/affordable_housing_delivery';
+import { render, screen } from '~/test/test.utils';
 
-import { AffordableHousingDelivery } from './affordable-housing-delivery.component';
+import AffordableHousingDelivery from './affordable-housing-delivery.component';
 
 const targets = {
   2018: 100,
@@ -25,15 +25,15 @@ describe('<AfforableHousingDelivery />', () => {
       render(
         <AffordableHousingDelivery
           data={mockData}
-          targets={targets}
           setDashboardSettings={setDashboardSettings}
-        />
+          targets={targets}
+        />,
       );
 
       expect(
         screen.getByRole('heading', {
           name: `Affordable Housing Delivery (%)`,
-        })
+        }),
       ).toBeInTheDocument();
     });
 
@@ -41,12 +41,12 @@ describe('<AfforableHousingDelivery />', () => {
       render(
         <AffordableHousingDelivery
           data={mockData}
-          targets={targets}
           setDashboardSettings={setDashboardSettings}
-        />
+          targets={targets}
+        />,
       );
       expect(
-        screen.getByText('Affordable Housing Delivery (%)')
+        screen.getByText('Affordable Housing Delivery (%)'),
       ).toBeInTheDocument();
       expect(screen.getByText('Financial Year')).toBeInTheDocument();
     });

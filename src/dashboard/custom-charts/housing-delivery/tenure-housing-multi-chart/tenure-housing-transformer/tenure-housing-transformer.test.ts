@@ -1,9 +1,9 @@
-import { it, expect, describe, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { tenureHousingTransformer } from './tenure-housing-transformer';
 
 /** This is here just so tests don't need every key every time. */
-vi.mock('../../../../../constants', () => ({
+vi.mock('~/constants', () => ({
   housingTenureTypes: {
     market: 'Market',
     intermediate: 'Intermediate',

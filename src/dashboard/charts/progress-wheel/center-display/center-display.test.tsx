@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
 
-import { render, screen } from '../../../../test/test.utils';
+import { render, screen } from '~/test/test.utils';
 
 import CenterDisplay from './center-display.component';
 
@@ -18,7 +18,7 @@ describe('CenterDisplay', () => {
         percentage: null,
         target: 100,
         name: 'Test Name',
-      })
+      }),
     );
 
     expect(screen.getByText('Test Name Target Required')).toBeInTheDocument();

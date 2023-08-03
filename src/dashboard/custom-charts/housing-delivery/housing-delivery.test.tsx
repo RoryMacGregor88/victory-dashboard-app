@@ -1,11 +1,10 @@
-import { it, expect, describe, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { render, userEvent, screen, waitFor } from '../../../test/test.utils';
+import tenureData from '~/mocks/fixtures/tenure_type_housing_delivery';
+import totalData from '~/mocks/fixtures/total_housing_delivery';
+import { render, screen, userEvent, waitFor } from '~/test/test.utils';
 
-import { HousingDelivery } from './housing-delivery.component';
-
-import tenureData from '../../../mocks/fixtures/tenure_type_housing_delivery';
-import totalData from '../../../mocks/fixtures/total_housing_delivery';
+import HousingDelivery from './housing-delivery.component';
 
 const defaultData = {
   tenureHousingDeliveryChartData: tenureData,
@@ -26,7 +25,7 @@ describe('HousingDelivery', () => {
       <HousingDelivery
         {...defaultData}
         setDashboardSettings={setDashboardSettings}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -34,11 +33,11 @@ describe('HousingDelivery', () => {
     });
 
     expect(
-      screen.getByRole('button', { name: '2018-2019 - 2022-2023' })
+      screen.getByRole('button', { name: '2018-2019 - 2022-2023' }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole('button', { name: 'All Tenure Types' })
+      screen.getByRole('button', { name: 'All Tenure Types' }),
     ).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Gross' })).toBeInTheDocument();
@@ -55,19 +54,19 @@ describe('HousingDelivery', () => {
     render(
       <HousingDelivery
         {...defaultData}
-        settings={settings}
         setDashboardSettings={setDashboardSettings}
-      />
+        settings={settings}
+      />,
     );
 
     expect(setDashboardSettings).not.toHaveBeenCalled();
 
     expect(
-      screen.getByRole('button', { name: '2014-2015 - 2018-2019' })
+      screen.getByRole('button', { name: '2014-2015 - 2018-2019' }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole('button', { name: 'Social Rent' })
+      screen.getByRole('button', { name: 'Social Rent' }),
     ).toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Net' })).toBeInTheDocument();
@@ -85,14 +84,14 @@ describe('HousingDelivery', () => {
     render(
       <HousingDelivery
         {...defaultData}
-        targets={targets}
-        settings={settings}
         setDashboardSettings={setDashboardSettings}
-      />
+        settings={settings}
+        targets={targets}
+      />,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Market for sale' })
+      screen.getByRole('button', { name: 'Market for sale' }),
     );
 
     await userEvent.click(screen.getByRole('option', { name: 'Social Rent' }));
@@ -106,16 +105,16 @@ describe('HousingDelivery', () => {
     render(
       <HousingDelivery
         {...defaultData}
-        settings={{ tenureYear: 2019 }}
         setDashboardSettings={setDashboardSettings}
-      />
+        settings={{ tenureYear: 2019 }}
+      />,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'All Tenure Types' })
+      screen.getByRole('button', { name: 'All Tenure Types' }),
     );
     await userEvent.click(
-      screen.getByRole('option', { name: 'Market for sale' })
+      screen.getByRole('option', { name: 'Market for sale' }),
     );
 
     expect(setDashboardSettings).toHaveBeenCalledTimes(2);

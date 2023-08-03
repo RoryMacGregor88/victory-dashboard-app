@@ -1,7 +1,7 @@
 import { alpha, useTheme } from '@material-ui/core';
 import deepmerge from 'deepmerge';
 
-import { ChartColors, ChartTheme, TenureCategory } from '../types';
+import { ChartColors, ChartTheme, TenureCategory } from '~/types';
 
 const colors = [
   '#f6be00',

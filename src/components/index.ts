@@ -7,5 +7,6 @@ export { DialogTitle } from './dialog/dialog-title.component';
 export { Grid } from './grid.component';
 export { StyledParentSize } from './styled-parent-size.component';
 export { FlyoutTooltip } from './flyout-tooltip';
+export { IconButton } from './icon-button/icon-button.component';
 
 export * from './icons';

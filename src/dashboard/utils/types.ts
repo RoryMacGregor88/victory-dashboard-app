@@ -4,7 +4,7 @@ import {
   ProgressionOfUnitsData,
   TenureTypeHousingData,
   TotalHousingDeliveryData,
-} from '../../mocks/fixtures';
+} from '~/mocks/fixtures';
 
 export type HousingApprovalsObjectArray = HousingApprovalsData[number]['data'];
 

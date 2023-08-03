@@ -1,15 +1,13 @@
 import { VictoryBar, VictoryStack } from 'victory';
 
-import { FlyoutTooltip } from '~/components';
-
-import { getStackTotals } from './utils/utils';
-import { StyledParentSize } from '../../../components';
-import { deliverableSupplySummaryTypes } from '../../../constants';
-import { DeliverableSupplySummaryData } from '../../../mocks/fixtures/deliverable_supply_summary';
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
-import { useChartTheme } from '../../useChartTheme';
+import { FlyoutTooltip, StyledParentSize } from '~/components';
+import { deliverableSupplySummaryTypes } from '~/constants';
+import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { getStackTotals } from '~/dashboard/custom-charts/deliverable-supply-summary/utils/utils';
+import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { DeliverableSupplySummaryData } from '~/mocks/fixtures/deliverable_supply_summary';
 
 interface Props {
   data: DeliverableSupplySummaryData;
@@ -43,6 +41,7 @@ const DeliverableSupplySummary = ({ data }: Props) => {
             ranges = deliverableSupplySummaryTypes,
             x = 'startYear';
 
+          // TODO: put these back to ternaries, looks better
           if (!data) return null;
 
           return (

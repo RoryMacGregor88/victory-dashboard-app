@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 
-import { InfoIcon } from '../../components';
+import { InfoIcon } from '~/components';
 
 const useStyles = makeStyles((theme) => ({
   infoButton: {

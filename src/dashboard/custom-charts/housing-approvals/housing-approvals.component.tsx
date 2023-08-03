@@ -3,26 +3,25 @@ import { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { VictoryGroup, VictoryLine, VictoryScatter } from 'victory';
 
-import { FlyoutTooltip } from '~/components';
-
-import { housingApprovalsTransformer } from './housing-approvals-transformer/housing-approvals-transformer';
 import {
+  FlyoutTooltip,
   StyledParentSize,
   ToggleButton,
   ToggleButtonGroup,
-} from '../../../components';
-import { HOUSING_APPROVAL_DATA_TYPES } from '../../../constants';
-import { HousingApprovalsData } from '../../../mocks/fixtures';
+} from '~/components';
+import { HOUSING_APPROVAL_DATA_TYPES } from '~/constants';
+import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { housingApprovalsTransformer } from '~/dashboard/custom-charts/housing-approvals/housing-approvals-transformer/housing-approvals-transformer';
+import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { HousingApprovalsData } from '~/mocks/fixtures';
 import {
   ApprovalsGrantedDataType,
   LegendData,
   Settings,
   UpdateOrbStateArgs,
-} from '../../../types';
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
-import { useChartTheme } from '../../useChartTheme';
+} from '~/types';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -77,6 +76,8 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
     xLabel = 'Month',
     yLabel = 'No. Housing Approvals Granted';
 
+  if (!dataByType) return null;
+
   return (
     <ChartWrapper
       classes={{ paper }}
@@ -108,6 +109,7 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
                 {ranges.map((range, i) => {
                   const stroke = chartColors.approvalsGranted[i],
                     x = 'Month';
+
                   return (
                     <VictoryGroup key={range}>
                       <VictoryLine

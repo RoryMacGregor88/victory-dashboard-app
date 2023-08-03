@@ -256,7 +256,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
           updateOrbState={updateOrbState}
         />
 
-        {/* <Grid container item direction="column">
+        <Grid container item direction="column">
           <Grid container item wrap="nowrap">
             <DeliverableSupplySummary data={deliverableSupplySummary} />
             <HousingApprovals
@@ -280,7 +280,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
               updateOrbState={updateOrbState}
             />
           </Grid>
-        </Grid> */}
+        </Grid>
       </Grid>
 
       <Dialog

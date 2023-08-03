@@ -1,4 +1,4 @@
-import { TotalHousingDeliveryData } from '../../../../mocks/fixtures';
+import { TotalHousingDeliveryData } from '~/mocks/fixtures';
 
 /**
  * Works out bar widths for the total housing delivery chart (paired bars).

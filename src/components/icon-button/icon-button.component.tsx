@@ -1,5 +1,8 @@
-import { IconButton as MuiIconButton } from '@material-ui/core';
+import {
+  IconButtonProps,
+  IconButton as MuiIconButton,
+} from '@material-ui/core';
 
-const IconButton = (props) => <MuiIconButton {...props} />;
-
-export default IconButton;
+export const IconButton = (props: IconButtonProps) => (
+  <MuiIconButton {...props} />
+);

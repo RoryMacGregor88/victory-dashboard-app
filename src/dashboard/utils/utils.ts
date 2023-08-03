@@ -1,11 +1,11 @@
 import * as FileSaver from 'file-saver';
 import { utils, write } from 'xlsx';
 
+import { DEFAULT_FILTER_RANGE, EXTENSION, MIME_TYPE } from '~/constants';
 import { ExportData } from '~/mocks/fixtures';
+import { TargetCategory, Targets } from '~/types';
 
 import { TimelineData, TransformedTargets } from './types';
-import { DEFAULT_FILTER_RANGE, EXTENSION, MIME_TYPE } from '../../constants';
-import { TargetCategory, Targets } from '../../types';
 
 /**
  * This function transforms a key/value object into X/Y data to be rendered

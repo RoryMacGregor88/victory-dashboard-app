@@ -1,8 +1,8 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
-import { MOCK_USER } from '../constants';
-import { RootState } from '../store';
-import { UserOrbState } from '../types';
+import { MOCK_USER } from '~/constants';
+import { RootState } from '~/store';
+import { UserOrbState } from '~/types';
 
 export type User = {
   orb_state: {

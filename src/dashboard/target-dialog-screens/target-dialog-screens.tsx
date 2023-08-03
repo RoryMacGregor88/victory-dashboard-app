@@ -137,7 +137,7 @@ const TargetForm = ({
         }),
         { validation: {}, defaultValues: {}, emptyFormValues: {} },
       ),
-    [],
+    [pastYears, selectedDataset, targets],
   );
 
   const { validation, defaultValues, emptyFormValues } = formSetup;

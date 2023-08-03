@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 
-import data from '../fixtures/housing_approvals_over_time';
+import data from '~/mocks/fixtures/housing_approvals_over_time';
 
 const getHousingApprovalsData = rest.get(
   '*/housing_approvals_over_time/latest/',

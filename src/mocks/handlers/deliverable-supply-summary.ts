@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 
-import data from '../fixtures/deliverable_supply_summary';
+import data from '~/mocks/fixtures/deliverable_supply_summary';
 
 const getDeliverableSupplySummaryData = rest.get(
   '*/deliverable_supply_summary/latest/',

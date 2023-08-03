@@ -5,9 +5,9 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 
-import { User, updateUser, userSelector } from '../../accounts/accounts.slice';
-import { RootState } from '../../store';
-import { ChartData, ChartMetadata, UserOrbState } from '../../types';
+import { User, updateUser, userSelector } from '~/accounts/accounts.slice';
+import { RootState } from '~/store';
+import { ChartData, ChartMetadata, UserOrbState } from '~/types';
 
 export type DashboardState = {
   [sourceId: string]: {

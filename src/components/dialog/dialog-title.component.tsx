@@ -5,8 +5,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
-import IconButton from '../icon-button/icon-button.component';
-import { CloseIcon } from '../icons';
+import { CloseIcon, IconButton } from '~/components';
 
 const useStyles = makeStyles((theme) => ({
   root: {

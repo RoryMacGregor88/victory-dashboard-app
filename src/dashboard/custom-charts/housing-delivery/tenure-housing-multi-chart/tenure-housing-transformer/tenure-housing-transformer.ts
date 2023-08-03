@@ -1,7 +1,7 @@
-import { userTargetTransformer } from '../../../../utils/utils';
-import { housingTenureTypes } from '../../../../../constants';
-import { TenureTypeHousingData } from '../../../../../mocks/fixtures';
-import { TargetCategory, Targets } from '../../../../../types';
+import { housingTenureTypes } from '~/constants';
+import { userTargetTransformer } from '~/dashboard/utils/utils';
+import { TenureTypeHousingData } from '~/mocks/fixtures';
+import { TargetCategory, Targets } from '~/types';
 
 /**
  * Pads missing data for years on the timeline with null values
@@ -33,7 +33,7 @@ export const tenureHousingTransformer = ({
           startYear: String(year),
           ...Object.values(housingTenureTypes).reduce(
             (acc, cur) => ({ ...acc, [cur]: null }),
-            {}
+            {},
           ),
         };
   });

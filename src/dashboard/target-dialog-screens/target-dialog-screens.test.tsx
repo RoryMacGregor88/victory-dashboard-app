@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { inputErrorMessage } from '~/constants';
+import { render, screen, userEvent } from '~/test/test.utils';
+
 import { SelectForm, TargetForm } from './target-dialog-screens';
-import { inputErrorMessage } from '../../constants';
-import { render, screen, userEvent } from '../../test/test.utils';
 
 describe('Target Dialog Screens', () => {
   describe('SelectForm', () => {

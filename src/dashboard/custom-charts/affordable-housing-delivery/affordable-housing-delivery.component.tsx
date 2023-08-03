@@ -8,24 +8,24 @@ import {
   VictoryScatter,
 } from 'victory';
 
-import { FlyoutTooltip } from '~/components';
+import { FlyoutTooltip, StyledParentSize } from '~/components';
+import { yellowStyle } from '~/constants';
+import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { affordableHousingTransformer } from '~/dashboard/custom-charts/affordable-housing-delivery/affordable-housing-transformer/affordable-housing-transformer';
+import { CustomDateRange } from '~/dashboard/custom-date-range/custom-date-range.component';
+import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { getDataTimeline } from '~/dashboard/utils/utils';
+import { AffordableHousingData } from '~/mocks/fixtures';
+import { Settings, TargetCategory, Targets, UpdateOrbStateArgs } from '~/types';
 
-import { affordableHousingTransformer } from './affordable-housing-transformer/affordable-housing-transformer';
-import { StyledParentSize } from '../../../components';
-import { yellowStyle } from '../../../constants';
-import { getDataTimeline } from '../../../dashboard/utils/utils';
-import { AffordableHousingData } from '../../../mocks/fixtures';
-import {
-  Settings,
-  TargetCategory,
-  Targets,
-  UpdateOrbStateArgs,
-} from '../../../types';
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { CustomDateRange } from '../../custom-date-range/custom-date-range.component';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
-import { useChartTheme } from '../../useChartTheme';
+const info = `
+  This chart shows the percentage of affordable housing delivered,
+  derived from user inputted target values. Changing your targets for
+  'Affordable Housing Delivery' will immediately impact the values displayed
+  in this graph.
+`;
 
 // TODO: already have a getFilteredData function for the other charts, why this one too?
 
@@ -125,7 +125,7 @@ const AffordableHousingDelivery = ({
         targets: pairedTargets,
         timeline,
       }),
-    [timeline],
+    [pairedData, pairedTargets, timeline],
   );
 
   const handleYearSelect = useCallback(
@@ -146,16 +146,10 @@ const AffordableHousingDelivery = ({
     updateOrbState({
       settings: { affordableHousingTotalYear: mostRecentYear },
     });
-  }, [affordableHousingTotalYear, timeline, handleYearSelect]);
+  }, [affordableHousingTotalYear, timeline, handleYearSelect, updateOrbState]);
 
   return (
-    <ChartWrapper
-      info={`This chart shows the percentage of affordable housing delivered,
-      derived from user inputted target values. Changing your targets for
-      'Affordable Housing Delivery' will immediately impact the values displayed
-      in this graph.`}
-      title="Affordable Housing Delivery (%)"
-    >
+    <ChartWrapper info={info} title="Affordable Housing Delivery (%)">
       <StyledParentSize>
         {({ width }: { width: number }) => {
           const filteredData = getFilteredData({
@@ -176,20 +170,7 @@ const AffordableHousingDelivery = ({
             domain: { y },
           };
 
-          return !filteredData ? (
-            <Grid
-              container
-              alignItems="center"
-              justifyContent="space-around"
-              style={{ height: '12rem' }}
-            >
-              <Typography variant="h4">
-                {Object.keys(targetDataset ?? {}).length
-                  ? 'No matching data for provided targets.'
-                  : 'Please enter affordable housing delivery targets.'}
-              </Typography>
-            </Grid>
-          ) : (
+          return !!filteredData ? (
             <>
               <CustomDateRange
                 timeline={timeline}
@@ -218,6 +199,19 @@ const AffordableHousingDelivery = ({
                 </VictoryGroup>
               </BaseChart>
             </>
+          ) : (
+            <Grid
+              container
+              alignItems="center"
+              justifyContent="space-around"
+              style={{ height: '12rem' }}
+            >
+              <Typography variant="h4">
+                {Object.keys(targetDataset ?? {}).length
+                  ? 'No matching data for provided targets.'
+                  : 'Please enter affordable housing delivery targets.'}
+              </Typography>
+            </Grid>
           );
         }}
       </StyledParentSize>

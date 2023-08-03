@@ -74,6 +74,7 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
             >
               <VictoryGroup offset={offset}>
                 {transformedData.map((arr, i) => {
+                  // TODO: new react hook here?
                   const key = arr[i].x;
                   return (
                     <VictoryBar

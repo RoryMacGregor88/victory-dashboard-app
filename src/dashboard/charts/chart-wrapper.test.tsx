@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from '../../test/test.utils';
+import { render, screen, userEvent } from '~/test/test.utils';
 
 import { ChartWrapper } from './chart-wrapper.component';
 
@@ -8,21 +8,21 @@ const INFO = 'Test info message';
 describe('< ChartWrapper/>', () => {
   it('should render the title', () => {
     render(
-      <ChartWrapper title={TITLE} info={INFO}>
+      <ChartWrapper info={INFO} title={TITLE}>
         <div>Test Children</div>
-      </ChartWrapper>
+      </ChartWrapper>,
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Test Title' })
+      screen.getByRole('heading', { name: 'Test Title' }),
     ).toBeInTheDocument();
   });
 
   it('the info icon should be visible', () => {
     render(
-      <ChartWrapper title={TITLE} info={INFO}>
+      <ChartWrapper info={INFO} title={TITLE}>
         <div>Test Children</div>
-      </ChartWrapper>
+      </ChartWrapper>,
     );
 
     expect(screen.getByRole('img', { name: 'Info' })).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe('< ChartWrapper/>', () => {
     render(
       <ChartWrapper title={TITLE}>
         <div>Test Children</div>
-      </ChartWrapper>
+      </ChartWrapper>,
     );
 
     expect(screen.queryByRole('img', { name: 'Info' })).not.toBeInTheDocument();
@@ -40,9 +40,9 @@ describe('< ChartWrapper/>', () => {
 
   it('should render the info icon message when user clicks on it', async () => {
     render(
-      <ChartWrapper title={TITLE} info={INFO}>
+      <ChartWrapper info={INFO} title={TITLE}>
         <div>Test Children</div>
-      </ChartWrapper>
+      </ChartWrapper>,
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'Info' })),
