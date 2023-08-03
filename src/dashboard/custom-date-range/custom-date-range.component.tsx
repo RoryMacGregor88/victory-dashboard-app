@@ -1,6 +1,6 @@
-import { Select, MenuItem, makeStyles } from '@material-ui/core';
+import { MenuItem, Select, makeStyles } from '@material-ui/core';
 
-import { DEFAULT_FILTER_RANGE } from '../../constants';
+import { DEFAULT_FILTER_RANGE } from '~/constants';
 
 const useSelectStyles = makeStyles((theme) => ({
   root: {
@@ -18,27 +18,26 @@ const useSelectStyles = makeStyles((theme) => ({
   },
 }));
 
-/**
- * @param {{
- *  timeline: number[]
- *  value: number
- *  onSelect: (value: number) => void
- *  range?: number,
- * }} props
- */
+interface Props {
+  timeline: number[];
+  value: number;
+  onSelect: (value: number) => void;
+  range?: number;
+}
+
 const CustomDateRange = ({
   timeline,
   value,
   onSelect,
   range = DEFAULT_FILTER_RANGE,
-}) => {
+}: Props) => {
   const { root, select } = useSelectStyles({});
   return (
     <Select
+      disableUnderline
+      classes={{ root, select }}
       value={value ?? ''}
       onChange={({ target: { value } }) => onSelect(Number(value))}
-      classes={{ root, select }}
-      disableUnderline
     >
       {timeline?.map((year) => {
         const startYear = Number(timeline[timeline.indexOf(year) - range]);
@@ -48,7 +47,7 @@ const CustomDateRange = ({
           ${year}-${year + 1}
         `;
 
-        return startYear ? (
+        return !!startYear ? (
           <MenuItem key={year} value={year}>
             {optionLabel}
           </MenuItem>

@@ -1,13 +1,13 @@
-import { it, expect, describe } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
-  userTargetTransformer,
-  getTargetTotals,
-  getPastYears,
-  getUser5YearTotals,
   getDataTimeline,
   getFilteredTimeline,
+  getPastYears,
   getStackDatumTotal,
+  getTargetTotals,
+  getUser5YearTotals,
+  userTargetTransformer,
 } from './utils';
 
 describe('Utility Functions', () => {

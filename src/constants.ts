@@ -2,12 +2,11 @@
 
 // TODO: move this into types file?
 import { User } from './accounts/accounts.slice';
-
 import {
   DatasetName,
-  TenureCategories,
   ProgressionVsPlanningCategory,
   TargetCategory,
+  TenureCategories,
   TenureDataType,
 } from './types';
 
@@ -16,19 +15,32 @@ export const MOCK_USER: User = {
     mock_source_id: {
       targets: {
         totalHousing: {
-          2023: 1350,
-          2022: 1500,
-          2021: 1610,
-          2020: 1480,
+          2023: 350,
+          2022: 500,
+          2021: 610,
+          2020: 480,
+          2019: 712,
         },
         intermediateDelivery: {
           2023: 106,
+          2022: 80,
+          2021: 35,
+          2020: 95,
+          2019: 61,
         },
         marketHousing: {
           2023: 134,
+          2022: 80,
+          2021: 35,
+          2020: 95,
+          2019: 61,
         },
         sociallyRented: {
           2023: 11,
+          2022: 80,
+          2021: 35,
+          2020: 95,
+          2019: 61,
         },
         affordableHousingDelivery: {
           2023: 100,
@@ -43,7 +55,13 @@ export const MOCK_USER: User = {
           2014: 59,
           2013: 65,
         },
-        privateRental: {},
+        privateRental: {
+          2023: 100,
+          2022: 80,
+          2021: 35,
+          2020: 95,
+          2019: 61,
+        },
       },
       settings: {},
     },

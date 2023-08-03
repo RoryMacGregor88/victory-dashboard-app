@@ -1,5 +1,4 @@
 import { LoadMaskFallback } from '../../components';
-
 import { Dashboard } from '../dashboard.component';
 
 const SOURCE_ID = 'source_id';

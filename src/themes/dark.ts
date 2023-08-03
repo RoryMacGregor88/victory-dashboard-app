@@ -1,9 +1,9 @@
 import {
-  createTheme,
-  alpha,
-  lighten,
-  ThemeOptions,
   Theme,
+  ThemeOptions,
+  alpha,
+  createTheme,
+  lighten,
 } from '@material-ui/core';
 import createPalette, {
   PaletteOptions,

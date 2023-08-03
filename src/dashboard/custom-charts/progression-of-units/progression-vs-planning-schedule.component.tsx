@@ -1,27 +1,27 @@
-import { Grid, Select, MenuItem } from '@material-ui/core';
-
+import { Grid, MenuItem, Select } from '@material-ui/core';
 import { ColorScalePropType, VictoryBar, VictoryStack } from 'victory';
 
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
+import { FlyoutTooltip } from '~/components';
+
 import { StyledParentSize } from '../../../components';
-import { useChartTheme } from '../../useChartTheme';
-import FlyoutTooltip from '../../FlyoutTooltip';
-import { filterByType, getStackDatumTotal } from '../../utils/utils';
-import { useSelectStyles } from '../../custom-date-range/custom-date-range.component';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import {
+  ALL_TENURE_CATEGORIES,
   progressionVsPlanningCategories,
   progressionVsPlanningPalette,
-  ALL_TENURE_CATEGORIES,
 } from '../../../constants';
 import { ProgressionOfUnitsData } from '../../../mocks/fixtures';
 import {
-  Settings,
-  UpdateOrbStateArgs,
   ChartTheme,
   ProgressionVsPlanningCategory,
+  Settings,
+  UpdateOrbStateArgs,
 } from '../../../types';
+import { BaseChart } from '../../charts/base-chart/base-chart.component';
+import { ChartWrapper } from '../../charts/chart-wrapper.component';
+import { useSelectStyles } from '../../custom-date-range/custom-date-range.component';
+import { CustomLegend } from '../../custom-legend/custom-legend.component';
+import { useChartTheme } from '../../useChartTheme';
+import { filterByType, getStackDatumTotal } from '../../utils/utils';
 
 interface Props {
   data: ProgressionOfUnitsData;
@@ -41,7 +41,7 @@ const ProgressionVsPlanningSchedule = ({
     settings.progressionVsPlanningCategory ?? ALL_TENURE_CATEGORIES;
 
   const progressVsPlanningValues = Object.values(
-    progressionVsPlanningCategories
+    progressionVsPlanningCategories,
   );
 
   /**
@@ -68,8 +68,8 @@ const ProgressionVsPlanningSchedule = ({
 
   return (
     <ChartWrapper
-      title='Progression of Units Relating to Planning Schedule'
-      info='This graph uses mock data to demonstrate how housing delivery progress information could be presented.'
+      info="This graph uses mock data to demonstrate how housing delivery progress information could be presented."
+      title="Progression of Units Relating to Planning Schedule"
     >
       <StyledParentSize>
         {({ width }: { width: number }) => {
@@ -101,21 +101,21 @@ const ProgressionVsPlanningSchedule = ({
             <>
               <Grid
                 container
-                justifyContent='space-between'
-                alignItems='center'
-                wrap='nowrap'
+                alignItems="center"
+                justifyContent="space-between"
+                wrap="nowrap"
               >
                 <Grid item>
                   <CustomLegend apiData={legendData} width={width} />
                 </Grid>
                 <Grid item>
                   <Select
+                    disableUnderline
+                    classes={{ root, select }}
                     value={selectedCategory}
                     onChange={({ target: { value } }) =>
                       handleTypeSelect(value as ProgressionVsPlanningCategory)
                     }
-                    classes={{ root, select }}
-                    disableUnderline
                   >
                     <MenuItem value={ALL_TENURE_CATEGORIES}>
                       {ALL_TENURE_CATEGORIES}
@@ -125,27 +125,25 @@ const ProgressionVsPlanningSchedule = ({
                         <MenuItem key={key} value={key}>
                           {value}
                         </MenuItem>
-                      )
+                      ),
                     )}
                   </Select>
                 </Grid>
               </Grid>
 
               <BaseChart
-                width={width}
-                yLabel='Number Of Units'
-                xLabel='Financial Year'
-                theme={extendedTheme}
                 financialYearFormat
+                theme={extendedTheme}
+                width={width}
+                xLabel="Financial Year"
+                yLabel="Number Of Units"
               >
                 <VictoryStack>
                   {ranges.map((range) => (
                     <VictoryBar
-                      labelComponent={FlyoutTooltip()}
                       key={range}
                       data={filteredData}
-                      x={x}
-                      y={range}
+                      labelComponent={FlyoutTooltip()}
                       labels={({ datum }) =>
                         getStackDatumTotal({ datum, ranges })
                       }
@@ -155,6 +153,8 @@ const ProgressionVsPlanningSchedule = ({
                           fill: progressionVsPlanningPalette[range],
                         },
                       }}
+                      x={x}
+                      y={range}
                     />
                   ))}
                 </VictoryStack>

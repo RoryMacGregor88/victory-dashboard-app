@@ -1,10 +1,8 @@
+import { makeStyles } from '@material-ui/core';
 import {
   ToggleButtonGroup as MuiToggleButtonGroup,
   ToggleButtonGroupProps,
 } from '@material-ui/lab';
-
-import { makeStyles } from '@material-ui/core';
-
 import clsx from 'clsx';
 
 const useStyles = makeStyles(() => ({
@@ -44,8 +42,8 @@ export const ToggleButtonGroup = ({
 
   return (
     <MuiToggleButtonGroup
-      exclusive={exclusive}
       classes={combinedStyles}
+      exclusive={exclusive}
       {...props}
     />
   );

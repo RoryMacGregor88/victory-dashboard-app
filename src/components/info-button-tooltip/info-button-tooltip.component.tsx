@@ -1,16 +1,15 @@
-import { useState, ReactNode, MouseEvent } from 'react';
+import { useState } from 'react';
 
 import {
   ClickAwayListener,
   IconButton,
-  makeStyles,
   Tooltip,
   Typography,
+  makeStyles,
 } from '@material-ui/core';
+import clsx from 'clsx';
 
 import { InfoIcon } from '../../components';
-
-import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   infoButton: {
@@ -33,6 +32,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.black,
   },
 }));
+
+const TooltipTitle = ({ title }: { title: string }) => {
+  const { content } = useStyles();
+  return <Typography className={content}>{title}</Typography>;
+};
+
 interface Props {
   placement?:
     | 'left'
@@ -47,7 +52,7 @@ interface Props {
     | 'top-end'
     | 'top-start'
     | 'top';
-  tooltipContent: ReactNode;
+  tooltipContent: string;
   iconButtonClassName?: string;
 }
 
@@ -57,7 +62,7 @@ export const InfoButtonTooltip = ({
   iconButtonClassName,
 }: Props) => {
   const [isInfoVisible, setIsInfoVisible] = useState(false);
-  const { content, open, infoButton } = useStyles();
+  const { open, infoButton } = useStyles();
 
   const handleIconClick = () => setIsInfoVisible((c) => !c);
 
@@ -65,30 +70,24 @@ export const InfoButtonTooltip = ({
     <ClickAwayListener onClickAway={() => setIsInfoVisible(false)}>
       <Tooltip
         arrow
-        placement={placement}
-        disableHoverListener
         disableFocusListener
+        disableHoverListener
         disableTouchListener
         open={isInfoVisible}
-        title={
-          typeof tooltipContent === 'string' ? (
-            <Typography className={content}>{tooltipContent}</Typography>
-          ) : (
-            tooltipContent
-          )
-        }
+        placement={placement}
+        title={<TooltipTitle title={tooltipContent} />}
       >
         <IconButton
-          color='inherit'
+          aria-label="Info"
           className={clsx(
             infoButton,
             isInfoVisible ? open : null,
-            iconButtonClassName
+            iconButtonClassName,
           )}
-          aria-label='Info'
+          color="inherit"
           onClick={handleIconClick}
         >
-          <InfoIcon titleAccess='Info' fontSize='inherit' />
+          <InfoIcon fontSize="inherit" titleAccess="Info" />
         </IconButton>
       </Tooltip>
     </ClickAwayListener>

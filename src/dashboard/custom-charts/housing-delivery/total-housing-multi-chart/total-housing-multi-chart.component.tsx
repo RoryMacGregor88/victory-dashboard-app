@@ -1,24 +1,21 @@
 import { useMemo } from 'react';
 
 import { darken } from '@material-ui/core';
+import { VictoryBar, VictoryGroup, VictoryLine, VictoryScatter } from 'victory';
 
-import { VictoryGroup, VictoryBar, VictoryLine, VictoryScatter } from 'victory';
-
-import { BaseChart } from '../../../charts/base-chart/base-chart.component';
-import { StyledParentSize } from '../../../../components';
-import { useChartTheme } from '../../../../dashboard/useChartTheme';
-import { pairedWidthCalculator } from '../utils/utils';
-import FlyoutTooltip from '../../../FlyoutTooltip';
-import { CustomLegend } from '../../../custom-legend/custom-legend.component';
+import { FlyoutTooltip, StyledParentSize } from '~/components';
 import {
-  TENURE_DATA_TYPES,
-  TARGET_LEGEND_DATA,
   DEFAULT_TARGET_COLOR,
-} from '../../../../constants';
-
-import { totalHousingTransformer } from './total-housing-transformer/total-housing-transformer';
-import { TotalHousingDeliveryData } from '../../../../mocks/fixtures';
-import { Targets } from '../../../../types';
+  TARGET_LEGEND_DATA,
+  TENURE_DATA_TYPES,
+} from '~/constants';
+import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { totalHousingTransformer } from '~/dashboard/custom-charts/housing-delivery/total-housing-multi-chart/total-housing-transformer/total-housing-transformer';
+import { pairedWidthCalculator } from '~/dashboard/custom-charts/housing-delivery/utils/utils';
+import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { TotalHousingDeliveryData } from '~/mocks/fixtures';
+import { Targets } from '~/types';
 
 interface Props {
   data: TotalHousingDeliveryData;
@@ -37,7 +34,7 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
    */
   const transformerOutput = useMemo(
     () => totalHousingTransformer({ data, targetDataset, timeline }),
-    [data, targetDataset, timeline]
+    [data, targetDataset, timeline],
   );
 
   if (!transformerOutput) return null;
@@ -63,17 +60,17 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
           scatterWidth = width / 2;
 
         return (
-          <>
+          <div>
             <CustomLegend
               apiData={apiLegendData}
               targetData={!!transformedTargets ? TARGET_LEGEND_DATA : null}
               width={width}
             />
             <BaseChart
-              width={width}
-              yLabel='Housing Delivery in Units'
-              xLabel='Financial Year'
               financialYearFormat
+              width={width}
+              xLabel="Financial Year"
+              yLabel="Housing Delivery in Units"
             >
               <VictoryGroup offset={offset}>
                 {transformedData.map((arr, i) => {
@@ -82,8 +79,8 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
                     <VictoryBar
                       key={key}
                       data={arr}
-                      labels={({ datum: { _y } }) => `${_y}`}
                       labelComponent={FlyoutTooltip()}
+                      labels={({ datum: { _y } }) => `${_y}`}
                       style={{
                         data: {
                           fill: chartColors.totalHousingDelivery[i],
@@ -116,7 +113,7 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
                 </VictoryGroup>
               ) : null}
             </BaseChart>
-          </>
+          </div>
         );
       }}
     </StyledParentSize>

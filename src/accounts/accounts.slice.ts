@@ -1,7 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
-import { RootState } from '../store';
 import { MOCK_USER } from '../constants';
+import { RootState } from '../store';
 import { UserOrbState } from '../types';
 
 export type User = {
@@ -43,7 +43,7 @@ const baseSelector = (state: RootState) => state.accounts;
 
 export const userSelector = createSelector(
   baseSelector,
-  (accounts) => accounts.user
+  (accounts) => accounts.user,
 );
 
 export default accountsSlice.reducer;

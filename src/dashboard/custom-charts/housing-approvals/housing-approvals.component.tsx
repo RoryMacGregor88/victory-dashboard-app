@@ -1,26 +1,28 @@
 import { useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/core';
-import { ToggleButtonGroup, ToggleButton } from '../../../components';
-
 import { VictoryGroup, VictoryLine, VictoryScatter } from 'victory';
 
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { StyledParentSize } from '../../../components';
-import { useChartTheme } from '../../useChartTheme';
-import FlyoutTooltip from '../../FlyoutTooltip';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
-import { HOUSING_APPROVAL_DATA_TYPES } from '../../../constants';
+import { FlyoutTooltip } from '~/components';
 
 import { housingApprovalsTransformer } from './housing-approvals-transformer/housing-approvals-transformer';
+import {
+  StyledParentSize,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '../../../components';
+import { HOUSING_APPROVAL_DATA_TYPES } from '../../../constants';
 import { HousingApprovalsData } from '../../../mocks/fixtures';
 import {
   ApprovalsGrantedDataType,
   LegendData,
-  UpdateOrbStateArgs,
   Settings,
+  UpdateOrbStateArgs,
 } from '../../../types';
+import { BaseChart } from '../../charts/base-chart/base-chart.component';
+import { ChartWrapper } from '../../charts/chart-wrapper.component';
+import { CustomLegend } from '../../custom-legend/custom-legend.component';
+import { useChartTheme } from '../../useChartTheme';
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -54,7 +56,7 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
 
   const dataByType = useMemo(() => {
     const { data: dataArray } = data.find(
-      ({ name }) => name === approvalsGrantedDataType
+      ({ name }) => name === approvalsGrantedDataType,
     )!;
 
     return housingApprovalsTransformer(dataArray);
@@ -77,19 +79,19 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
 
   return (
     <ChartWrapper
-      title='No. of housing approvals granted over time'
-      info='This shows the number of housing approvals granted over time'
       classes={{ paper }}
+      info="This shows the number of housing approvals granted over time"
+      title="No. of housing approvals granted over time"
     >
       <StyledParentSize>
         {({ width }: { width: number }) => (
           <>
             <ToggleButtonGroup
-              size='small'
-              value={approvalsGrantedDataType}
-              orientation='horizontal'
-              onChange={handleToggleClick}
               className={toggleButtonGroup}
+              orientation="horizontal"
+              size="small"
+              value={approvalsGrantedDataType}
+              onChange={handleToggleClick}
             >
               <ToggleButton value={HOUSING_APPROVAL_DATA_TYPES.monthly}>
                 {HOUSING_APPROVAL_DATA_TYPES.monthly}
@@ -110,17 +112,17 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
                     <VictoryGroup key={range}>
                       <VictoryLine
                         data={dataByType}
+                        style={{ data: { stroke } }}
                         x={x}
                         y={range}
-                        style={{ data: { stroke } }}
                       />
                       <VictoryScatter
                         data={dataByType}
-                        x={x}
-                        y={range}
-                        style={{ data: { stroke } }}
                         labelComponent={FlyoutTooltip()}
                         labels={({ datum: { _y } }) => `${_y}`}
+                        style={{ data: { fill: stroke, stroke } }}
+                        x={x}
+                        y={range}
                       />
                     </VictoryGroup>
                   );

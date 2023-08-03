@@ -1,29 +1,27 @@
-import { darken } from '@material-ui/core';
+import { useMemo } from 'react';
 
+import { darken } from '@material-ui/core';
 import {
   VictoryBar,
-  VictoryStack,
   VictoryGroup,
   VictoryLine,
   VictoryScatter,
+  VictoryStack,
 } from 'victory';
 
-import { BaseChart } from '../../../charts/base-chart/base-chart.component';
-import { StyledParentSize } from '../../../../components';
-import { useChartTheme } from '../../../useChartTheme';
-import FlyoutTooltip from '../../../FlyoutTooltip';
-import { getStackDatumTotal } from '../../../utils/utils';
-import { CustomLegend } from '../../../custom-legend/custom-legend.component';
+import { FlyoutTooltip, StyledParentSize } from '~/components';
 import {
   DEFAULT_TARGET_COLOR,
   TARGET_LEGEND_DATA,
   housingTenureTypes,
-} from '../../../../constants';
-
-import { tenureHousingTransformer } from './tenure-housing-transformer/tenure-housing-transformer';
-import { useMemo } from 'react';
-import { TenureTypeHousingData } from '../../../../mocks/fixtures';
-import { TargetCategory, Targets, TenureCategory } from '../../../../types';
+} from '~/constants';
+import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { tenureHousingTransformer } from '~/dashboard/custom-charts/housing-delivery/tenure-housing-multi-chart/tenure-housing-transformer/tenure-housing-transformer';
+import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { getStackDatumTotal } from '~/dashboard/utils/utils';
+import { TenureTypeHousingData } from '~/mocks/fixtures';
+import { TargetCategory, Targets, TenureCategory } from '~/types';
 
 interface Props {
   apiData: Partial<TenureTypeHousingData>;
@@ -42,7 +40,7 @@ const TenureHousingMultiChart = ({
 
   const transformerOutput = useMemo(
     () => tenureHousingTransformer({ apiData, targets, timeline }),
-    [apiData, targets, timeline]
+    [apiData, targets, timeline],
   );
 
   if (!transformerOutput) return null;
@@ -75,29 +73,29 @@ const TenureHousingMultiChart = ({
         return (
           <>
             <CustomLegend
-              apiData={legendData}
-              targetData={transformedTargets ? TARGET_LEGEND_DATA : null}
-              width={width}
               padTop
+              apiData={legendData}
+              targetData={!!transformedTargets ? TARGET_LEGEND_DATA : null}
+              width={width}
             />
             <BaseChart
-              width={width}
-              yLabel='Housing Delivery in Units'
-              xLabel='Financial Year'
               financialYearFormat
+              width={width}
+              xLabel="Financial Year"
+              yLabel="Housing Delivery in Units"
             >
               <VictoryStack colorScale={colorScale}>
                 {ranges?.map((range) => (
                   <VictoryBar
                     key={range}
                     data={transformedData}
-                    x='startYear'
-                    y={range}
+                    labelComponent={FlyoutTooltip()}
                     labels={({ datum }) =>
                       getStackDatumTotal({ datum, ranges })
                     }
-                    labelComponent={FlyoutTooltip()}
                     style={{ data: { width: barWidth } }}
+                    x="startYear"
+                    y={range}
                   />
                 ))}
               </VictoryStack>
@@ -106,8 +104,6 @@ const TenureHousingMultiChart = ({
                 <VictoryGroup>
                   <VictoryScatter
                     data={transformedTargets}
-                    x='x'
-                    y='y'
                     labelComponent={FlyoutTooltip()}
                     labels={({ datum: { _y } }) => `Total: ${_y}`}
                     style={{
@@ -117,12 +113,14 @@ const TenureHousingMultiChart = ({
                         fill: color,
                       },
                     }}
+                    x="x"
+                    y="y"
                   />
                   <VictoryLine
                     data={transformedTargets}
-                    x='x'
-                    y='y'
                     style={{ data: { stroke: color } }}
+                    x="x"
+                    y="y"
                   />
                 </VictoryGroup>
               ) : null}

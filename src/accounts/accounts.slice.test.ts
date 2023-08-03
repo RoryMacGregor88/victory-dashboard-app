@@ -1,4 +1,4 @@
-import { it, expect, describe, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Accouts Slice', () => {
   it('', () => {});

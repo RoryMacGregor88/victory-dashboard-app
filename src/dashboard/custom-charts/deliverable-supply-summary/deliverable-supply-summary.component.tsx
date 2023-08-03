@@ -1,14 +1,15 @@
 import { VictoryBar, VictoryStack } from 'victory';
 
+import { FlyoutTooltip } from '~/components';
+
+import { getStackTotals } from './utils/utils';
+import { StyledParentSize } from '../../../components';
+import { deliverableSupplySummaryTypes } from '../../../constants';
+import { DeliverableSupplySummaryData } from '../../../mocks/fixtures/deliverable_supply_summary';
 import { BaseChart } from '../../charts/base-chart/base-chart.component';
 import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import { useChartTheme } from '../../useChartTheme';
-import FlyoutTooltip from '../../FlyoutTooltip';
-import { getStackTotals } from './utils/utils';
 import { CustomLegend } from '../../custom-legend/custom-legend.component';
-import { deliverableSupplySummaryTypes } from '../../../constants';
-import { StyledParentSize } from '../../../components';
-import { DeliverableSupplySummaryData } from '../../../mocks/fixtures/deliverable_supply_summary';
+import { useChartTheme } from '../../useChartTheme';
 
 interface Props {
   data: DeliverableSupplySummaryData;
@@ -33,8 +34,8 @@ const DeliverableSupplySummary = ({ data }: Props) => {
   // TODO: update info
   return (
     <ChartWrapper
-      title='Deliverable Supply Summary'
-      info='Deliverable Supply Summary in Units'
+      info="Deliverable Supply Summary in Units"
+      title="Deliverable Supply Summary"
     >
       <StyledParentSize>
         {({ width }: { width: number }) => {
@@ -46,11 +47,11 @@ const DeliverableSupplySummary = ({ data }: Props) => {
 
           return (
             <BaseChart
-              width={width}
-              yLabel='Number Of Units'
-              xLabel='Financial Year'
-              theme={updatedTheme}
               financialYearFormat
+              theme={updatedTheme}
+              width={width}
+              xLabel="Financial Year"
+              yLabel="Number Of Units"
             >
               <CustomLegend apiData={legendData} width={1024} />
               <VictoryStack>
@@ -58,11 +59,11 @@ const DeliverableSupplySummary = ({ data }: Props) => {
                   <VictoryBar
                     key={range}
                     data={data}
-                    x={x}
-                    y={range}
                     labelComponent={FlyoutTooltip()}
                     labels={getStackTotals(data)}
                     style={{ data: { width: barWidth } }}
+                    x={x}
+                    y={range}
                   />
                 ))}
               </VictoryStack>

@@ -1,17 +1,52 @@
 module.exports = {
-  env: { browser: true, es2020: true },
+  env: {
+    browser: true,
+    es2021: true,
+    node: true,
+  },
   extends: [
     'eslint:recommended',
+    'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:testing-library/react',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['react-refresh'],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  plugins: ['react', '@typescript-eslint', 'react-hooks', 'prettier', 'import'],
   rules: {
-    'react-refresh/only-export-components': 'warn',
+    'prettier/prettier': ['error', { singleQuote: true }],
+    'react-hooks/rules-of-hooks': 'error',
+    'no-extra-boolean-cast': 0,
+    'react-hooks/exhaustive-deps': 'warn',
+    'react/react-in-jsx-scope': 'off',
+    'import/no-unresolved': 'off',
+    'no-duplicate-imports': 'error',
+    'no-multiple-empty-lines': [
+      'error',
+      {
+        max: 1,
+        maxEOF: 0,
+        maxBOF: 0,
+      },
+    ],
+    'import/first': 'error',
     'import/newline-after-import': 'error',
+    'import/no-duplicates': 'error',
+    'import/no-unassigned-import': [
+      'error',
+      {
+        allow: ['**/*.css', '**/i18n/i18n'],
+      },
+    ],
     'import/order': [
       'error',
       {
@@ -58,5 +93,10 @@ module.exports = {
         reservedFirst: true,
       },
     ],
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };

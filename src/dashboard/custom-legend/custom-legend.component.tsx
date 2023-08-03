@@ -1,5 +1,6 @@
 import { Grid, makeStyles } from '@material-ui/core';
-import { LegendData } from '../../types';
+
+import { LegendData } from '~/types';
 
 const RATIOS = {
     legendContainer: 0.1125,
@@ -51,22 +52,22 @@ export const CustomLegend = ({
     styles = useStyles({ maxHeight, padTop, padBottom });
 
   return (
-    <Grid container direction='column' justifyContent='space-between'>
+    <Grid container direction="column" justifyContent="space-between">
       <Grid
-        item
         container
-        direction='column'
-        wrap='wrap'
+        item
         className={styles.apiLegend}
+        direction="column"
+        wrap="wrap"
       >
         {apiData?.map(({ name, color }) => {
           const legendItemMargin = width * RATIOS.iconSpacing;
           return (
             <Grid
               key={name}
-              item
               container
-              alignItems='center'
+              item
+              alignItems="center"
               className={styles.legendItem}
             >
               {/* creates square with correct color */}
@@ -89,11 +90,11 @@ export const CustomLegend = ({
 
       {!!targetData ? (
         <Grid
-          item
           container
-          justifyContent='flex-end'
-          alignItems='center'
+          item
+          alignItems="center"
           className={styles.userTarget}
+          justifyContent="flex-end"
         >
           {/* creates line with correct color */}
           <div

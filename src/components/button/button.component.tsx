@@ -1,6 +1,7 @@
+import { ReactNode } from 'react';
+
 import { Button as MuiButton, PropTypes } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { ReactNode } from 'react';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -9,7 +10,7 @@ const styles = makeStyles((theme) => ({
       ['background-color', 'box-shadow', 'border', 'opacity'],
       {
         duration: theme.transitions.duration.short,
-      }
+      },
     ),
   },
   disabled: {},
@@ -69,11 +70,11 @@ export const Button = ({
 }: ButtonProps) => (
   <MuiButton
     classes={styles()}
-    variant={variant}
     color={color}
-    size={size}
     disabled={disabled}
+    size={size}
     type={type}
+    variant={variant}
     onClick={onClick}
   >
     {children}

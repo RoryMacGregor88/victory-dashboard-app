@@ -1,20 +1,17 @@
 import { ReactNode } from 'react';
 
 import {
+  Grid,
   Paper,
   Typography,
   lighten,
   makeStyles,
-  Grid,
 } from '@material-ui/core';
-
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
-
 import { Skeleton } from '@material-ui/lab';
-
 import clsx from 'clsx';
 
-import { InfoButtonTooltip } from '../../components/info-button-tooltip/info-button-tooltip.component';
+import { InfoButtonTooltip } from '~/components';
 
 const useStyles = makeStyles((theme) => ({
   iconInfo: {
@@ -64,33 +61,33 @@ const ChartWrapper = ({
   const { paper, header, iconInfo } = useStyles();
   return (
     <Grid
-      item
       container
-      direction='column'
-      justifyContent='space-between'
-      wrap='nowrap'
-      component={Paper}
+      item
       className={clsx(paper, classes?.paper)}
+      component={Paper}
+      direction="column"
+      justifyContent="space-between"
+      wrap="nowrap"
       {...rest}
     >
       <Grid
-        item
         container
-        justifyContent='space-between'
-        wrap='nowrap'
+        item
         className={clsx(header, classes?.header)}
+        justifyContent="space-between"
+        wrap="nowrap"
       >
         <Typography
-          component='h3'
+          color="primary"
+          component="h3"
           variant={titleSize === 'small' ? 'h4' : 'h2'}
-          color='primary'
         >
           {title}
         </Typography>
-        {info ? (
+        {!!info ? (
           <InfoButtonTooltip
-            tooltipContent={info}
             iconButtonClassName={iconInfo}
+            tooltipContent={info}
           />
         ) : null}
       </Grid>
@@ -104,13 +101,13 @@ export const ChartWrapperSkeleton = ({ children }: { children: ReactNode }) => {
   return (
     <Paper className={paper}>
       <span className={heading}>
-        <Skeleton variant='text' width={300} />
-        <Skeleton variant='circle' width={15} height={15} />
+        <Skeleton variant="text" width={300} />
+        <Skeleton height={15} variant="circle" width={15} />
       </span>
 
       <div>
-        <Skeleton variant='text' />
-        <Skeleton variant='text' />
+        <Skeleton variant="text" />
+        <Skeleton variant="text" />
       </div>
 
       {children}

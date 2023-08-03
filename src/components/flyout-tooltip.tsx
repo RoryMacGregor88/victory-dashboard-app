@@ -1,8 +1,7 @@
+import { useTheme } from '@material-ui/core';
 import { VictoryTooltip } from 'victory';
 
-import { useTheme } from '@material-ui/core';
-
-import { tooltipFlyoutStyle } from '../constants';
+import { tooltipFlyoutStyle } from '~/constants';
 
 /**
  * Usage of this is like a function call (FlyoutTooltip()), instead of
@@ -12,22 +11,20 @@ import { tooltipFlyoutStyle } from '../constants';
  * at some point in the future.
  */
 
-const FlyoutTooltip = () => {
+export const FlyoutTooltip = () => {
   const {
     palette: { common },
   } = useTheme();
 
   return (
     <VictoryTooltip
-      pointerOrientation='right'
-      pointerWidth={25}
-      flyoutHeight={40}
-      flyoutWidth={100}
       constrainToVisibleArea
+      flyoutHeight={40}
       flyoutStyle={tooltipFlyoutStyle}
+      flyoutWidth={100}
+      pointerOrientation="right"
+      pointerWidth={25}
       style={{ fill: common.black }}
     />
   );
 };
-
-export default FlyoutTooltip;

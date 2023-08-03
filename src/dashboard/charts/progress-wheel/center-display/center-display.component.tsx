@@ -1,10 +1,10 @@
 import { Text } from '@visx/text';
 
 import {
+  ERROR_FONT_DEVISOR,
   PERCENT_FONT_DEVISOR,
   TARGET_FONT_DEVISOR,
-  ERROR_FONT_DEVISOR,
-} from '../../../../constants';
+} from '~/constants';
 
 interface CenterDisplayArgs {
   percentage: number | null;
@@ -28,45 +28,45 @@ const CenterDisplay = ({
   percentage ? (
     <>
       <Text
-        width={radius}
-        textAnchor='middle'
-        verticalAnchor='end'
-        x={radius}
-        y={radius}
         dy={-8}
         style={{
           fill: '#fff',
           fontSize: `${width / PERCENT_FONT_DEVISOR}rem`,
         }}
+        textAnchor="middle"
+        verticalAnchor="end"
+        width={radius}
+        x={radius}
+        y={radius}
       >
         {`${Math.round(percentage)}%`}
       </Text>
       <Text
-        width={radius}
-        textAnchor='middle'
-        verticalAnchor='start'
-        x={radius}
-        y={radius}
         dy={8}
         style={{
           fill: '#fff',
           fontSize: `${width / TARGET_FONT_DEVISOR}rem`,
         }}
+        textAnchor="middle"
+        verticalAnchor="start"
+        width={radius}
+        x={radius}
+        y={radius}
       >
         {`Target ${target} Units`}
       </Text>
     </>
   ) : (
     <Text
-      width={radius}
-      textAnchor='middle'
-      verticalAnchor='middle'
-      x={radius}
-      y={radius}
       style={{
         fill: '#fff',
         fontSize: `${width / ERROR_FONT_DEVISOR}rem`,
       }}
+      textAnchor="middle"
+      verticalAnchor="middle"
+      width={radius}
+      x={radius}
+      y={radius}
     >
       {`${name} Target Required`}
     </Text>

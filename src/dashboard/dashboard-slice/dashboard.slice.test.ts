@@ -1,6 +1,6 @@
-import { it, expect, describe, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
-import reducer, { setChartData, chartDataSelector } from './dashboard.slice';
+import reducer, { chartDataSelector, setChartData } from './dashboard.slice';
 
 let beforeState = {};
 
@@ -70,7 +70,7 @@ describe('Dashboard Slice', () => {
 
         const result = chartDataSelector(
           'test-source',
-          'test-dataset-name'
+          'test-dataset-name',
         )(state);
         expect(result).toEqual(expected);
       });
@@ -80,7 +80,7 @@ describe('Dashboard Slice', () => {
 
         const result = chartDataSelector(
           'test-source',
-          'test-dataset-name'
+          'test-dataset-name',
         )(state);
         expect(result).toBeUndefined();
       });

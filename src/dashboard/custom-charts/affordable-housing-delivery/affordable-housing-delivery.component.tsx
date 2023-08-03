@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { Grid, Typography } from '@material-ui/core';
-
 import {
   DomainTuple,
   VictoryGroup,
@@ -9,14 +8,12 @@ import {
   VictoryScatter,
 } from 'victory';
 
-import { BaseChart } from '../../charts/base-chart/base-chart.component';
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
+import { FlyoutTooltip } from '~/components';
+
+import { affordableHousingTransformer } from './affordable-housing-transformer/affordable-housing-transformer';
 import { StyledParentSize } from '../../../components';
-import { useChartTheme } from '../../useChartTheme';
-import FlyoutTooltip from '../../FlyoutTooltip';
-import { CustomDateRange } from '../../custom-date-range/custom-date-range.component';
-import { CustomLegend } from '../../custom-legend/custom-legend.component';
 import { yellowStyle } from '../../../constants';
+import { getDataTimeline } from '../../../dashboard/utils/utils';
 import { AffordableHousingData } from '../../../mocks/fixtures';
 import {
   Settings,
@@ -24,8 +21,11 @@ import {
   Targets,
   UpdateOrbStateArgs,
 } from '../../../types';
-import { getDataTimeline } from '../../../dashboard/utils/utils';
-import { affordableHousingTransformer } from './affordable-housing-transformer/affordable-housing-transformer';
+import { BaseChart } from '../../charts/base-chart/base-chart.component';
+import { ChartWrapper } from '../../charts/chart-wrapper.component';
+import { CustomDateRange } from '../../custom-date-range/custom-date-range.component';
+import { CustomLegend } from '../../custom-legend/custom-legend.component';
+import { useChartTheme } from '../../useChartTheme';
 
 // TODO: already have a getFilteredData function for the other charts, why this one too?
 
@@ -76,7 +76,7 @@ const getPairedData = ({ data, targetDataset }: GetPairedDataArgs) =>
             },
           };
     },
-    { pairedData: [], pairedTargets: {} }
+    { pairedData: [], pairedTargets: {} },
   );
 
 const thisYear = new Date().getFullYear();
@@ -125,12 +125,12 @@ const AffordableHousingDelivery = ({
         targets: pairedTargets,
         timeline,
       }),
-    [timeline]
+    [timeline],
   );
 
   const handleYearSelect = useCallback(
     (settings: Settings) => updateOrbState({ settings }),
-    [updateOrbState]
+    [updateOrbState],
   );
 
   /** initialisation/reset for affordable housing chart */
@@ -150,11 +150,11 @@ const AffordableHousingDelivery = ({
 
   return (
     <ChartWrapper
-      title='Affordable Housing Delivery (%)'
       info={`This chart shows the percentage of affordable housing delivered,
       derived from user inputted target values. Changing your targets for
       'Affordable Housing Delivery' will immediately impact the values displayed
       in this graph.`}
+      title="Affordable Housing Delivery (%)"
     >
       <StyledParentSize>
         {({ width }: { width: number }) => {
@@ -164,7 +164,7 @@ const AffordableHousingDelivery = ({
           });
 
           const allValues = filteredData.map(
-              (item) => item['Affordable Housing']
+              (item) => item['Affordable Housing'],
             ),
             maxValue = Math.max(...allValues),
             y = [0, maxValue > 100 ? maxValue : 100] as DomainTuple;
@@ -179,11 +179,11 @@ const AffordableHousingDelivery = ({
           return !filteredData ? (
             <Grid
               container
-              justifyContent='space-around'
-              alignItems='center'
+              alignItems="center"
+              justifyContent="space-around"
               style={{ height: '12rem' }}
             >
-              <Typography variant='h4'>
+              <Typography variant="h4">
                 {Object.keys(targetDataset ?? {}).length
                   ? 'No matching data for provided targets.'
                   : 'Please enter affordable housing delivery targets.'}
@@ -200,12 +200,12 @@ const AffordableHousingDelivery = ({
                   })
                 }
               />
-              <CustomLegend width={width} apiData={legendData} padTop />
+              <CustomLegend padTop apiData={legendData} width={width} />
               <BaseChart
-                yLabel='Affordable Housing %'
-                xLabel='Financial Year'
-                width={width}
                 financialYearFormat
+                width={width}
+                xLabel="Financial Year"
+                yLabel="Affordable Housing %"
               >
                 <VictoryGroup>
                   <VictoryLine {...sharedProps} style={yellowStyle} />

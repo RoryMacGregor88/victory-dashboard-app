@@ -1,45 +1,38 @@
-import { useEffect, useMemo, SyntheticEvent } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useMemo } from 'react';
 
-import { Select, MenuItem, Typography, makeStyles } from '@material-ui/core';
+import { MenuItem, Select, Typography, makeStyles } from '@material-ui/core';
 
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-
+import { Grid, ToggleButton, ToggleButtonGroup } from '~/components';
 import {
-  getDataTimeline,
-  getTargetTotals,
-  filterByType,
-  getFilteredTimeline,
-} from '../../utils/utils';
-
+  ALL_TENURE_CATEGORIES,
+  TENURE_DATA_TYPES,
+  housingTenureTypes,
+} from '~/constants';
+import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import TenureHousingMultiChart from '~/dashboard/custom-charts/housing-delivery/tenure-housing-multi-chart/tenure-housing-multi-chart.component';
+import TotalHousingMultiChart from '~/dashboard/custom-charts/housing-delivery/total-housing-multi-chart/total-housing-multi-chart.component';
 import {
   CustomDateRange,
   useSelectStyles,
-} from '../../custom-date-range/custom-date-range.component';
-
+} from '~/dashboard/custom-date-range/custom-date-range.component';
 import {
-  housingTenureTypes,
-  TENURE_DATA_TYPES,
-  ALL_TENURE_CATEGORIES,
-} from '../../../constants';
-
-import TenureHousingMultiChart from './tenure-housing-multi-chart/tenure-housing-multi-chart.component';
-import TotalHousingMultiChart from './total-housing-multi-chart/total-housing-multi-chart.component';
-
-import { ToggleButton, ToggleButtonGroup, Grid } from '../../../components';
-
+  filterByType,
+  getDataTimeline,
+  getFilteredTimeline,
+  getTargetTotals,
+} from '~/dashboard/utils/utils';
 import {
   TenureTypeHousingData,
   TotalHousingDeliveryData,
-} from '../../../mocks/fixtures';
-
+} from '~/mocks/fixtures';
 import {
-  TenureCategories,
   Settings,
   Targets,
+  TenureCategories,
   TenureCategory,
   TenureDataType,
   UserOrbState,
-} from '../../../types';
+} from '~/types';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -84,19 +77,19 @@ const TenureDataFilter = ({
   return (
     <Grid
       container
-      justifyContent='flex-start'
-      alignItems='center'
-      wrap='nowrap'
+      alignItems="center"
       className={selectFilters}
+      justifyContent="flex-start"
+      wrap="nowrap"
     >
       <Grid item>
         <Select
+          disableUnderline
+          classes={{ root, select }}
           value={tenureCategory}
           onChange={({ target: { value } }) =>
             handleTenureTypeSelect(value as TenureCategory)
           }
-          classes={{ root, select }}
-          disableUnderline
         >
           <MenuItem value={ALL_TENURE_CATEGORIES}>
             {ALL_TENURE_CATEGORIES}
@@ -150,19 +143,25 @@ const HousingDelivery = ({
   };
 
   // TODO: is this a number? Is this for both or just one?
-  const updateDateFilter = (data: UpdateDateFilterArgs) =>
-    updateOrbState({ settings: { ...data } });
+  const updateDateFilter = useCallback(
+    (data: UpdateDateFilterArgs) => updateOrbState({ settings: { ...data } }),
+    [updateOrbState],
+  );
 
   const handleTenureTypeSelect = (tenureCategory: TenureCategory) =>
     updateOrbState({ settings: { tenureCategory } });
 
   const handleToggleClick = (
     _: SyntheticEvent,
-    tenureDataType: TenureDataType
+    tenureDataType: TenureDataType,
   ) => updateOrbState({ settings: { tenureDataType } });
 
   const showAllData = tenureCategory === ALL_TENURE_CATEGORIES;
 
+  /**
+   * If showing all data, then totals for each year
+   * must be calculated from all datasets
+   */
   const processedTargets = showAllData
     ? getTargetTotals(targets)
     : targets[tenureCategory];
@@ -170,13 +169,13 @@ const HousingDelivery = ({
   // TODO: why is this one memoized, bit other is not? (Progression/Planning)
   const dataByTenureType = useMemo(
     () =>
-      showAllData
+      !!showAllData
         ? tenureHousingDeliveryData
         : filterByType<TenureTypeHousingData>({
             apiData: tenureHousingDeliveryData,
             selectedType: housingTenureTypes[tenureCategory],
           }),
-    [tenureHousingDeliveryData, tenureCategory, showAllData]
+    [tenureHousingDeliveryData, tenureCategory, showAllData],
   ) as Partial<TenureTypeHousingData>;
 
   const totalTimeline = getDataTimeline({
@@ -213,29 +212,29 @@ const HousingDelivery = ({
   }, [tenureTimeline, tenureYear, updateDateFilter]);
 
   return (
-    <Grid container direction='column' className={container}>
+    <Grid container className={container} direction="column">
       <Grid
-        item
         container
-        justifyContent='space-between'
-        alignItems='center'
+        item
+        alignItems="center"
         className={header}
+        justifyContent="space-between"
       >
-        <Grid item component={Typography} variant='h1'>
+        <Grid item component={Typography} variant="h1">
           Housing Delivery
         </Grid>
       </Grid>
 
       <Grid
-        item
         container
-        justifyContent='space-between'
-        alignItems='stretch'
-        wrap='nowrap'
+        item
+        alignItems="stretch"
+        justifyContent="space-between"
+        wrap="nowrap"
       >
         <ChartWrapper
-          title='Total Housing Delivery'
-          info='Total housing delivery values per financial year. The data source is the PLD (Planning London Data Hub).'
+          info="Total housing delivery values per financial year. The data source is the PLD (Planning London Data Hub)."
+          title="Total Housing Delivery"
         >
           <CustomDateRange
             timeline={totalTimeline}
@@ -253,33 +252,33 @@ const HousingDelivery = ({
         </ChartWrapper>
 
         <ChartWrapper
-          title='Housing Delivery by Tenure Type'
-          info='Housing delivery values broken down by tenure type per financial year. The data source is the PLD (Planning London Data Hub).'
+          info="Housing delivery values broken down by tenure type per financial year. The data source is the PLD (Planning London Data Hub)."
+          title="Housing Delivery by Tenure Type"
         >
           <Grid
-            item
             container
-            justifyContent='space-between'
-            wrap='nowrap'
+            item
             className={controls}
+            justifyContent="space-between"
+            wrap="nowrap"
           >
             <TenureDataFilter
-              timeline={tenureTimeline}
-              tenureYear={tenureYear}
-              tenureCategory={tenureCategory}
-              housingTenureTypes={housingTenureTypes}
+              handleTenureTypeSelect={handleTenureTypeSelect}
               handleYearRangeSelect={(year) =>
                 updateDateFilter({ tenureYear: year })
               }
-              handleTenureTypeSelect={handleTenureTypeSelect}
+              housingTenureTypes={housingTenureTypes}
+              tenureCategory={tenureCategory}
+              tenureYear={tenureYear}
+              timeline={tenureTimeline}
             />
 
             <ToggleButtonGroup
-              size='small'
-              value={tenureDataType}
-              orientation='horizontal'
-              onChange={handleToggleClick}
               className={buttons}
+              orientation="horizontal"
+              size="small"
+              value={tenureDataType}
+              onChange={handleToggleClick}
             >
               <ToggleButton value={TENURE_DATA_TYPES.gross}>
                 {TENURE_DATA_TYPES.gross}

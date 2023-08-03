@@ -1,11 +1,9 @@
-import clsx from 'clsx';
-
+import { darken, makeStyles } from '@material-ui/core';
 import {
   ToggleButton as MuiToggleButton,
   ToggleButtonProps,
 } from '@material-ui/lab';
-
-import { darken, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
       ['background-color', 'box-shadow', 'border', 'opacity'],
       {
         duration: theme.transitions.duration.short,
-      }
+      },
     ),
     '&:hover': {
       backgroundColor: darken(theme.palette.secondary.main, 0.3),
@@ -66,8 +64,8 @@ export const ToggleButton = ({ classes = {}, ...props }: ToggleButtonProps) => {
 
   return (
     <MuiToggleButton
-      disableRipple
       disableFocusRipple
+      disableRipple
       classes={combinedStyles}
       {...props}
     />

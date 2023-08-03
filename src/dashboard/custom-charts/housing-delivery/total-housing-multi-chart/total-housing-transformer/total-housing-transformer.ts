@@ -1,6 +1,6 @@
-import { TotalHousingDeliveryData } from '../../../../../mocks/fixtures';
-import { userTargetTransformer } from '../../../../utils/utils';
-import { TargetCategory, Targets } from '../../../../../types';
+import { userTargetTransformer } from '~/dashboard/utils/utils';
+import { TotalHousingDeliveryData } from '~/mocks/fixtures';
+import { TargetCategory, Targets } from '~/types';
 
 interface Args {
   data: TotalHousingDeliveryData;
@@ -32,7 +32,7 @@ export const totalHousingTransformer = ({
         net: [...acc.net, { x: year.toString(), y: obj['Total Net'] ?? null }],
       };
     },
-    { gross: [], net: [] }
+    { gross: [], net: [] },
   );
 
   /** only the array values of gross/net are required */

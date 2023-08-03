@@ -2,22 +2,21 @@ import { useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/core';
 
-import { ChartWrapper } from '../../charts/chart-wrapper.component';
-import ProgressWheel from '../../charts/progress-wheel/progress-wheel-chart.component';
-import { useChartTheme } from '../../useChartTheme';
-
-import { getUser5YearTotals, getPastYears } from '../../utils/utils';
 import {
-  PROGRESS_CHART_DATA,
-  MIN_PERCENTAGE,
   MAX_PERCENTAGE,
-} from '../../../constants';
+  MIN_PERCENTAGE,
+  PROGRESS_CHART_DATA,
+} from '~/constants';
+import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import ProgressWheel from '~/dashboard/charts/progress-wheel/progress-wheel-chart.component';
+import { getPercentage } from '~/dashboard/custom-charts/progress-indicators/utils/utils';
+import { useChartTheme } from '~/dashboard/useChartTheme';
+import { getPastYears, getUser5YearTotals } from '~/dashboard/utils/utils';
 import {
-  TotalHousingDeliveryData,
   TenureTypeHousingData,
-} from '../../../mocks/fixtures';
-import { ProgressIndicatorData, Targets } from '../../../types';
-import { getPercentage } from './utils/utils';
+  TotalHousingDeliveryData,
+} from '~/mocks/fixtures';
+import { ProgressIndicatorData, Targets } from '~/types';
 
 const useStyles = makeStyles(() => ({
   header: { minHeight: '6ch' },
@@ -40,13 +39,11 @@ const ProgressIndicators = ({
   const { header } = useStyles();
 
   const tenureCurrentYear = tenureData.find(
-    (obj) => obj.startYear === currentYear
+    (obj) => obj.startYear === currentYear,
   )!;
 
-  const totalHousing = targets.totalHousing ?? {},
-    intermediateDelivery = targets.intermediateDelivery ?? {},
-    marketHousing = targets.marketHousing ?? {},
-    sociallyRented = targets.sociallyRented ?? {};
+  const { totalHousing, intermediateDelivery, marketHousing, sociallyRented } =
+    useMemo(() => targets, [targets]);
 
   /** 'Gross' values tallied up for last 5 years */
   const past5YearsTotal = useMemo(
@@ -55,7 +52,7 @@ const ProgressIndicators = ({
         const match = totalData.find(({ startYear }) => startYear === year);
         return !!match ? (acc += match['Total Gross']) : acc;
       }, 0),
-    [totalData]
+    [totalData],
   );
 
   /** data combined with user target for display in progress wheels */
@@ -68,21 +65,28 @@ const ProgressIndicators = ({
       },
       {
         ...PROGRESS_CHART_DATA.intermediate,
-        target: intermediateDelivery[currentYear] ?? null,
+        target: intermediateDelivery?.[currentYear] ?? null,
         progress: tenureCurrentYear['Intermediate'] ?? null,
       },
       {
         ...PROGRESS_CHART_DATA.marketHousing,
-        target: marketHousing[currentYear] ?? null,
+        target: marketHousing?.[currentYear] ?? null,
         progress: tenureCurrentYear['Market for sale'] ?? null,
       },
       {
         ...PROGRESS_CHART_DATA.socialRented,
-        target: sociallyRented[currentYear] ?? null,
+        target: sociallyRented?.[currentYear] ?? null,
         progress: tenureCurrentYear['Social Rent'] ?? null,
       },
     ],
-    [past5YearsTotal, tenureCurrentYear, targets, currentYear]
+    [
+      intermediateDelivery,
+      marketHousing,
+      past5YearsTotal,
+      sociallyRented,
+      tenureCurrentYear,
+      totalHousing,
+    ],
   );
 
   if (!targetData) return null;
@@ -98,13 +102,13 @@ const ProgressIndicators = ({
       ];
 
     return (
-      <ChartWrapper key={name} title={title} info={info} classes={{ header }}>
+      <ChartWrapper key={name} classes={{ header }} info={info} title={title}>
         <ProgressWheel
           color={chartTheme.colors[i]}
+          data={data}
+          name={name}
           percentage={percentage}
           target={target}
-          name={name}
-          data={data}
         />
       </ChartWrapper>
     );

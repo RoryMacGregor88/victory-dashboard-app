@@ -1,15 +1,13 @@
 import {
-  createSlice,
-  createSelector,
-  createAsyncThunk,
   Dispatch,
+  createAsyncThunk,
+  createSelector,
+  createSlice,
 } from '@reduxjs/toolkit';
 
-import { User, updateUser } from '../../accounts/accounts.slice';
-import { userSelector } from '../../accounts/accounts.slice';
-
+import { User, updateUser, userSelector } from '../../accounts/accounts.slice';
 import { RootState } from '../../store';
-import { ChartMetadata, ChartData, UserOrbState } from '../../types';
+import { ChartData, ChartMetadata, UserOrbState } from '../../types';
 
 export type DashboardState = {
   [sourceId: string]: {
@@ -58,7 +56,7 @@ export const fetchDashboardData = createAsyncThunk(
       const { message } = error;
       return rejectWithValue({ message });
     }
-  }
+  },
 );
 
 export type UserConfigData = {

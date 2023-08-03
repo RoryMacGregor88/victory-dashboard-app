@@ -1,6 +1,6 @@
 import { it, expect, describe } from 'vitest';
 
-import { totalHousingTransformer } from './total-housing-transformer';
+import { totalHousingTransformer } from '~/dashboard/custom-charts/housing-delivery/total-housing-multi-chart/total-housing-transformer/total-housing-transformer';
 
 const dataArray = [
   {
@@ -184,7 +184,11 @@ const dataArray = [
 describe('totalHousingTransformer', () => {
   dataArray.forEach(({ title, data, targets, filteredTimeline, expected }) =>
     it(title, () => {
-      const result = totalHousingTransformer(data, targets, filteredTimeline);
+      const result = totalHousingTransformer({
+        data,
+        targetDataset: targets,
+        timeline: filteredTimeline,
+      });
       expect(result).toEqual(expected);
     })
   );

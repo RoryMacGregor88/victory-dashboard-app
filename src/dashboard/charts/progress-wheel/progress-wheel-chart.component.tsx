@@ -1,10 +1,10 @@
 import { Grid, makeStyles } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-
 import { ParentSize } from '@visx/responsive';
 import { VictoryAnimation, VictoryPie } from 'victory';
-import CenterDisplay from './center-display/center-display.component';
-import { ProgressIndicatorData } from '../../../types';
+
+import CenterDisplay from '~/dashboard/charts/progress-wheel/center-display/center-display.component';
+import { ProgressIndicatorData } from '~/types';
 
 const useStyles = makeStyles((theme) => ({
   parentSize: {
@@ -47,39 +47,39 @@ const ProgressIndicatorChart = ({
 
         return (
           <svg
-            width={halfWidth}
             height={halfWidth}
             viewBox={`0 0 ${halfWidth} ${halfWidth}`}
+            width={halfWidth}
           >
             <circle
+              className={circle}
               cx={radius}
               cy={radius}
               r={bgCirlceRadius > 0 ? bgCirlceRadius : 0}
-              className={circle}
             />
             <VictoryPie
-              standalone={false}
-              width={halfWidth}
-              height={halfWidth}
-              padding={0}
-              data={data}
-              innerRadius={radius - progressBarWidth}
-              cornerRadius={progressBarWidth / 2}
               animate={{ duration: 1000 }}
+              cornerRadius={progressBarWidth / 2}
+              data={data}
+              height={halfWidth}
+              innerRadius={radius - progressBarWidth}
               labels={() => null}
+              padding={0}
+              standalone={false}
               style={{
                 data: {
                   fill: ({ datum }) => (datum.x === 1 ? color : 'transparent'),
                 },
               }}
+              width={halfWidth}
             />
-            <VictoryAnimation duration={1000}>
+            <VictoryAnimation duration={2000}>
               {() => (
                 <CenterDisplay
-                  percentage={percentage}
-                  target={target}
                   name={name}
+                  percentage={percentage}
                   radius={radius}
+                  target={target}
                   width={width}
                 />
               )}
@@ -93,16 +93,16 @@ const ProgressIndicatorChart = ({
 
 // TODO: use this or ditch?
 export const ProgressIndicatorChartSkeleton = () => {
-  const { ekeleton } = useStyles();
+  const { skeleton } = useStyles();
   return (
     <Grid
-      item
       container
-      alignItems='center'
-      justifyContent='center'
+      item
+      alignItems="center"
       className={skeleton}
+      justifyContent="center"
     >
-      <Skeleton variant='circle' width='8rem' height='8rem' />
+      <Skeleton height="8rem" variant="circle" width="8rem" />
     </Grid>
   );
 };

@@ -39,17 +39,17 @@ export const DialogTitle = ({
 }: DialogTitleProps & Props) => {
   const styles = useStyles();
   return (
-    <MuiDialogTitle className={styles.root} disableTypography>
+    <MuiDialogTitle disableTypography className={styles.root}>
       {disableTypography ? (
         children
       ) : (
-        <Typography className='content' variant='h1'>
+        <Typography className="content" variant="h1">
           {children}
         </Typography>
       )}
-      {onClose ? (
+      {!!onClose ? (
         <IconButton
-          aria-label='Close Dialog'
+          aria-label="Close Dialog"
           className={styles.closeButton}
           onClick={onClose}
         >

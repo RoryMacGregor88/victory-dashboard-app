@@ -1,18 +1,14 @@
-import { useState, ReactNode, useMemo } from 'react';
-
-import { useForm } from 'react-hook-form';
-
-import * as Yup from 'yup';
+import { ReactNode, useMemo, useState } from 'react';
 
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Input, MenuItem, Select, makeStyles } from '@material-ui/core';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
-import { makeStyles, Select, MenuItem, Input } from '@material-ui/core';
-
-import { getPastYears } from '../utils/utils';
-import { targetDatasets } from '../../constants';
-
-import { Button, Grid } from '../../components';
-import { TargetCategory, Targets } from '../../types';
+import { Button, Grid } from '~/components';
+import { targetDatasets } from '~/constants';
+import { getPastYears } from '~/dashboard/utils/utils';
+import { TargetCategory, Targets } from '~/types';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -42,10 +38,10 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <Grid
       container
-      direction='column'
-      justifyContent='space-between'
-      alignItems='center'
+      alignItems="center"
       className={wrapper}
+      direction="column"
+      justifyContent="space-between"
     >
       {children}
     </Grid>
@@ -69,16 +65,16 @@ const SelectForm = ({ onNextClick }: SelectFormProps) => {
   return (
     <Wrapper>
       <Grid
-        item
         container
+        item
         component={Select}
-        value={selectedDataset}
         inputProps={{ 'aria-label': DEFAULT_TEXT }}
+        value={selectedDataset}
         onChange={({ target: { value } }) =>
           setSelectedDataset(value as TargetCategory)
         }
       >
-        <MenuItem value={DEFAULT_TEXT} disabled>
+        <MenuItem disabled value={DEFAULT_TEXT}>
           {DEFAULT_TEXT}
         </MenuItem>
         {Object.entries(targetDatasets).map(([key, value]) => (
@@ -87,7 +83,7 @@ const SelectForm = ({ onNextClick }: SelectFormProps) => {
           </MenuItem>
         ))}
       </Grid>
-      <Grid item container justifyContent='flex-end' className={buttons}>
+      <Grid container item className={buttons} justifyContent="flex-end">
         <Button
           disabled={isDisabled}
           onClick={() => !isDisabled && onNextClick(selectedDataset)}
@@ -139,9 +135,9 @@ const TargetForm = ({
             [year]: '',
           },
         }),
-        { validation: {}, defaultValues: {}, emptyFormValues: {} }
+        { validation: {}, defaultValues: {}, emptyFormValues: {} },
       ),
-    []
+    [],
   );
 
   const { validation, defaultValues, emptyFormValues } = formSetup;
@@ -169,9 +165,9 @@ const TargetForm = ({
   // TODO: reset doesn't dirty form
 
   return (
-    <Grid item container component='form' onSubmit={handleSubmit(onSubmit)}>
+    <Grid container item component="form" onSubmit={handleSubmit(onSubmit)}>
       {hasErrors ? (
-        <Grid item container direction='column' className={error}>
+        <Grid container item className={error} direction="column">
           {Object.entries(errors).map(([year, error]) => (
             <span>
               Error in {formatYear(Number(year))}: {error?.message}
@@ -180,7 +176,7 @@ const TargetForm = ({
         </Grid>
       ) : null}
 
-      <Grid item container className={inputFields}>
+      <Grid container item className={inputFields}>
         {pastYears.map((year) => {
           const stringYear = String(year) as TargetCategory;
           return (
@@ -192,11 +188,11 @@ const TargetForm = ({
           );
         })}
       </Grid>
-      <Grid item container justifyContent='flex-end' className={buttons}>
-        <Button color='secondary' onClick={() => reset(emptyFormValues)}>
+      <Grid container item className={buttons} justifyContent="flex-end">
+        <Button color="secondary" onClick={() => reset(emptyFormValues)}>
           Reset
         </Button>
-        <Button disabled={isDisabled} type='submit'>
+        <Button disabled={isDisabled} type="submit">
           Add Target
         </Button>
       </Grid>

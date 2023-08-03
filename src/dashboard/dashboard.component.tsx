@@ -1,29 +1,16 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
-  makeStyles,
   CircularProgress,
-  Typography,
   Dialog,
   DialogContent,
+  Typography,
+  makeStyles,
 } from '@material-ui/core';
 
-import { Button, LoadMaskFallback, DialogTitle, Grid } from '../components';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { exportToCsv } from './utils/utils';
-
-import {
-  chartDataSelector,
-  fetchDashboardData,
-  updateUserDashboardConfig,
-  userOrbStateSelector,
-} from './dashboard-slice/dashboard.slice';
-
-import {
-  SelectForm,
-  TargetForm,
-} from './target-dialog-screens/target-dialog-screens';
-
+import { userSelector } from '~/accounts/accounts.slice';
+import { Button, DialogTitle, Grid, LoadMaskFallback } from '~/components';
+import { apiMetadata, targetDatasets } from '~/constants';
 import {
   AffordableHousingDelivery,
   DeliverableSupplySummary,
@@ -31,30 +18,35 @@ import {
   HousingDelivery,
   ProgressIndicators,
   ProgressionVsPlanningSchedule,
-} from './custom-charts';
-
-import { apiMetadata, targetDatasets } from '../constants';
-import { userSelector } from '../accounts/accounts.slice';
-
+} from '~/dashboard/custom-charts';
 import {
-  TotalHousingDeliveryData,
-  TenureTypeHousingData,
+  chartDataSelector,
+  fetchDashboardData,
+  updateUserDashboardConfig,
+  userOrbStateSelector,
+} from '~/dashboard/dashboard-slice/dashboard.slice';
+import {
+  SelectForm,
+  TargetForm,
+} from '~/dashboard/target-dialog-screens/target-dialog-screens';
+import { exportToCsv } from '~/dashboard/utils/utils';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import {
   AffordableHousingData,
-  ProgressionOfUnitsData,
-  HousingApprovalsData,
   DeliverableSupplySummaryData,
-} from '../mocks/fixtures';
-
-// TODO: why does this work
-import { ExportData } from '~/mocks/fixtures/export_data';
-
+  ExportData,
+  HousingApprovalsData,
+  ProgressionOfUnitsData,
+  TenureTypeHousingData,
+  TotalHousingDeliveryData,
+} from '~/mocks/fixtures';
 import {
   ChartMetadata,
-  Targets,
-  UserOrbState,
-  UpdateOrbStateArgs,
   TargetCategory,
-} from '../types';
+  Targets,
+  UpdateOrbStateArgs,
+  UserOrbState,
+} from '~/types';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -77,22 +69,22 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
 
   /** all data, including 'name', 'version', etc */
   const approvalsGranted: HousingApprovalsData = useAppSelector(
-      chartDataSelector(sourceId, 'approvalsGranted')
+      chartDataSelector(sourceId, 'approvalsGranted'),
     ),
     progressionVsPlanning: ProgressionOfUnitsData = useAppSelector(
-      chartDataSelector(sourceId, 'progressionVsPlanning')
+      chartDataSelector(sourceId, 'progressionVsPlanning'),
     ),
     tenureHousingDelivery: TenureTypeHousingData = useAppSelector(
-      chartDataSelector(sourceId, 'tenureHousingDelivery')
+      chartDataSelector(sourceId, 'tenureHousingDelivery'),
     ),
     totalHousingDelivery: TotalHousingDeliveryData = useAppSelector(
-      chartDataSelector(sourceId, 'totalHousingDelivery')
+      chartDataSelector(sourceId, 'totalHousingDelivery'),
     ),
     affordableHousingDelivery: AffordableHousingData = useAppSelector(
-      chartDataSelector(sourceId, 'affordableHousingDelivery')
+      chartDataSelector(sourceId, 'affordableHousingDelivery'),
     ),
     deliverableSupplySummary: DeliverableSupplySummaryData = useAppSelector(
-      chartDataSelector(sourceId, 'deliverableSupplySummary')
+      chartDataSelector(sourceId, 'deliverableSupplySummary'),
     );
 
   const user = useAppSelector(userSelector);
@@ -101,7 +93,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
   const [orbState, setOrbState] = useState<UserOrbState | null>(null);
 
   const [selectedDataset, setSelectedDataset] = useState<TargetCategory | null>(
-    null
+    null,
   );
   const [targetDialogVisible, setTargetDialogVisible] = useState(false);
   const [exportIsLoading, setExportIsLoading] = useState(false);
@@ -143,7 +135,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
         dispatch(updateUserDashboardConfig({ user, sourceId, data }));
       }
     },
-    [dispatch, sourceId, user]
+    [dispatch, sourceId, user],
   );
 
   useEffect(() => {
@@ -183,7 +175,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
   /** add event listener that covers user closing/refreshing tab */
   useEffect(() => {
     window.addEventListener('beforeunload', saveSettingsHandler);
-  }, []);
+  }, [saveSettingsHandler]);
 
   /** remove listener and save settings if user navigates away in-app */
   useEffect(() => {
@@ -224,32 +216,32 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
     <>
       <Grid
         container
-        justifyContent='space-between'
-        alignItems='center'
-        wrap='nowrap'
+        alignItems="center"
         className={header}
+        justifyContent="space-between"
+        wrap="nowrap"
       >
-        <Typography variant='h2'>Housing Delivery Dashboard</Typography>
-        <Grid item container className={headerButtons}>
-          <Button size='small' onClick={handleExport}>
+        <Typography variant="h2">Housing Delivery Dashboard</Typography>
+        <Grid container item className={headerButtons}>
+          <Button size="small" onClick={handleExport}>
             {exportIsLoading ? (
-              <CircularProgress size={20} color='inherit' />
+              <CircularProgress color="inherit" size={20} />
             ) : (
               'Export'
             )}
           </Button>
-          <Button size='small' onClick={() => setTargetDialogVisible(true)}>
+          <Button size="small" onClick={() => setTargetDialogVisible(true)}>
             Add Targets
           </Button>
         </Grid>
       </Grid>
 
-      <Grid item container direction='column' className={content}>
-        <Grid item container wrap='nowrap'>
+      <Grid container item className={content} direction="column">
+        <Grid container item wrap="nowrap">
           <ProgressIndicators
-            totalData={totalHousingDelivery}
-            tenureData={tenureHousingDelivery}
             targets={targets}
+            tenureData={tenureHousingDelivery}
+            totalData={totalHousingDelivery}
           />
         </Grid>
 
@@ -257,15 +249,15 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
          * Tenure Housing charts
          */}
         <HousingDelivery
-          totalHousingDeliveryData={totalHousingDelivery}
-          tenureHousingDeliveryData={tenureHousingDelivery}
-          targets={targets}
           settings={settings}
+          targets={targets}
+          tenureHousingDeliveryData={tenureHousingDelivery}
+          totalHousingDeliveryData={totalHousingDelivery}
           updateOrbState={updateOrbState}
         />
 
-        <Grid item container direction='column'>
-          <Grid item container wrap='nowrap'>
+        {/* <Grid container item direction="column">
+          <Grid container item wrap="nowrap">
             <DeliverableSupplySummary data={deliverableSupplySummary} />
             <HousingApprovals
               data={approvalsGranted}
@@ -274,7 +266,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
             />
           </Grid>
 
-          <Grid item container wrap='nowrap'>
+          <Grid container item wrap="nowrap">
             <ProgressionVsPlanningSchedule
               data={progressionVsPlanning}
               settings={settings}
@@ -283,19 +275,19 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
 
             <AffordableHousingDelivery
               data={affordableHousingDelivery}
-              targets={targets}
               settings={settings}
+              targets={targets}
               updateOrbState={updateOrbState}
             />
           </Grid>
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <Dialog
-        maxWidth='md'
+        aria-labelledby="targets-dialog"
+        maxWidth="md"
         open={targetDialogVisible}
         onClose={closeDialog}
-        aria-labelledby='targets-dialog'
       >
         <DialogTitle onClose={closeDialog}>
           {!!selectedDataset ? targetDatasets[selectedDataset] : 'Add Targets'}
@@ -303,11 +295,11 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
         <DialogContent>
           {!!selectedDataset ? (
             <TargetForm
+              selectedDataset={selectedDataset}
+              targets={targets}
               onAddTargetsClick={(targets: Targets) =>
                 handleAddTargetsClick(targets)
               }
-              selectedDataset={selectedDataset}
-              targets={targets}
             />
           ) : (
             <SelectForm

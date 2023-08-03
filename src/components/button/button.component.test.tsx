@@ -1,15 +1,14 @@
-import { vi, it, expect, describe } from 'vitest';
-
-import { render, userEvent, screen } from '../../test/test.utils';
+import { describe, expect, it, vi } from 'vitest';
 
 import { Button } from './button.component';
+import { render, screen, userEvent } from '../../test/test.utils';
 
 describe('Button Component', () => {
   it('renders', () => {
     render(<Button onClick={vi.fn()}>Some Text</Button>);
 
     expect(
-      screen.getByRole('button', { name: 'Some Text' })
+      screen.getByRole('button', { name: 'Some Text' }),
     ).toBeInTheDocument();
   });
 
@@ -24,9 +23,9 @@ describe('Button Component', () => {
   it('disables button if disabled prop present', async () => {
     const onClick = vi.fn();
     render(
-      <Button onClick={onClick} disabled>
+      <Button disabled onClick={onClick}>
         Some Text
-      </Button>
+      </Button>,
     );
 
     expect(screen.getByRole('button')).toBeDisabled();

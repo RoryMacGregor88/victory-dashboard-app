@@ -1,9 +1,8 @@
-import { it, expect, describe, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { render, userEvent, screen } from '../../test/test.utils';
-
-import { inputErrorMessage } from '../../constants';
 import { SelectForm, TargetForm } from './target-dialog-screens';
+import { inputErrorMessage } from '../../constants';
+import { render, screen, userEvent } from '../../test/test.utils';
 
 describe('Target Dialog Screens', () => {
   describe('SelectForm', () => {
@@ -54,7 +53,7 @@ describe('Target Dialog Screens', () => {
     it('renders', () => {
       render(<TargetForm {...defaultProps} />);
       expect(
-        screen.getByRole('button', { name: 'Add Target' })
+        screen.getByRole('button', { name: 'Add Target' }),
       ).toBeInTheDocument();
     });
 
@@ -98,9 +97,9 @@ describe('Target Dialog Screens', () => {
       render(
         <TargetForm
           {...defaultProps}
+          selectedDataset="test-dataset"
           onAddTargetsClick={onAddTargetsClick}
-          selectedDataset='test-dataset'
-        />
+        />,
       );
 
       await userEvent.type(screen.getByPlaceholderText('2020-2021'), '123');

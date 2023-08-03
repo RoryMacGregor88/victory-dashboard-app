@@ -1,4 +1,4 @@
-import { MIN_PERCENTAGE, MAX_PERCENTAGE } from '../constants';
+import { MAX_PERCENTAGE, MIN_PERCENTAGE } from '~/constants';
 
 interface PercentageArgs {
   target: number | null;

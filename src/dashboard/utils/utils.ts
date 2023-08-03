@@ -1,10 +1,11 @@
-import { DEFAULT_FILTER_RANGE, MIME_TYPE, EXTENSION } from '../../constants';
-
 import * as FileSaver from 'file-saver';
 import { utils, write } from 'xlsx';
-import { TargetCategory, Targets } from '../../types';
-import { TimelineData, TransformedTargets } from './types';
+
 import { ExportData } from '~/mocks/fixtures';
+
+import { TimelineData, TransformedTargets } from './types';
+import { DEFAULT_FILTER_RANGE, EXTENSION, MIME_TYPE } from '../../constants';
+import { TargetCategory, Targets } from '../../types';
 
 /**
  * This function transforms a key/value object into X/Y data to be rendered
@@ -18,7 +19,7 @@ import { ExportData } from '~/mocks/fixtures';
  */
 const userTargetTransformer = (
   targetDataset: Targets[TargetCategory],
-  timeline: number[]
+  timeline: number[],
 ): TransformedTargets | null => {
   if (!targetDataset) return null;
 
@@ -29,7 +30,7 @@ const userTargetTransformer = (
         ? [...acc, { x: key, y: value }]
         : acc;
     },
-    []
+    [],
   );
 
   return transformedTargets.length ? transformedTargets : null;
@@ -54,7 +55,7 @@ const getTargetTotals = (data: Targets) => {
 
       return { ...acc, ...yearTotal };
     },
-    {}
+    {},
   );
 };
 
@@ -78,7 +79,7 @@ const getUser5YearTotals = (targetDataset: Targets[TargetCategory]) => {
 
   return getPastYears().reduce(
     (acc, year) => (acc += targetDataset[year] ?? 0),
-    0
+    0,
   );
 };
 

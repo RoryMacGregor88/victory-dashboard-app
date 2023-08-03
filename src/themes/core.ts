@@ -1,4 +1,5 @@
-import { createTheme, alpha, ThemeOptions } from '@material-ui/core';
+import { ThemeOptions, alpha, createTheme } from '@material-ui/core';
+
 import { palette } from './palette';
 
 const borderRadius = 5;
@@ -12,7 +13,7 @@ export const core: ThemeOptions = createTheme({
         '&:hover': {
           backgroundColor: alpha(
             palette.info.main,
-            palette.action.hoverOpacity
+            palette.action.hoverOpacity,
           ),
           '@media (hover: none)': {
             backgroundColor: 'transparent',
@@ -35,7 +36,7 @@ export const core: ThemeOptions = createTheme({
           borderColor: palette.info.main,
           backgroundColor: alpha(
             palette.info.main,
-            palette.action.hoverOpacity
+            palette.action.hoverOpacity,
           ),
           '@media (hover: none)': {
             backgroundColor: 'transparent',
@@ -97,7 +98,7 @@ export const core: ThemeOptions = createTheme({
         '&:focus': {
           backgroundColor: alpha(
             palette.action.active,
-            palette.action.hoverOpacity
+            palette.action.hoverOpacity,
           ),
         },
       },
@@ -105,7 +106,7 @@ export const core: ThemeOptions = createTheme({
         '&:focus': {
           backgroundColor: alpha(
             palette.primary.main,
-            palette.action.hoverOpacity
+            palette.action.hoverOpacity,
           ),
         },
       },
@@ -114,7 +115,7 @@ export const core: ThemeOptions = createTheme({
         '&:hover': {
           backgroundColor: alpha(
             palette.info.main,
-            palette.action.hoverOpacity
+            palette.action.hoverOpacity,
           ),
           '@media (hover: none)': {
             backgroundColor: 'transparent',
@@ -123,7 +124,7 @@ export const core: ThemeOptions = createTheme({
         '&:focus': {
           backgroundColor: alpha(
             palette.info.main,
-            palette.action.hoverOpacity
+            palette.action.hoverOpacity,
           ),
         },
       },
