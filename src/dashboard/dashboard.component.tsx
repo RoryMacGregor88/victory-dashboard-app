@@ -273,15 +273,15 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
         {/* parent component that wraps both Total Housing and
          * Tenure Housing charts
          */}
-        {/* <HousingDelivery
+        <HousingDelivery
           settings={settings}
           targets={targets}
           tenureHousingDeliveryData={tenureHousingDelivery}
           totalHousingDeliveryData={totalHousingDelivery}
           updateOrbState={updateOrbState}
-        /> */}
+        />
 
-        {/* <Grid container item direction="column">
+        <Grid container item direction="column">
           <Grid container item wrap="nowrap">
             <DeliverableSupplySummary data={deliverableSupplySummary} />
             <HousingApprovals
@@ -305,7 +305,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
               updateOrbState={updateOrbState}
             />
           </Grid>
-        </Grid> */}
+        </Grid>
       </Grid>
 
       <Dialog
