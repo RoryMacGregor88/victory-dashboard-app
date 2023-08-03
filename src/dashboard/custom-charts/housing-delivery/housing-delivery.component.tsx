@@ -46,11 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
   controls: {
     marginBottom: theme.spacing(2),
-  },
-  selectFilters: {
-    width: '50%',
-  },
-  buttons: {
     width: '50%',
   },
 }));
@@ -72,14 +67,12 @@ const TenureDataFilter = ({
   handleYearRangeSelect,
   handleTenureTypeSelect,
 }: TenureDataFilterProps) => {
-  const { selectFilters } = useStyles();
   const { root, select } = useSelectStyles({});
   return (
     <Grid
       container
       alignItems="center"
-      className={selectFilters}
-      justifyContent="flex-start"
+      justifyContent="space-between"
       wrap="nowrap"
     >
       <Grid item>
@@ -130,7 +123,7 @@ const HousingDelivery = ({
   settings,
   updateOrbState,
 }: HousingDeliveryProps) => {
-  const { container, header, buttons, controls } = useStyles();
+  const { container, header, controls } = useStyles();
 
   const tenureCategory = settings.tenureCategory ?? ALL_TENURE_CATEGORIES,
     tenureDataType = settings.tenureDataType ?? TENURE_DATA_TYPES.gross,
@@ -255,13 +248,7 @@ const HousingDelivery = ({
           info="Housing delivery values broken down by tenure type per financial year. The data source is the PLD (Planning London Data Hub)."
           title="Housing Delivery by Tenure Type"
         >
-          <Grid
-            container
-            item
-            className={controls}
-            justifyContent="space-between"
-            wrap="nowrap"
-          >
+          <Grid container item className={controls} direction="column">
             <TenureDataFilter
               handleTenureTypeSelect={handleTenureTypeSelect}
               handleYearRangeSelect={(year) =>
@@ -274,7 +261,6 @@ const HousingDelivery = ({
             />
 
             <ToggleButtonGroup
-              className={buttons}
               orientation="horizontal"
               size="small"
               value={tenureDataType}

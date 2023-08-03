@@ -6,6 +6,7 @@ import {
   DialogContent,
   Typography,
   makeStyles,
+  useMediaQuery,
 } from '@material-ui/core';
 
 import { userSelector } from '~/accounts/accounts.slice';
@@ -179,10 +180,13 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
 
   /** remove listener and save settings if user navigates away in-app */
   useEffect(() => {
-    return () => {
+    const beforeUnload = () => {
       window.removeEventListener('beforeunload', saveSettingsHandler);
       saveSettingsHandler();
     };
+
+    /** cleanup */
+    return beforeUnload;
   }, [saveSettingsHandler]);
 
   const closeDialog = () => {
@@ -210,7 +214,28 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
 
   // TODO: use skeletons instead of loadmask? Maybe leave until later?
 
-  if (!dataIsLoaded || !orbStateIsLoaded) return <LoadMaskFallback />;
+  /** app was created for desktops only */
+  const isDesktopSize = useMediaQuery('(min-width:1500px)');
+
+  if (!dataIsLoaded || !orbStateIsLoaded || !isDesktopSize) {
+    const { innerWidth } = window;
+    return (
+      <LoadMaskFallback>
+        {!isDesktopSize ? (
+          <>
+            <h1>Unable to load.</h1>
+            <h3>
+              This app is designed for screen sizes of 1500 pixels width or
+              more.
+            </h3>
+            <h3>Your current device width is {innerWidth} pixels.</h3>
+          </>
+        ) : (
+          <h1>Loading...</h1>
+        )}
+      </LoadMaskFallback>
+    );
+  }
 
   return (
     <>
@@ -248,15 +273,15 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
         {/* parent component that wraps both Total Housing and
          * Tenure Housing charts
          */}
-        <HousingDelivery
+        {/* <HousingDelivery
           settings={settings}
           targets={targets}
           tenureHousingDeliveryData={tenureHousingDelivery}
           totalHousingDeliveryData={totalHousingDelivery}
           updateOrbState={updateOrbState}
-        />
+        /> */}
 
-        <Grid container item direction="column">
+        {/* <Grid container item direction="column">
           <Grid container item wrap="nowrap">
             <DeliverableSupplySummary data={deliverableSupplySummary} />
             <HousingApprovals
@@ -280,7 +305,7 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
               updateOrbState={updateOrbState}
             />
           </Grid>
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <Dialog

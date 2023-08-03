@@ -15,15 +15,15 @@ const RATIOS = {
 interface StylesProps {
   padTop?: boolean;
   padBottom?: boolean;
-  maxHeight?: number;
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   apiLegend: {
     width: '100%',
-    maxHeight: ({ maxHeight }: StylesProps) => maxHeight ?? '5rem',
-    marginTop: ({ padTop }: StylesProps) => (padTop ? '1rem' : '0'),
-    marginBottom: ({ padBottom }: StylesProps) => (padBottom ? '1rem' : '0'),
+    height: theme.spacing(8),
+    marginTop: ({ padTop }: StylesProps) => (padTop ? theme.spacing(2) : '0'),
+    marginBottom: ({ padBottom }: StylesProps) =>
+      padBottom ? theme.spacing(2) : '0',
   },
   legendItem: { width: 'fit-content' },
   userTarget: {
@@ -46,10 +46,9 @@ export const CustomLegend = ({
   padTop = false,
   padBottom = false,
 }: Props) => {
-  const maxHeight = width * RATIOS.legendContainer,
-    fontSize = width * RATIOS.fontSize,
+  const fontSize = width * RATIOS.fontSize,
     fontSizeLimit = fontSize < MAX_FONT_SIZE ? fontSize : MAX_FONT_SIZE,
-    styles = useStyles({ maxHeight, padTop, padBottom });
+    styles = useStyles({ padTop, padBottom });
 
   return (
     <Grid container direction="column" justifyContent="space-between">

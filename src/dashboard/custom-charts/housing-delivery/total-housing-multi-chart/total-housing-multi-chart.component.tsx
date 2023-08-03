@@ -60,7 +60,7 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
           scatterWidth = width / 2;
 
         return (
-          <div>
+          <>
             <CustomLegend
               apiData={apiLegendData}
               targetData={!!transformedTargets ? TARGET_LEGEND_DATA : null}
@@ -114,7 +114,7 @@ const TotalHousingMultiChart = ({ data, targets, timeline }: Props) => {
                 </VictoryGroup>
               ) : null}
             </BaseChart>
-          </div>
+          </>
         );
       }}
     </StyledParentSize>
