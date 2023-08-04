@@ -8,7 +8,7 @@ import {
   TENURE_DATA_TYPES,
   housingTenureTypes,
 } from '~/constants';
-import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { ChartWrapper } from '~/dashboard/charts';
 import TenureHousingMultiChart from '~/dashboard/custom-charts/housing-delivery/tenure-housing-multi-chart/tenure-housing-multi-chart.component';
 import TotalHousingMultiChart from '~/dashboard/custom-charts/housing-delivery/total-housing-multi-chart/total-housing-multi-chart.component';
 import {
