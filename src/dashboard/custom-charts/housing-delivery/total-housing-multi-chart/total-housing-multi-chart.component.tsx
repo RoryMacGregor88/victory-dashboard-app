@@ -9,7 +9,7 @@ import {
   TARGET_LEGEND_DATA,
   TENURE_DATA_TYPES,
 } from '~/constants';
-import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { BaseChart } from '~/dashboard/charts';
 import { totalHousingTransformer } from '~/dashboard/custom-charts/housing-delivery/total-housing-multi-chart/total-housing-transformer/total-housing-transformer';
 import { pairedWidthCalculator } from '~/dashboard/custom-charts/housing-delivery/utils/utils';
 import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';

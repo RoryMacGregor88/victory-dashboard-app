@@ -10,8 +10,7 @@ import {
 
 import { FlyoutTooltip, StyledParentSize } from '~/components';
 import { yellowStyle } from '~/constants';
-import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
-import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { BaseChart, ChartWrapper } from '~/dashboard/charts';
 import { affordableHousingTransformer } from '~/dashboard/custom-charts/affordable-housing-delivery/affordable-housing-transformer/affordable-housing-transformer';
 import { CustomDateRange } from '~/dashboard/custom-date-range/custom-date-range.component';
 import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';

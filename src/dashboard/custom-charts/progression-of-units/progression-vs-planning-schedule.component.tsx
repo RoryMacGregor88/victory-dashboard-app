@@ -7,8 +7,7 @@ import {
   progressionVsPlanningCategories,
   progressionVsPlanningPalette,
 } from '~/constants';
-import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
-import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { BaseChart, ChartWrapper } from '~/dashboard/charts';
 import { useSelectStyles } from '~/dashboard/custom-date-range/custom-date-range.component';
 import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
 import { useChartTheme } from '~/dashboard/useChartTheme';

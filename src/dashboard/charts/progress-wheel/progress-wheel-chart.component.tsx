@@ -25,13 +25,7 @@ interface Props {
   name: string;
 }
 
-const ProgressIndicatorChart = ({
-  color,
-  data,
-  percentage,
-  target,
-  name,
-}: Props) => {
+const ProgressWheel = ({ color, data, percentage, target, name }: Props) => {
   const { parentSize, circle } = useStyles();
   return (
     <ParentSize className={parentSize}>
@@ -87,4 +81,4 @@ const ProgressIndicatorChart = ({
   );
 };
 
-export default ProgressIndicatorChart;
+export default ProgressWheel;

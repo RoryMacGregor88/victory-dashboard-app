@@ -80,4 +80,4 @@ const ChartWrapper = ({
   );
 };
 
-export { ChartWrapper };
+export default ChartWrapper;

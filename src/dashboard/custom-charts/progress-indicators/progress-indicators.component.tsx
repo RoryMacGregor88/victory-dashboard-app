@@ -7,8 +7,7 @@ import {
   MIN_PERCENTAGE,
   PROGRESS_CHART_DATA,
 } from '~/constants';
-import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
-import ProgressWheel from '~/dashboard/charts/progress-wheel/progress-wheel-chart.component';
+import { ChartWrapper, ProgressWheel } from '~/dashboard/charts';
 import { getPercentage } from '~/dashboard/custom-charts/progress-indicators/utils/utils';
 import { useChartTheme } from '~/dashboard/useChartTheme';
 import { getPastYears, getUser5YearTotals } from '~/dashboard/utils/utils';

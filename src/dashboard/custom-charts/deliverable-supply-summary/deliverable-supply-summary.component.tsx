@@ -2,8 +2,7 @@ import { VictoryBar, VictoryStack } from 'victory';
 
 import { FlyoutTooltip, StyledParentSize } from '~/components';
 import { deliverableSupplySummaryTypes } from '~/constants';
-import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
-import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { BaseChart, ChartWrapper } from '~/dashboard/charts';
 import { getStackTotals } from '~/dashboard/custom-charts/deliverable-supply-summary/utils/utils';
 import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
 import { useChartTheme } from '~/dashboard/useChartTheme';

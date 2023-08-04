@@ -15,7 +15,7 @@ interface Props {
   theme?: Partial<ChartTheme>;
 }
 
-export const BaseChart = ({
+const BaseChart = ({
   children,
   width,
   xLabel = '',
@@ -64,3 +64,5 @@ export const BaseChart = ({
     </VictoryChart>
   );
 };
+
+export default BaseChart;

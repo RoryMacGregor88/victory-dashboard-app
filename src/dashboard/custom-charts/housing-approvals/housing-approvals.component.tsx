@@ -10,8 +10,7 @@ import {
   ToggleButtonGroup,
 } from '~/components';
 import { HOUSING_APPROVAL_DATA_TYPES } from '~/constants';
-import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
-import { ChartWrapper } from '~/dashboard/charts/chart-wrapper.component';
+import { BaseChart, ChartWrapper } from '~/dashboard/charts';
 import { housingApprovalsTransformer } from '~/dashboard/custom-charts/housing-approvals/housing-approvals-transformer/housing-approvals-transformer';
 import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
 import { useChartTheme } from '~/dashboard/useChartTheme';

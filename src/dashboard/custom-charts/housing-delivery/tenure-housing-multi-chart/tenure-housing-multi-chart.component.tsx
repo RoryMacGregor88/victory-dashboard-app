@@ -15,7 +15,7 @@ import {
   TARGET_LEGEND_DATA,
   housingTenureTypes,
 } from '~/constants';
-import { BaseChart } from '~/dashboard/charts/base-chart/base-chart.component';
+import { BaseChart } from '~/dashboard/charts';
 import { tenureHousingTransformer } from '~/dashboard/custom-charts/housing-delivery/tenure-housing-multi-chart/tenure-housing-transformer/tenure-housing-transformer';
 import { CustomLegend } from '~/dashboard/custom-legend/custom-legend.component';
 import { useChartTheme } from '~/dashboard/useChartTheme';
