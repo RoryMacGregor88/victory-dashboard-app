@@ -62,10 +62,13 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(4),
     backgroundColor: theme.palette.background.default,
   },
+  loadmaskText: {
+    textAlign: 'center',
+  },
 }));
 
 export const Dashboard = ({ sourceId }: { sourceId: string }) => {
-  const { header, headerButtons, content } = useStyles();
+  const { header, headerButtons, content, loadmaskText } = useStyles();
   const dispatch = useAppDispatch();
 
   /** all data, including 'name', 'version', etc */
@@ -101,7 +104,9 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
 
   const orbStateRef = useRef(orbState);
 
-  // TODO: don't need this if using skeletons, eventually remove
+  /** app was created for desktops only */
+  const isDesktopSize = useMediaQuery('(min-width:1500px)');
+
   const dataIsLoaded =
     !!approvalsGranted &&
     !!progressionVsPlanning &&
@@ -212,26 +217,23 @@ export const Dashboard = ({ sourceId }: { sourceId: string }) => {
     setExportIsLoading(false);
   };
 
-  // TODO: use skeletons instead of loadmask? Maybe leave until later?
-
-  /** app was created for desktops only */
-  const isDesktopSize = useMediaQuery('(min-width:1500px)');
-
   if (!dataIsLoaded || !orbStateIsLoaded || !isDesktopSize) {
     const { innerWidth } = window;
     return (
       <LoadMaskFallback>
-        {!isDesktopSize ? (
+        {isDesktopSize ? (
+          <Typography variant="h1">Loading...</Typography>
+        ) : (
           <>
-            <h1>Unable to load.</h1>
-            <h3>
+            <Typography variant="h1">Unable to load.</Typography>
+            <Typography className={loadmaskText} variant="h3">
               This app is designed for screen sizes of 1500 pixels width or
               more.
-            </h3>
-            <h3>Your current device width is {innerWidth} pixels.</h3>
+            </Typography>
+            <Typography className={loadmaskText} variant="h3">
+              Your current device width is {innerWidth} pixels.
+            </Typography>
           </>
-        ) : (
-          <h1>Loading...</h1>
         )}
       </LoadMaskFallback>
     );

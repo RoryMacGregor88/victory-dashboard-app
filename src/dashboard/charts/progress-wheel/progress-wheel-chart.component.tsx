@@ -1,5 +1,4 @@
-import { Grid, makeStyles } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core';
 import { ParentSize } from '@visx/responsive';
 import { VictoryAnimation, VictoryPie } from 'victory';
 
@@ -13,9 +12,6 @@ const useStyles = makeStyles((theme) => ({
   },
   circle: {
     fill: theme.palette.background.default,
-  },
-  skeleton: {
-    margin: `${theme.spacing(2)} 0`,
   },
 }));
 
@@ -88,22 +84,6 @@ const ProgressIndicatorChart = ({
         );
       }}
     </ParentSize>
-  );
-};
-
-// TODO: use this or ditch?
-export const ProgressIndicatorChartSkeleton = () => {
-  const { skeleton } = useStyles();
-  return (
-    <Grid
-      container
-      item
-      alignItems="center"
-      className={skeleton}
-      justifyContent="center"
-    >
-      <Skeleton height="8rem" variant="circle" width="8rem" />
-    </Grid>
   );
 };
 

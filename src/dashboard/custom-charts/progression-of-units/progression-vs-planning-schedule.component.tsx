@@ -92,10 +92,7 @@ const ProgressionVsPlanningSchedule = ({
             selectedType,
           });
 
-          // TODO: skeleton here? Also, use ternary
-          if (!filteredData) return null;
-
-          return (
+          return !!filteredData ? (
             <>
               <Grid
                 container
@@ -158,7 +155,7 @@ const ProgressionVsPlanningSchedule = ({
                 </VictoryStack>
               </BaseChart>
             </>
-          );
+          ) : null;
         }}
       </StyledParentSize>
     </ChartWrapper>

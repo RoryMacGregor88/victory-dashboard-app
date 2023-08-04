@@ -8,7 +8,6 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import { ClassNameMap } from '@material-ui/core/styles/withStyles';
-import { Skeleton } from '@material-ui/lab';
 import clsx from 'clsx';
 
 import { InfoButtonTooltip } from '~/components';
@@ -24,21 +23,6 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     marginBottom: theme.spacing(2),
-  },
-}));
-
-const skeletonStyles = makeStyles((theme) => ({
-  paper: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: lighten(theme.palette.background.default, 0.055),
-    padding: theme.spacing(3),
-    width: '100%',
-  },
-  heading: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
 }));
 
@@ -93,25 +77,6 @@ const ChartWrapper = ({
       </Grid>
       {children}
     </Grid>
-  );
-};
-
-export const ChartWrapperSkeleton = ({ children }: { children: ReactNode }) => {
-  const { paper, heading } = skeletonStyles();
-  return (
-    <Paper className={paper}>
-      <span className={heading}>
-        <Skeleton variant="text" width={300} />
-        <Skeleton height={15} variant="circle" width={15} />
-      </span>
-
-      <div>
-        <Skeleton variant="text" />
-        <Skeleton variant="text" />
-      </div>
-
-      {children}
-    </Paper>
   );
 };
 
