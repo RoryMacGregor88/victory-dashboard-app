@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect, useMemo } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 
 import { MenuItem, Select, Typography, makeStyles } from '@material-ui/core';
 
@@ -130,6 +130,12 @@ const HousingDelivery = ({
     tenureYear = settings.tenureYear ?? thisYear,
     totalYear = settings.totalYear ?? thisYear;
 
+  /** sort data by 'Gross' or 'Net' datasets */
+  const dataByType = useMemo(
+    () => tenureHousingDeliveryData?.[tenureDataType],
+    [tenureDataType, tenureHousingDeliveryData],
+  );
+
   type UpdateDateFilterArgs = {
     totalYear?: number;
     tenureYear?: number;
@@ -144,10 +150,15 @@ const HousingDelivery = ({
   const handleTenureTypeSelect = (tenureCategory: TenureCategory) =>
     updateOrbState({ settings: { tenureCategory } });
 
-  const handleToggleClick = (
-    _: SyntheticEvent,
-    tenureDataType: TenureDataType,
-  ) => updateOrbState({ settings: { tenureDataType } });
+  const handleToggleClick = ({
+    currentTarget: { value },
+  }: MouseEvent<HTMLButtonElement>) => {
+    const newTenureDataType = value as TenureDataType;
+
+    /** prevent repeated toggling */
+    if (newTenureDataType === tenureDataType) return;
+    updateOrbState({ settings: { tenureDataType: newTenureDataType } });
+  };
 
   const showAllData = tenureCategory === ALL_TENURE_CATEGORIES;
 
@@ -163,12 +174,12 @@ const HousingDelivery = ({
   const dataByTenureType = useMemo(
     () =>
       !!showAllData
-        ? tenureHousingDeliveryData
+        ? dataByType
         : filterByType<TenureTypeHousingData>({
-            apiData: tenureHousingDeliveryData,
+            apiData: dataByType,
             selectedType: housingTenureTypes[tenureCategory],
           }),
-    [tenureHousingDeliveryData, tenureCategory, showAllData],
+    [dataByType, tenureCategory, showAllData],
   ) as Partial<TenureTypeHousingData>;
 
   const totalTimeline = getDataTimeline({

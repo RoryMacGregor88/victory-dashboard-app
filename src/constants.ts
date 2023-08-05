@@ -3,6 +3,7 @@
 // TODO: move this into types file?
 import { User } from './accounts/accounts.slice';
 import {
+  ApprovalsGrantedDataType,
   DatasetName,
   ProgressionVsPlanningCategory,
   TargetCategory,
@@ -166,7 +167,9 @@ export const targetDatasets: { [key in TargetCategory]: string } = {
     'Affordable Housing Targets for previous 10 financial years',
 };
 
-export const HOUSING_APPROVAL_DATA_TYPES = {
+export const HOUSING_APPROVAL_DATA_TYPES: {
+  [key: string]: ApprovalsGrantedDataType;
+} = {
   monthly: 'Monthly',
   cumulative: 'Cumulative',
 };

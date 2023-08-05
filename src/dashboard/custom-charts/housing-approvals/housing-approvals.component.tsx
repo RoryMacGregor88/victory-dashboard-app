@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { MouseEvent, useMemo } from 'react';
 
 import { makeStyles } from '@material-ui/core';
 import { VictoryGroup, VictoryLine, VictoryScatter } from 'victory';
@@ -47,11 +47,19 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
   const approvalsGrantedDataType =
     settings.approvalsGrantedDataType ?? HOUSING_APPROVAL_DATA_TYPES.monthly;
 
-  const handleToggleClick = (_: unknown, value: ApprovalsGrantedDataType) =>
-    updateOrbState({
-      settings: { approvalsGrantedDataType: value },
-    });
+  const handleToggleClick = ({
+    currentTarget: { value },
+  }: MouseEvent<HTMLButtonElement>) => {
+    const newDataType = value as ApprovalsGrantedDataType;
 
+    /** prevent repeated toggling */
+    if (newDataType === approvalsGrantedDataType) return;
+    updateOrbState({
+      settings: { approvalsGrantedDataType: newDataType },
+    });
+  };
+
+  /** switches between 'Monthly' or 'Cumulative' datasets */
   const dataByType = useMemo(() => {
     const { data: dataArray } = data.find(
       ({ name }) => name === approvalsGrantedDataType,
@@ -75,9 +83,7 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
     xLabel = 'Month',
     yLabel = 'No. Housing Approvals Granted';
 
-  if (!dataByType) return null;
-
-  return (
+  return !!dataByType ? (
     <ChartWrapper
       classes={{ paper }}
       info="This shows the number of housing approvals granted over time"
@@ -134,7 +140,7 @@ const HousingApprovals = ({ data, settings, updateOrbState }: Props) => {
         )}
       </StyledParentSize>
     </ChartWrapper>
-  );
+  ) : null;
 };
 
 export default HousingApprovals;

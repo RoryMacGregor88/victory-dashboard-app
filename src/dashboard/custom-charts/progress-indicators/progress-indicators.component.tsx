@@ -37,7 +37,8 @@ const ProgressIndicators = ({
   const chartTheme = useChartTheme();
   const { header } = useStyles();
 
-  const tenureCurrentYear = tenureData.find(
+  /** 'Gross' values only are required */
+  const tenureCurrentYear = tenureData['Gross'].find(
     (obj) => obj.startYear === currentYear,
   )!;
 

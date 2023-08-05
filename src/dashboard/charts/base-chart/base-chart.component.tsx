@@ -45,8 +45,8 @@ const BaseChart = ({
   return (
     <VictoryChart
       animate={{
-        duration: 2000,
-        onLoad: { duration: 2000 },
+        duration: 500,
+        onLoad: { duration: 500 },
       }}
       domainPadding={{ x: width * 0.1 }}
       height={width / 1.778}
